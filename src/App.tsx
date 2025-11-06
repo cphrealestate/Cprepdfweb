@@ -4,6 +4,8 @@ import { PropertyList } from './components/PropertyList';
 import { PropertyDetail } from './components/PropertyDetail';
 import { CapexList } from './components/CapexList';
 import { CapexDetail } from './components/CapexDetail';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { FullPageLoader } from './components/LoadingSpinner';
 import { properties, Property } from './data/portfolio';
 import { getProperties, Property as SanityProperty } from './lib/sanity-queries';
 
@@ -89,10 +91,22 @@ export default function App() {
     setCurrentView('overview');
   };
 
+  const handleErrorReset = () => {
+    // Reset to overview on error
+    setCurrentView('overview');
+    setSelectedProperty(null);
+    setSelectedCapexId(null);
+  };
+
+  // Show loading screen while initial data is loading
+  if (loading) {
+    return <FullPageLoader message="Indlæser portfolio data..." />;
+  }
+
   return (
-    <>
+    <ErrorBoundary onReset={handleErrorReset}>
       {currentView === 'overview' && (
-        <PortfolioOverview 
+        <PortfolioOverview
           onNavigateToProperties={handleNavigateToProperties}
           onNavigateToCapex={handleNavigateToCapex}
         />
@@ -127,6 +141,6 @@ export default function App() {
           onBack={handleBackToCapexList}
         />
       )}
-    </>
+    </ErrorBoundary>
   );
 }

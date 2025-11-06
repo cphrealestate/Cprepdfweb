@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Production
+build/
+dist/
+.vercel/
+
+# Logs
+*.log
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Misc
+.DS_Store
+*.min.js
+*.min.css
