@@ -66,6 +66,7 @@ export interface PortfolioSettings {
   _id: string;
   title: string;
   description: string;
+  logo?: any; // Sanity image object
   totalProperties?: number;
   totalArea?: string;
   totalValue?: string;
@@ -87,6 +88,7 @@ export async function getPortfolioSettings(): Promise<PortfolioSettings | null> 
     _id,
     title,
     description,
+    logo,
     totalProperties,
     totalArea,
     totalValue,

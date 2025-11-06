@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Building2, TrendingUp, MapPin, Award, X } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
 import logoImage from 'figma:asset/cdb9893bb0a895cc5f8c245820867dd1cfc47d3b.png';
 import { useState, useEffect } from 'react';
 import {
@@ -23,6 +24,7 @@ interface PortfolioOverviewProps {
 export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex }: PortfolioOverviewProps) {
   // Fallback to hardcoded data initially
   const [data, setData] = useState(portfolioData);
+  const [logo, setLogo] = useState<any>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [regionPropertiesData, setRegionPropertiesData] = useState<any>({});
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,11 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex }:
         ]);
 
         if (settings && regions.length > 0) {
+          // Store logo separately
+          if (settings.logo) {
+            setLogo(settings.logo);
+          }
+
           setData({
             title: settings.title,
             description: settings.description,
@@ -103,11 +110,20 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex }:
               {title}
             </h1>
             <div className="w-20 h-20 flex-shrink-0">
-              <ImageWithFallback
-                src={logoImage}
-                alt="Copenhagen Real Estate Logo"
-                className="w-full h-full object-contain"
-              />
+              {logo ? (
+                <SanityImage
+                  image={logo}
+                  alt="Copenhagen Real Estate Logo"
+                  width={80}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <ImageWithFallback
+                  src={logoImage}
+                  alt="Copenhagen Real Estate Logo"
+                  className="w-full h-full object-contain"
+                />
+              )}
             </div>
           </div>
           <p className="font-['Albert_Sans',sans-serif] text-[24px] leading-[33px] text-[#595959] max-w-[800px]">

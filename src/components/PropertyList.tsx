@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Building2, MapPin, ArrowLeft } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 
 interface PropertyListProps {
@@ -43,9 +44,11 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
             >
               {/* Image */}
               <div className="aspect-[4/3] bg-[#e5e5e0] overflow-hidden">
-                <ImageWithFallback
-                  src={property.image}
+                <SanityImage
+                  image={property.image}
                   alt={property.name}
+                  width={800}
+                  fallbackQuery={`${property.name} ${property.location} building`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>

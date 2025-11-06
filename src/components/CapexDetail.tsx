@@ -3,6 +3,7 @@ import { ArrowLeft, Calendar, DollarSign, MapPin, TrendingUp, CheckCircle } from
 import { capexProjects, CapexProject } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
 
 interface CapexDetailProps {
   capexId: string;
@@ -105,9 +106,11 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
               className="bg-white rounded-lg overflow-hidden"
             >
               <div className="h-80 overflow-hidden">
-                <ImageWithFallback
-                  src={project.beforeImage}
+                <SanityImage
+                  image={project.beforeImage}
                   alt={`${project.name} - Før`}
+                  width={800}
+                  fallbackQuery={`${project.name} before renovation`}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -128,9 +131,11 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
               className="bg-white rounded-lg overflow-hidden"
             >
               <div className="h-80 overflow-hidden">
-                <ImageWithFallback
-                  src={project.afterImage}
+                <SanityImage
+                  image={project.afterImage}
                   alt={`${project.name} - Efter`}
+                  width={800}
+                  fallbackQuery={`${project.name} after renovation modern`}
                   className="w-full h-full object-cover"
                 />
               </div>

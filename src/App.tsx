@@ -24,7 +24,7 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
     occupancy: sanityProp.occupancy,
     yearBuilt: sanityProp.yearBuilt,
     description: sanityProp.description,
-    image: '', // Will be handled with Sanity image
+    image: sanityProp.image || '', // Pass Sanity image object
     keyFacts: sanityProp.keyFacts || [],
     distances: sanityProp.distances,
   };
