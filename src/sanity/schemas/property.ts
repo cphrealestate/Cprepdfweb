@@ -1,0 +1,146 @@
+// Schema for Sanity Studio
+// Place this in your Sanity Studio project
+
+export default {
+  name: 'property',
+  title: 'Ejendom',
+  type: 'document',
+  fields: [
+    {
+      name: 'name',
+      title: 'Navn',
+      type: 'string',
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'location',
+      title: 'By/Lokation',
+      type: 'string',
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'address',
+      title: 'Adresse',
+      type: 'string',
+      validation: (Rule: any) => Rule.required(),
+    },
+    {
+      name: 'type',
+      title: 'Type',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Kontor', value: 'Kontor'},
+          {title: 'Blandet', value: 'Blandet'},
+          {title: 'Detail', value: 'Detail'},
+          {title: 'Industri', value: 'Industri'},
+        ],
+      },
+    },
+    {
+      name: 'area',
+      title: 'Areal',
+      type: 'string',
+    },
+    {
+      name: 'totalRent',
+      title: 'Samlet Leje',
+      type: 'string',
+      description: 'Fx: 15.7 mio. DKK/år',
+    },
+    {
+      name: 'value',
+      title: 'Værdi',
+      type: 'string',
+    },
+    {
+      name: 'occupancy',
+      title: 'Udlejningsgrad',
+      type: 'string',
+    },
+    {
+      name: 'yearBuilt',
+      title: 'Opførelsesår',
+      type: 'number',
+    },
+    {
+      name: 'description',
+      title: 'Beskrivelse',
+      type: 'text',
+    },
+    {
+      name: 'image',
+      title: 'Hovedbillede',
+      type: 'image',
+      options: {
+        hotspot: true,
+      },
+    },
+    {
+      name: 'keyFacts',
+      title: 'Nøgletal',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'label',
+              title: 'Label',
+              type: 'string',
+            },
+            {
+              name: 'value',
+              title: 'Værdi',
+              type: 'string',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'distances',
+      title: 'Afstande',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'location',
+              title: 'Lokation',
+              type: 'string',
+            },
+            {
+              name: 'distance',
+              title: 'Afstand',
+              type: 'string',
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'region',
+      title: 'Region',
+      type: 'reference',
+      to: [{type: 'region'}],
+      description: 'Hvilken region/by tilhører denne ejendom?',
+    },
+  ],
+  preview: {
+    select: {
+      title: 'name',
+      location: 'location',
+      media: 'image',
+      area: 'area',
+    },
+    prepare({title, location, media, area}: any) {
+      return {
+        title,
+        subtitle: `${location} • ${area}`,
+        media,
+      };
+    },
+  },
+};
