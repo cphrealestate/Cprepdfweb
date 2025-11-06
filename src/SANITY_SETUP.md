@@ -177,6 +177,93 @@ npm run dev
 3. **Opdater CORS i Sanity:**
    - Tilføj din Vercel URL til allowed origins
 
+## 🔄 Automatiske Opdateringer med Webhooks
+
+For at få Vercel til automatisk at rebuilde når du opdaterer indhold i Sanity CMS, skal du sætte webhooks op.
+
+### Step 1: Opret Deploy Hook i Vercel
+
+1. Gå til [Vercel Dashboard](https://vercel.com/dashboard)
+2. Vælg dit projekt (cprepdfweb)
+3. Gå til **Settings** → **Git**
+4. Scroll ned til **Deploy Hooks**
+5. Klik **Create Hook**
+   - **Name**: Sanity Content Update
+   - **Git Branch**: main (eller den branch Vercel deployer fra)
+6. Klik **Create Hook**
+7. **Kopiér den genererede URL** - den ser sådan ud:
+   ```
+   https://api.vercel.com/v1/integrations/deploy/prj_xxx/xxx
+   ```
+
+### Step 2: Tilføj Deploy Hook URL til Vercel Environment Variables
+
+1. Stadig i Vercel Dashboard → Settings → **Environment Variables**
+2. Tilføj ny variable:
+   - **Key**: `VERCEL_DEPLOY_HOOK`
+   - **Value**: Din Deploy Hook URL fra Step 1
+   - **Environments**: Production, Preview, Development (vælg alle)
+3. Klik **Save**
+
+### Step 3: (Valgfrit) Tilføj Webhook Secret
+
+For ekstra sikkerhed kan du tilføje et webhook secret:
+
+1. Generer et tilfældigt secret (f.eks. på https://randomkeygen.com/)
+2. I Vercel Dashboard → Settings → Environment Variables:
+   - **Key**: `SANITY_WEBHOOK_SECRET`
+   - **Value**: Dit genererede secret
+3. Gem dette secret - du skal bruge det i Step 4
+
+### Step 4: Opsæt Webhook i Sanity
+
+1. Gå til [Sanity Dashboard](https://sanity.io/manage)
+2. Vælg dit projekt
+3. Gå til **API** → **Webhooks**
+4. Klik **Create webhook**
+5. Konfigurer webhooket:
+   - **Name**: Vercel Deploy Trigger
+   - **URL**: `https://din-vercel-url.vercel.app/api/revalidate`
+     - Erstat `din-vercel-url` med din faktiske Vercel URL
+   - **Dataset**: production
+   - **Trigger on**: Create, Update, Delete (vælg alle)
+   - **HTTP Method**: POST
+   - **HTTP Headers** (hvis du bruger secret fra Step 3):
+     - Header: `sanity-webhook-signature`
+     - Value: Dit secret fra SANITY_WEBHOOK_SECRET
+   - **Projection**: `{_type, _id, _rev}`
+   - **API version**: v2024-01-01
+6. Klik **Save**
+
+### Step 5: Test Webhook
+
+1. Gå til dit Sanity Studio
+2. Rediger et dokument (f.eks. opdater en ejendom)
+3. Gem ændringerne
+4. Gå til Sanity Dashboard → API → Webhooks
+5. Klik på dit webhook og se under **Deliveries**
+6. Du skulle se en grøn ✓ hvis webhooket lykkedes
+7. Check Vercel Dashboard → Deployments - der skulle være en ny deployment
+
+### Troubleshooting Webhooks
+
+**Webhook fails med 500 error:**
+- Check at `VERCEL_DEPLOY_HOOK` er sat korrekt i Vercel environment variables
+- Redeploy projektet efter tilføjelse af environment variables
+
+**Webhook fails med 401 error:**
+- Check at `sanity-webhook-signature` header matcher `SANITY_WEBHOOK_SECRET`
+- Eller fjern secret valideringen hvis du ikke bruger det
+
+**Deployment trigger ikke:**
+- Verificer webhook URL er korrekt: `https://din-url.vercel.app/api/revalidate`
+- Check Sanity webhook deliveries for fejlmeddelelser
+- Se Vercel Function Logs under Deployments → Functions tab
+
+**Langsom opdatering:**
+- Vercel deployment tager typisk 30-90 sekunder
+- Din browser cache kan også forsinke opdateringer - prøv hard refresh (Ctrl+Shift+R)
+
 ## 📚 Næste Skridt
 
 Nu hvor Sanity er sat op, kan du:
