@@ -19,6 +19,15 @@ export default {
       validation: (Rule: any) => Rule.required(),
     },
     {
+      name: 'logo',
+      title: 'Logo',
+      type: 'image',
+      description: 'Upload dit logo her (vises i øverste venstre hjørne)',
+      options: {
+        hotspot: true,
+      },
+    },
+    {
       name: 'totalProperties',
       title: 'Antal Ejendomme',
       type: 'number',
