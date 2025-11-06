@@ -7,8 +7,8 @@ export default defineConfig({
   name: 'default',
   title: 'Copenhagen Real Estate - Portfolio CMS',
 
-  projectId: process.env.SANITY_STUDIO_PROJECT_ID || 'YOUR_PROJECT_ID',
-  dataset: process.env.SANITY_STUDIO_DATASET || 'production',
+  projectId: 'ayuikhh7',
+  dataset: 'production',
 
   plugins: [
     structureTool(),
