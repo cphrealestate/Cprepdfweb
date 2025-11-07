@@ -4,8 +4,8 @@ import { SanityImage } from './SanityImage';
 import { motion } from 'motion/react';
 
 interface BeforeAfterSliderProps {
-  beforeImage: string | any; // string URL or Sanity image object
-  afterImage: string | any; // string URL or Sanity image object
+  beforeImage: string | any; // Can be URL string or Sanity image object
+  afterImage: string | any;  // Can be URL string or Sanity image object
   beforeDescription: string;
   afterDescription: string;
   beforeLabel?: string;
@@ -25,8 +25,8 @@ export function BeforeAfterSlider({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Check if images are Sanity objects or URL strings
-  const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null && afterImage._type === 'image';
-  const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null && beforeImage._type === 'image';
+  const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null;
+  const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null;
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
