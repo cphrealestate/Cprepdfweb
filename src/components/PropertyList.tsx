@@ -44,7 +44,7 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
               {/* Image */}
               <div className="aspect-[4/3] bg-[#e5e5e0] overflow-hidden">
                 <ImageWithFallback
-                  src={property.image}
+                  src={property.images[0]}
                   alt={property.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />

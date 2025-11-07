@@ -73,7 +73,7 @@ export interface Property {
   occupancy: string;
   yearBuilt: number;
   description: string;
-  image: string;
+  images: string[]; // ← ÆNDRET fra "image: string" til "images: string[]"
   keyFacts: Array<{
     label: string;
     value: string;
@@ -96,7 +96,12 @@ export const properties: Property[] = [
     occupancy: "100%",
     yearBuilt: 2019,
     description: "Moderne kontorejendom i hjertet af Ørestad med fremragende offentlig transport og faciliteter.",
-    image: "office building modern",
+    images: [
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200",
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200",
+      "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200"
+    ],
     keyFacts: [
       { label: "Lejere", value: "6 virksomheder" },
       { label: "Gennemsnitlig leje", value: "1,850 DKK/m²" },
@@ -120,7 +125,11 @@ export const properties: Property[] = [
     occupancy: "95%",
     yearBuilt: 2021,
     description: "Ikonisk højhus i Aarhus centrum med kontorer, detailhandel og cafe i stueetagen.",
-    image: "commercial tower modern",
+    images: [
+      "https://images.unsplash.com/photo-1478860409698-8707f313ee8b?w=1200",
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200",
+      "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200"
+    ],
     keyFacts: [
       { label: "Etager", value: "12" },
       { label: "Detailhandel", value: "800 m²" },
@@ -144,7 +153,10 @@ export const properties: Property[] = [
     occupancy: "92%",
     yearBuilt: 2018,
     description: "Fleksibel kontorejendom tæt på Odense Banegård med moderne faciliteter.",
-    image: "office campus building",
+    images: [
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200",
+      "https://images.unsplash.com/photo-1497366811353-6870c455e76e?w=1200"
+    ],
     keyFacts: [
       { label: "Lejere", value: "8 virksomheder" },
       { label: "Mødecenter", value: "Ja" },

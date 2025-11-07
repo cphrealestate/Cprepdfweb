@@ -1,8 +1,9 @@
-import { motion } from 'motion/react';
-import { ArrowLeft, MapPin, Calendar, TrendingUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { LogoButton } from './LogoButton';
+import { useState } from 'react';
 
 interface PropertyDetailProps {
   property: Property;
@@ -11,10 +12,30 @@ interface PropertyDetailProps {
 }
 
 export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetailProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Navigation mellem billeder
+  const nextImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === property.images.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const previousImage = () => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? property.images.length - 1 : prev - 1
+    );
+  };
+
+  const goToImage = (index: number) => {
+    setCurrentImageIndex(index);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
       <LogoButton onClick={onBackToHome} />
-      
+
       <div className="px-12 py-12">
         {/* Back button */}
         <motion.button
@@ -51,18 +72,77 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
 
           {/* Main Grid */}
           <div className="grid grid-cols-2 gap-8 mb-12">
-            {/* Image */}
+            {/* Billedgalleri med navigation */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
-              className="aspect-[4/3] bg-[#e5e5e0] rounded-lg overflow-hidden"
+              className="aspect-[4/3] bg-[#e5e5e0] rounded-lg overflow-hidden relative group"
             >
-              <ImageWithFallback
-                src={property.image}
-                alt={property.name}
-                className="w-full h-full object-cover"
-              />
+              {/* Hoved billede - klikbart */}
+              <div
+                onClick={() => setIsLightboxOpen(true)}
+                className="cursor-pointer w-full h-full"
+              >
+                <ImageWithFallback
+                  src={property.images[currentImageIndex]}
+                  alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Navigation knapper - vises kun hvis der er flere billeder */}
+              {property.images.length > 1 && (
+                <>
+                  {/* Forrige knap */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      previousImage();
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label="Forrige billede"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-black" />
+                  </button>
+
+                  {/* Næste knap */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage();
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    aria-label="Næste billede"
+                  >
+                    <ChevronRight className="w-6 h-6 text-black" />
+                  </button>
+
+                  {/* Prikker navigation */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    {property.images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goToImage(index);
+                        }}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? 'bg-white w-6'
+                            : 'bg-white/50 hover:bg-white/75'
+                        }`}
+                        aria-label={`Gå til billede ${index + 1}`}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Tæller */}
+                  <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full font-['Albert_Sans',sans-serif] text-[14px]">
+                    {currentImageIndex + 1} / {property.images.length}
+                  </div>
+                </>
+              )}
             </motion.div>
 
             {/* Key Stats */}
@@ -75,7 +155,7 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
               <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6">
                 Nøgletal
               </h2>
-              
+
               <div className="space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
                   <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Type</span>
@@ -169,6 +249,82 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
           )}
         </div>
       </div>
+
+      {/* Lightbox/Modal for fuldskærms visning */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+            onClick={() => setIsLightboxOpen(false)}
+          >
+            {/* Luk knap */}
+            <button
+              onClick={() => setIsLightboxOpen(false)}
+              className="absolute top-6 right-6 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors"
+              aria-label="Luk"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+
+            {/* Billede container */}
+            <div
+              className="relative max-w-7xl max-h-[90vh] w-full px-20"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ImageWithFallback
+                src={property.images[currentImageIndex]}
+                alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                className="w-full h-full object-contain"
+              />
+
+              {/* Navigation i lightbox */}
+              {property.images.length > 1 && (
+                <>
+                  <button
+                    onClick={previousImage}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-4 rounded-full transition-colors"
+                    aria-label="Forrige billede"
+                  >
+                    <ChevronLeft className="w-8 h-8 text-white" />
+                  </button>
+
+                  <button
+                    onClick={nextImage}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-4 rounded-full transition-colors"
+                    aria-label="Næste billede"
+                  >
+                    <ChevronRight className="w-8 h-8 text-white" />
+                  </button>
+
+                  {/* Thumbnail strip */}
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2 p-4 bg-black/50 rounded-lg">
+                    {property.images.map((img, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToImage(index)}
+                        className={`w-20 h-14 rounded overflow-hidden border-2 transition-all ${
+                          index === currentImageIndex
+                            ? 'border-white scale-110'
+                            : 'border-transparent opacity-60 hover:opacity-100'
+                        }`}
+                      >
+                        <ImageWithFallback
+                          src={img}
+                          alt={`Thumbnail ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
