@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
 import { motion } from 'motion/react';
 
 interface BeforeAfterSliderProps {
-  beforeImage: string;
-  afterImage: string;
+  beforeImage: string | any; // string URL or Sanity image object
+  afterImage: string | any; // string URL or Sanity image object
   beforeDescription: string;
   afterDescription: string;
   beforeLabel?: string;
@@ -22,6 +23,10 @@ export function BeforeAfterSlider({
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Check if images are Sanity objects or URL strings
+  const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null && afterImage._type === 'image';
+  const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null && beforeImage._type === 'image';
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
@@ -78,11 +83,20 @@ export function BeforeAfterSlider({
       >
         {/* After Image (Background) */}
         <div className="absolute inset-0">
-          <ImageWithFallback
-            src={afterImage}
-            alt="Efter renovering"
-            className="w-full h-full object-cover"
-          />
+          {isAfterSanityImage ? (
+            <SanityImage
+              image={afterImage}
+              alt="Efter renovering"
+              width={1200}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ImageWithFallback
+              src={afterImage as string}
+              alt="Efter renovering"
+              className="w-full h-full object-cover"
+            />
+          )}
           {/* After Label */}
           <div className="absolute top-4 right-4 bg-[#767A57] text-white px-4 py-2 rounded-full font-['Albert_Sans',sans-serif] text-[14px] shadow-lg">
             {afterLabel}
@@ -94,11 +108,20 @@ export function BeforeAfterSlider({
           className="absolute inset-0 transition-all"
           style={{ clipPath: `inset(0 ${100 - sliderPosition}% 0 0)` }}
         >
-          <ImageWithFallback
-            src={beforeImage}
-            alt="Før renovering"
-            className="w-full h-full object-cover"
-          />
+          {isBeforeSanityImage ? (
+            <SanityImage
+              image={beforeImage}
+              alt="Før renovering"
+              width={1200}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <ImageWithFallback
+              src={beforeImage as string}
+              alt="Før renovering"
+              className="w-full h-full object-cover"
+            />
+          )}
           {/* Before Label */}
           <div className="absolute top-4 left-4 bg-[#595959] text-white px-4 py-2 rounded-full font-['Albert_Sans',sans-serif] text-[14px] shadow-lg">
             {beforeLabel}
