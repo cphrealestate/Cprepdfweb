@@ -4,17 +4,12 @@ import {
   ChevronLeft,
   ChevronRight,
   MapPin,
-  Home,
   TrendingUp,
-  Users,
   Calendar,
   Building2,
   Square,
   Percent,
-  X,
-  Train,
-  School,
-  ShoppingBag
+  X
 } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -27,8 +22,7 @@ interface PropertyPresentationProps {
 
 interface Slide {
   id: string;
-  title: string;
-  type: 'hero' | 'stats' | 'description' | 'details' | 'location';
+  type: 'hero' | 'stats' | 'description' | 'details';
 }
 
 export function PropertyPresentation({ property, onClose }: PropertyPresentationProps) {
@@ -36,25 +30,24 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
   const [direction, setDirection] = useState(0);
 
   const slides: Slide[] = [
-    { id: 'hero', title: 'Oversigt', type: 'hero' },
-    { id: 'stats', title: 'Nøgletal', type: 'stats' },
-    { id: 'description', title: 'Om Ejendommen', type: 'description' },
-    { id: 'details', title: 'Detaljer', type: 'details' },
+    { id: 'oversigt', type: 'hero' },
+    { id: 'nogletal', type: 'stats' },
+    { id: 'om-ejendommen', type: 'description' },
+    { id: 'detaljer', type: 'details' },
   ];
 
-  // Add location slide if property has distances
-  if (property.distances && property.distances.length > 0) {
-    slides.push({ id: 'location', title: 'Beliggenhed', type: 'location' });
-  }
-
   const nextSlide = () => {
-    setDirection(1);
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    if (currentSlide < slides.length - 1) {
+      setDirection(1);
+      setCurrentSlide((prev) => prev + 1);
+    }
   };
 
   const prevSlide = () => {
-    setDirection(-1);
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    if (currentSlide > 0) {
+      setDirection(-1);
+      setCurrentSlide((prev) => prev - 1);
+    }
   };
 
   const goToSlide = (index: number) => {
@@ -91,44 +84,41 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
     })
   };
 
-  // Get first image from images array
   const mainImage = property.images && property.images.length > 0 ? property.images[0] : '';
   const isSanityImage = typeof mainImage === 'object' && mainImage !== null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#f5f5f0] via-[#e8e8dd] to-[#767A57]">
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#d4d4c8] via-[#c8c8b8] to-[#9b9e7f]">
       {/* Close Button */}
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 z-50 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg hover:shadow-xl group"
+        className="absolute top-8 right-8 z-50 w-14 h-14 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all shadow-lg group"
       >
-        <X className="w-6 h-6 text-[#595959] group-hover:text-black transition-colors" />
+        <X className="w-7 h-7 text-[#595959] group-hover:text-black transition-colors" />
       </button>
 
-      {/* Property Title - Fixed Header */}
-      <div className="absolute top-0 left-0 right-0 z-40 bg-gradient-to-b from-black/50 to-transparent pt-8 pb-16 px-12">
-        <div className="max-w-[1600px] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex items-center gap-2 text-white/80 mb-2">
-              <MapPin className="w-4 h-4" />
-              <span className="font-['Albert_Sans',sans-serif] text-[14px]">
-                {property.location}
-              </span>
-            </div>
-            <h1 className="font-['Crimson_Text',serif] text-[56px] leading-[67px] text-white">
-              {property.name}
-            </h1>
-          </motion.div>
-        </div>
+      {/* Slide Counter */}
+      <div className="absolute top-8 left-12 z-50 bg-white/90 backdrop-blur-sm px-5 py-2 rounded-full">
+        <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+          {currentSlide + 1} / {slides.length}
+        </span>
+      </div>
+
+      {/* Property Title */}
+      <div className="absolute top-20 left-12 z-40">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="font-['Crimson_Text',serif] text-[64px] leading-[77px] text-white drop-shadow-lg"
+        >
+          {property.name}
+        </motion.h1>
       </div>
 
       {/* Slides Container */}
-      <div className="h-full flex items-center justify-center px-12 py-24">
-        <div className="max-w-[1600px] w-full h-full relative">
+      <div className="h-full flex items-center justify-center px-12 pt-48 pb-32">
+        <div className="max-w-[1400px] w-full h-full relative">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
               key={currentSlide}
@@ -147,48 +137,38 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
               {slides[currentSlide].type === 'stats' && <StatsSlide property={property} />}
               {slides[currentSlide].type === 'description' && <DescriptionSlide property={property} />}
               {slides[currentSlide].type === 'details' && <DetailsSlide property={property} mainImage={mainImage} isSanityImage={isSanityImage} />}
-              {slides[currentSlide].type === 'location' && <LocationSlide property={property} />}
             </motion.div>
           </AnimatePresence>
         </div>
       </div>
 
       {/* Navigation Controls */}
-      <div className="absolute bottom-8 left-0 right-0 z-40">
-        <div className="max-w-[1600px] mx-auto px-12 flex items-center justify-between">
+      <div className="absolute bottom-12 left-0 right-0 z-40">
+        <div className="max-w-[1400px] mx-auto px-12 flex items-center justify-between">
           {/* Previous Button */}
           <button
             onClick={prevSlide}
             disabled={currentSlide === 0}
-            className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg hover:shadow-xl disabled:opacity-40 disabled:cursor-not-allowed group"
+            className="w-16 h-16 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all shadow-lg disabled:opacity-30 disabled:cursor-not-allowed group"
           >
-            <ChevronLeft className="w-6 h-6 text-[#767A57] group-hover:text-[#5f6345] transition-colors" />
+            <ChevronLeft className="w-7 h-7 text-[#595959] group-hover:text-black transition-colors" />
           </button>
 
-          {/* Slide Indicators */}
+          {/* Slide Indicators - Simple dots */}
           <div className="flex items-center gap-3">
             {slides.map((slide, index) => (
               <button
                 key={slide.id}
                 onClick={() => goToSlide(index)}
-                className="group flex flex-col items-center gap-2"
+                className="group"
               >
                 <div
-                  className={`h-1 rounded-full transition-all ${
+                  className={`h-2 rounded-full transition-all ${
                     index === currentSlide
-                      ? 'w-16 bg-white'
-                      : 'w-8 bg-white/40 group-hover:bg-white/60'
+                      ? 'w-12 bg-white'
+                      : 'w-2 bg-white/40 group-hover:bg-white/60'
                   }`}
                 />
-                <span
-                  className={`font-['Albert_Sans',sans-serif] text-[12px] transition-colors ${
-                    index === currentSlide
-                      ? 'text-white'
-                      : 'text-white/60 group-hover:text-white/80'
-                  }`}
-                >
-                  {slide.title}
-                </span>
               </button>
             ))}
           </div>
@@ -197,18 +177,11 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
           <button
             onClick={nextSlide}
             disabled={currentSlide === slides.length - 1}
-            className="w-14 h-14 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg hover:shadow-xl disabled:opacity-40 disabled:cursor-not-allowed group"
+            className="w-16 h-16 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition-all shadow-lg disabled:opacity-30 disabled:cursor-not-allowed group"
           >
-            <ChevronRight className="w-6 h-6 text-[#767A57] group-hover:text-[#5f6345] transition-colors" />
+            <ChevronRight className="w-7 h-7 text-[#595959] group-hover:text-black transition-colors" />
           </button>
         </div>
-      </div>
-
-      {/* Slide Counter */}
-      <div className="absolute top-6 left-12 z-40 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full">
-        <span className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-          {currentSlide + 1} / {slides.length}
-        </span>
       </div>
     </div>
   );
@@ -217,13 +190,13 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
 // Hero Slide Component
 function HeroSlide({ property, mainImage, isSanityImage }: { property: Property; mainImage: any; isSanityImage: boolean }) {
   return (
-    <div className="h-full flex items-center gap-8">
-      {/* Image - Left Side (60%) */}
+    <div className="h-full flex items-stretch gap-8">
+      {/* Image - Left Side (55%) */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
-        className="w-[60%] h-full rounded-2xl overflow-hidden shadow-2xl"
+        className="w-[55%] rounded-3xl overflow-hidden shadow-2xl bg-white/10"
       >
         {isSanityImage ? (
           <SanityImage
@@ -241,18 +214,18 @@ function HeroSlide({ property, mainImage, isSanityImage }: { property: Property;
         )}
       </motion.div>
 
-      {/* Quick Stats - Right Side (40%) */}
-      <div className="w-[40%] h-full flex flex-col justify-center gap-6">
+      {/* Stats Cards - Right Side (45%) */}
+      <div className="w-[45%] flex flex-col justify-center gap-6">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl p-8 shadow-xl"
+          className="bg-white rounded-3xl p-10 shadow-xl"
         >
-          <h2 className="font-['Crimson_Text',serif] text-[36px] text-black mb-6">
+          <h2 className="font-['Crimson_Text',serif] text-[40px] text-black mb-8">
             Nøgletal
           </h2>
-          <div className="space-y-5">
+          <div className="space-y-6">
             <StatRow icon={Building2} label="Type" value={property.type} />
             <StatRow icon={Square} label="Areal" value={property.area} />
             <StatRow icon={TrendingUp} label="Værdi" value={property.value} primary />
@@ -265,12 +238,12 @@ function HeroSlide({ property, mainImage, isSanityImage }: { property: Property;
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-gradient-to-br from-[#767A57] to-[#5f6345] rounded-2xl p-8 shadow-xl text-white"
+          className="bg-[#767A57] rounded-3xl p-10 shadow-xl text-white"
         >
-          <p className="font-['Albert_Sans',sans-serif] text-[14px] text-white/80 mb-2">
+          <p className="font-['Albert_Sans',sans-serif] text-[14px] text-white/80 mb-3 uppercase tracking-wide">
             Beliggenhed
           </p>
-          <p className="font-['Crimson_Text',serif] text-[24px]">
+          <p className="font-['Crimson_Text',serif] text-[28px] leading-[34px]">
             {property.address}
           </p>
         </motion.div>
@@ -282,17 +255,18 @@ function HeroSlide({ property, mainImage, isSanityImage }: { property: Property;
 // Stats Slide Component
 function StatsSlide({ property }: { property: Property }) {
   return (
-    <div className="h-full flex items-center justify-center">
-      <div className="w-full max-w-[1200px]">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="font-['Crimson_Text',serif] text-[48px] text-white text-center mb-12"
-        >
-          Detaljerede Nøgletal
-        </motion.h2>
+    <div className="h-full flex flex-col items-center justify-center">
+      <motion.h2
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="font-['Crimson_Text',serif] text-[56px] text-white text-center mb-16 drop-shadow-lg"
+      >
+        Detaljerede Nøgletal
+      </motion.h2>
 
-        <div className="grid grid-cols-3 gap-6">
+      <div className="w-full max-w-[1200px]">
+        {/* Main Stats Grid - 3x2 */}
+        <div className="grid grid-cols-3 gap-6 mb-12">
           <StatCard
             icon={Building2}
             label="Type"
@@ -332,24 +306,24 @@ function StatsSlide({ property }: { property: Property }) {
           />
         </div>
 
-        {/* Additional Key Facts */}
+        {/* Additional Information */}
         {property.keyFacts && property.keyFacts.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-8"
+            className="bg-white/10 backdrop-blur-sm rounded-3xl p-10"
           >
-            <h3 className="font-['Crimson_Text',serif] text-[28px] text-white mb-6">
+            <h3 className="font-['Crimson_Text',serif] text-[32px] text-white mb-8">
               Yderligere Information
             </h3>
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-4 gap-8">
               {property.keyFacts.map((fact, index) => (
                 <div key={index} className="text-center">
-                  <p className="font-['Albert_Sans',sans-serif] text-[14px] text-white/70 mb-2">
+                  <p className="font-['Albert_Sans',sans-serif] text-[13px] text-white/70 mb-2 uppercase tracking-wide">
                     {fact.label}
                   </p>
-                  <p className="font-['Crimson_Text',serif] text-[24px] text-white">
+                  <p className="font-['Crimson_Text',serif] text-[28px] text-white">
                     {fact.value}
                   </p>
                 </div>
@@ -369,38 +343,38 @@ function DescriptionSlide({ property }: { property: Property }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[1000px] bg-white rounded-2xl p-12 shadow-2xl"
+        className="w-full max-w-[1000px] bg-white rounded-3xl p-14 shadow-2xl"
       >
-        <h2 className="font-['Crimson_Text',serif] text-[48px] text-black mb-8">
+        <h2 className="font-['Crimson_Text',serif] text-[56px] text-black mb-10">
           Om Ejendommen
         </h2>
-        <p className="font-['Albert_Sans',sans-serif] text-[20px] leading-[32px] text-[#595959]">
+        <p className="font-['Albert_Sans',sans-serif] text-[22px] leading-[36px] text-[#595959] mb-10">
           {property.description}
         </p>
 
-        <div className="mt-8 pt-8 border-t-2 border-[#e5e5e0] grid grid-cols-2 gap-6">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#767A57]/10 rounded-full flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-[#767A57]" />
+        <div className="pt-10 border-t-2 border-[#e5e5e0] grid grid-cols-2 gap-8">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-[#767A57]/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Building2 className="w-7 h-7 text-[#767A57]" />
             </div>
             <div>
-              <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+              <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
                 Type
               </p>
-              <p className="font-['Crimson_Text',serif] text-[20px] text-black">
+              <p className="font-['Crimson_Text',serif] text-[24px] text-black">
                 {property.type}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#767A57]/10 rounded-full flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-[#767A57]" />
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-[#767A57]/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Calendar className="w-7 h-7 text-[#767A57]" />
             </div>
             <div>
-              <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+              <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
                 Bygget
               </p>
-              <p className="font-['Crimson_Text',serif] text-[20px] text-black">
+              <p className="font-['Crimson_Text',serif] text-[24px] text-black">
                 {property.yearBuilt}
               </p>
             </div>
@@ -415,12 +389,12 @@ function DescriptionSlide({ property }: { property: Property }) {
 function DetailsSlide({ property, mainImage, isSanityImage }: { property: Property; mainImage: any; isSanityImage: boolean }) {
   return (
     <div className="h-full flex items-center justify-center">
-      <div className="w-full max-w-[1200px] grid grid-cols-2 gap-8">
+      <div className="w-full max-w-[1200px] grid grid-cols-2 gap-10">
         {/* Left Column - Image */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="h-full rounded-2xl overflow-hidden shadow-2xl"
+          className="rounded-3xl overflow-hidden shadow-2xl bg-white/10"
         >
           {isSanityImage ? (
             <SanityImage
@@ -442,13 +416,13 @@ function DetailsSlide({ property, mainImage, isSanityImage }: { property: Proper
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          className="space-y-6"
+          className="flex flex-col justify-center space-y-6"
         >
-          <div className="bg-white rounded-2xl p-8 shadow-xl">
-            <h3 className="font-['Crimson_Text',serif] text-[32px] text-black mb-6">
+          <div className="bg-white rounded-3xl p-10 shadow-xl">
+            <h3 className="font-['Crimson_Text',serif] text-[36px] text-black mb-8">
               Ejendomsoplysninger
             </h3>
-            <div className="space-y-4">
+            <div className="space-y-5">
               <DetailRow label="Adresse" value={property.address} />
               <DetailRow label="Type" value={property.type} />
               <DetailRow label="Areal" value={property.area} />
@@ -459,17 +433,17 @@ function DetailsSlide({ property, mainImage, isSanityImage }: { property: Proper
           </div>
 
           {property.keyFacts && property.keyFacts.length > 0 && (
-            <div className="bg-gradient-to-br from-[#767A57] to-[#5f6345] rounded-2xl p-8 shadow-xl">
-              <h3 className="font-['Crimson_Text',serif] text-[28px] text-white mb-6">
+            <div className="bg-[#767A57] rounded-3xl p-10 shadow-xl">
+              <h3 className="font-['Crimson_Text',serif] text-[32px] text-white mb-8">
                 Highlights
               </h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 {property.keyFacts.slice(0, 4).map((fact, index) => (
                   <div key={index}>
-                    <p className="font-['Albert_Sans',sans-serif] text-[12px] text-white/70 mb-1">
+                    <p className="font-['Albert_Sans',sans-serif] text-[12px] text-white/70 mb-2 uppercase tracking-wide">
                       {fact.label}
                     </p>
-                    <p className="font-['Crimson_Text',serif] text-[20px] text-white">
+                    <p className="font-['Crimson_Text',serif] text-[22px] text-white">
                       {fact.value}
                     </p>
                   </div>
@@ -479,64 +453,6 @@ function DetailsSlide({ property, mainImage, isSanityImage }: { property: Proper
           )}
         </motion.div>
       </div>
-    </div>
-  );
-}
-
-// Location Slide Component
-function LocationSlide({ property }: { property: Property }) {
-  if (!property.distances || property.distances.length === 0) return null;
-
-  return (
-    <div className="h-full flex items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-[1000px] bg-white rounded-2xl p-12 shadow-2xl"
-      >
-        <h2 className="font-['Crimson_Text',serif] text-[48px] text-black mb-8">
-          Beliggenhed & Afstande
-        </h2>
-
-        <div className="mb-8 p-6 bg-[#767A57]/10 rounded-xl">
-          <div className="flex items-center gap-3 mb-2">
-            <MapPin className="w-6 h-6 text-[#767A57]" />
-            <p className="font-['Crimson_Text',serif] text-[24px] text-black">
-              {property.address}
-            </p>
-          </div>
-          <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959] ml-9">
-            {property.location}
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {property.distances.map((distance, index) => {
-            const Icon = getDistanceIcon(distance.location);
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-between p-6 bg-[#f5f5f0] rounded-xl hover:bg-[#e8e8dd] transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-[#767A57]" />
-                  </div>
-                  <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">
-                    {distance.location}
-                  </span>
-                </div>
-                <span className="font-['Crimson_Text',serif] text-[24px] text-[#767A57]">
-                  {distance.distance}
-                </span>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.div>
     </div>
   );
 }
@@ -554,15 +470,15 @@ function StatRow({
   primary?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between pb-5 border-b border-[#e5e5e0] last:border-0 last:pb-0">
-      <div className="flex items-center gap-3">
-        <Icon className="w-5 h-5 text-[#767A57]" />
+    <div className="flex items-center justify-between py-4 border-b border-[#e5e5e0] last:border-0 last:pb-0">
+      <div className="flex items-center gap-4">
+        <Icon className="w-6 h-6 text-[#767A57]" />
         <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
           {label}
         </span>
       </div>
       <span className={`font-['Crimson_Text',serif] ${
-        primary ? 'text-[24px] text-[#767A57]' : 'text-[20px] text-black'
+        primary ? 'text-[28px] text-[#767A57] font-medium' : 'text-[22px] text-black'
       }`}>
         {value}
       </span>
@@ -588,19 +504,19 @@ function StatCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className={`rounded-2xl p-8 shadow-xl ${
+      className={`rounded-3xl p-10 shadow-xl ${
         highlight
-          ? 'bg-gradient-to-br from-[#767A57] to-[#5f6345] text-white'
+          ? 'bg-[#767A57]'
           : 'bg-white'
       }`}
     >
-      <Icon className={`w-8 h-8 mb-4 ${highlight ? 'text-white' : 'text-[#767A57]'}`} />
-      <p className={`font-['Albert_Sans',sans-serif] text-[14px] mb-2 ${
+      <Icon className={`w-10 h-10 mb-6 ${highlight ? 'text-white' : 'text-[#767A57]'}`} />
+      <p className={`font-['Albert_Sans',sans-serif] text-[13px] mb-3 uppercase tracking-wide ${
         highlight ? 'text-white/80' : 'text-[#595959]'
       }`}>
         {label}
       </p>
-      <p className={`font-['Crimson_Text',serif] text-[32px] ${
+      <p className={`font-['Crimson_Text',serif] text-[36px] ${
         highlight ? 'text-white' : 'text-black'
       }`}>
         {value}
@@ -619,23 +535,15 @@ function DetailRow({
   highlight?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between py-3 border-b border-[#e5e5e0] last:border-0">
-      <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+    <div className="flex items-center justify-between py-4 border-b border-[#e5e5e0] last:border-0">
+      <span className="font-['Albert_Sans',sans-serif] text-[15px] text-[#595959]">
         {label}
       </span>
       <span className={`font-['Crimson_Text',serif] ${
-        highlight ? 'text-[24px] text-[#767A57]' : 'text-[20px] text-black'
+        highlight ? 'text-[26px] text-[#767A57] font-medium' : 'text-[22px] text-black'
       }`}>
         {value}
       </span>
     </div>
   );
-}
-
-function getDistanceIcon(location: string) {
-  const lower = location.toLowerCase();
-  if (lower.includes('tog') || lower.includes('station') || lower.includes('h ')) return Train;
-  if (lower.includes('skole') || lower.includes('school')) return School;
-  if (lower.includes('butik') || lower.includes('shop')) return ShoppingBag;
-  return MapPin;
 }
