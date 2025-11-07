@@ -3,6 +3,7 @@ import { ArrowLeft, Calendar, DollarSign, MapPin, TrendingUp, CheckCircle } from
 import { capexProjects, CapexProject } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { BeforeAfterSlider } from './BeforeAfterSlider';
 
 interface CapexDetailProps {
   capexId: string;
@@ -96,54 +97,13 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
           >
             Før & Efter
           </motion.h2>
-          
-          <div className="grid grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-white rounded-lg overflow-hidden"
-            >
-              <div className="h-80 overflow-hidden">
-                <ImageWithFallback
-                  src={project.beforeImage}
-                  alt={`${project.name} - Før`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="font-['Albert_Sans',sans-serif] text-[24px] text-black mb-3">
-                  Før
-                </h3>
-                <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
-                  {project.beforeDescription}
-                </p>
-              </div>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white rounded-lg overflow-hidden"
-            >
-              <div className="h-80 overflow-hidden">
-                <ImageWithFallback
-                  src={project.afterImage}
-                  alt={`${project.name} - Efter`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="font-['Albert_Sans',sans-serif] text-[24px] text-black mb-3">
-                  Efter
-                </h3>
-                <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
-                  {project.afterDescription}
-                </p>
-              </div>
-            </motion.div>
-          </div>
+          <BeforeAfterSlider
+            beforeImage={project.beforeImage}
+            afterImage={project.afterImage}
+            beforeDescription={project.beforeDescription}
+            afterDescription={project.afterDescription}
+          />
         </div>
       </section>
 
