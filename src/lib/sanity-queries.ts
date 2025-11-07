@@ -76,6 +76,23 @@ export interface PortfolioSettings {
   }>;
 }
 
+export interface PresentationModule {
+  moduleType: 'portfolioOverview' | 'property' | 'region' | 'capex' | 'allProperties' | 'allCapex' | 'custom';
+  property?: Property;
+  region?: Region;
+  capexProject?: CapexProject;
+  customTitle?: string;
+  customContent?: any;
+  customImage?: any;
+}
+
+export interface Presentation {
+  _id: string;
+  title: string;
+  description?: string;
+  modules: PresentationModule[];
+}
+
 // Fetch portfolio settings
 export async function getPortfolioSettings(): Promise<PortfolioSettings | null> {
   if (!sanityClient) {
@@ -290,6 +307,146 @@ export async function getCapexProjectById(id: string): Promise<CapexProject | nu
     return await sanityClient.fetch(query, { id });
   } catch (error) {
     console.error('Error fetching capex project:', error);
+    return null;
+  }
+}
+
+// Fetch all presentations
+export async function getPresentations(): Promise<Presentation[]> {
+  if (!sanityClient) {
+    console.log('Sanity not configured - using fallback data');
+    return [];
+  }
+
+  const query = `*[_type == "presentation"] | order(_createdAt desc){
+    _id,
+    title,
+    description,
+    modules[]{
+      moduleType,
+      property->{
+        _id,
+        name,
+        location,
+        address,
+        type,
+        area,
+        totalRent,
+        value,
+        occupancy,
+        yearBuilt,
+        description,
+        image,
+        keyFacts,
+        distances,
+        region->{
+          _id,
+          name
+        }
+      },
+      region->{
+        _id,
+        name,
+        percentage,
+        "propertyCount": propertyCount
+      },
+      capexProject->{
+        _id,
+        name,
+        propertyName,
+        location,
+        status,
+        investment,
+        startDate,
+        completionDate,
+        description,
+        beforeDescription,
+        afterDescription,
+        beforeImage,
+        afterImage,
+        keyMetrics,
+        benefits
+      },
+      customTitle,
+      customContent,
+      customImage
+    }
+  }`;
+
+  try {
+    return await sanityClient.fetch(query);
+  } catch (error) {
+    console.error('Error fetching presentations:', error);
+    return [];
+  }
+}
+
+// Fetch single presentation by ID
+export async function getPresentationById(id: string): Promise<Presentation | null> {
+  if (!sanityClient) {
+    console.log('Sanity not configured - using fallback data');
+    return null;
+  }
+
+  const query = `*[_type == "presentation" && _id == $id][0]{
+    _id,
+    title,
+    description,
+    modules[]{
+      moduleType,
+      property->{
+        _id,
+        name,
+        location,
+        address,
+        type,
+        area,
+        totalRent,
+        value,
+        occupancy,
+        yearBuilt,
+        description,
+        image,
+        keyFacts,
+        distances,
+        region->{
+          _id,
+          name
+        }
+      },
+      region->{
+        _id,
+        name,
+        percentage,
+        "propertyCount": propertyCount
+      },
+      capexProject->{
+        _id,
+        name,
+        propertyName,
+        location,
+        status,
+        investment,
+        startDate,
+        completionDate,
+        description,
+        beforeDescription,
+        afterDescription,
+        beforeImage,
+        afterImage,
+        keyMetrics,
+        benefits
+      },
+      customTitle,
+      customContent,
+      customImage
+    }
+  }`;
+
+  try {
+    return await sanityClient.fetch(query, { id });
+  } catch (error) {
+    console.error('Error fetching presentation:', error);
     return null;
   }
 }

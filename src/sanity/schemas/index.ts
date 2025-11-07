@@ -5,10 +5,12 @@ import portfolioSettings from './portfolioSettings';
 import region from './region';
 import property from './property';
 import capexProject from './capexProject';
+import presentation from './presentation';
 
 export const schemaTypes = [
   portfolioSettings,
   region,
   property,
   capexProject,
+  presentation,
 ];
