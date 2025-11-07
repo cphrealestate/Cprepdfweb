@@ -179,8 +179,8 @@ export interface CapexProject {
   description: string;
   beforeDescription: string;
   afterDescription: string;
-  beforeImage: string;
-  afterImage: string;
+  beforeImage: string | any; // string URL or Sanity image object
+  afterImage: string | any; // string URL or Sanity image object
   keyMetrics: Array<{
     label: string;
     before: string;
