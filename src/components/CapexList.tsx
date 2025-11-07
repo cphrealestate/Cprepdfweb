@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, DollarSign, MapPin, CheckCircle, Clock, AlertCirc
 import { capexProjects } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
 import { useState, useEffect } from 'react';
 import { getCapexProjects, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
@@ -21,7 +22,7 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
       try {
         const sanityProjects = await getCapexProjects();
         if (sanityProjects && sanityProjects.length > 0) {
-          // Adapt Sanity projects to match current format
+          // Keep Sanity image objects instead of converting to strings
           const adapted = sanityProjects.map(p => ({
             id: p._id,
             name: p.name,
@@ -34,8 +35,8 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
             description: p.description,
             beforeDescription: p.beforeDescription,
             afterDescription: p.afterDescription,
-            beforeImage: '', // Will use SanityImage component
-            afterImage: '', // Will use SanityImage component
+            beforeImage: p.beforeImage || '', // Keep Sanity object
+            afterImage: p.afterImage || '', // Keep Sanity object
             keyMetrics: p.keyMetrics,
             benefits: p.benefits,
           }));
@@ -111,11 +112,20 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
             >
               {/* Project Image */}
               <div className="relative h-64 overflow-hidden">
-                <ImageWithFallback
-                  src={project.afterImage}
-                  alt={project.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
+                {typeof project.afterImage === 'object' && project.afterImage ? (
+                  <SanityImage
+                    image={project.afterImage}
+                    alt={project.name}
+                    width={800}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                ) : (
+                  <ImageWithFallback
+                    src={project.afterImage as string}
+                    alt={project.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                )}
                 <div className="absolute top-4 right-4">
                   <div className={`px-4 py-2 rounded-full ${getStatusColor(project.status)} flex items-center gap-2`}>
                     {getStatusIcon(project.status)}
