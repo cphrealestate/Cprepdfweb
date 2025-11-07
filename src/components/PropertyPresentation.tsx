@@ -87,8 +87,13 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
   const mainImage = property.images && property.images.length > 0 ? property.images[0] : '';
   const isSanityImage = typeof mainImage === 'object' && mainImage !== null;
 
+  // Debug logging
+  console.log('PropertyPresentation - mainImage:', mainImage);
+  console.log('PropertyPresentation - isSanityImage:', isSanityImage);
+  console.log('PropertyPresentation - property.images:', property.images);
+
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#d4d4c8] via-[#c8c8b8] to-[#9b9e7f]">
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-[#f5f5f0] via-[#e8e8dd] to-[#767A57]">
       {/* Close Button */}
       <button
         onClick={onClose}
