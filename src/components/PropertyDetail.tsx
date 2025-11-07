@@ -132,7 +132,7 @@ export function PropertyDetail({
             {/* Presentation Mode Button */}
             <button
               onClick={() => setShowPresentation(true)}
-              className="flex items-center gap-3 px-8 py-5 bg-gradient-to-br from-[#767A57] to-[#5f6345] text-white rounded-xl hover:shadow-2xl transition-all group shadow-lg"
+              className="flex items-center gap-3 px-8 py-5 bg-gradient-to-br from-[#767A57] to-[#5f6345] text-white rounded-xl hover:shadow-2xl transition-all group shadow-lg animate-pulse"
             >
               <Presentation className="w-7 h-7" />
               <div className="text-left">
