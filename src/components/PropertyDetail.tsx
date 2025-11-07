@@ -10,9 +10,21 @@ interface PropertyDetailProps {
   property: Property;
   onBack: () => void;
   onBackToHome: () => void;
+  onNext?: () => void;
+  onPrevious?: () => void;
+  currentIndex?: number;
+  totalProperties?: number;
 }
 
-export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetailProps) {
+export function PropertyDetail({
+  property,
+  onBack,
+  onBackToHome,
+  onNext,
+  onPrevious,
+  currentIndex,
+  totalProperties
+}: PropertyDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
@@ -42,16 +54,50 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
       <LogoButton onClick={onBackToHome} />
 
       <div className="px-12 py-12">
-        {/* Back button */}
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          onClick={onBack}
-          className="flex items-center gap-2 text-[#767A57] hover:text-[#5f6345] transition-colors mb-8 font-['Albert_Sans',sans-serif]"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Tilbage til Ejendomme
-        </motion.button>
+        {/* Navigation header */}
+        <div className="flex items-center justify-between mb-8">
+          {/* Back button */}
+          <motion.button
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            onClick={onBack}
+            className="flex items-center gap-2 text-[#767A57] hover:text-[#5f6345] transition-colors font-['Albert_Sans',sans-serif]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Tilbage til Ejendomme
+          </motion.button>
+
+          {/* Property navigation */}
+          {(onNext || onPrevious) && currentIndex !== undefined && totalProperties !== undefined && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-4"
+            >
+              <button
+                onClick={onPrevious}
+                disabled={!onPrevious}
+                className="p-2 rounded-full bg-white hover:bg-[#f5f5f0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Forrige ejendom"
+              >
+                <ChevronLeft className="w-6 h-6 text-[#767A57]" />
+              </button>
+
+              <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+                Ejendom {currentIndex + 1} af {totalProperties}
+              </span>
+
+              <button
+                onClick={onNext}
+                disabled={!onNext}
+                className="p-2 rounded-full bg-white hover:bg-[#f5f5f0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Næste ejendom"
+              >
+                <ChevronRight className="w-6 h-6 text-[#767A57]" />
+              </button>
+            </motion.div>
+          )}
+        </div>
 
         <div className="max-w-[1400px] mx-auto">
           {/* Header */}
@@ -323,7 +369,7 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
                   </button>
 
                   {/* Thumbnail strip */}
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2 p-4 bg-black/50 rounded-lg">
+                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 p-4 bg-black/50 rounded-lg">
                     {property.images.map((img, index) => {
                       const isSanityThumb = typeof img === 'object' && img !== null;
                       return (
@@ -356,6 +402,40 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
                   </div>
                 </>
               )}
+
+              {/* Bottom controls - Navigation and Close */}
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/50 rounded-full px-6 py-3">
+                {/* Previous button */}
+                {property.images.length > 1 && (
+                  <button
+                    onClick={previousImage}
+                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                    aria-label="Forrige billede"
+                  >
+                    <ChevronLeft className="w-6 h-6 text-white" />
+                  </button>
+                )}
+
+                {/* Close button */}
+                <button
+                  onClick={() => setIsLightboxOpen(false)}
+                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  aria-label="Luk galleri"
+                >
+                  <X className="w-6 h-6 text-white" />
+                </button>
+
+                {/* Next button */}
+                {property.images.length > 1 && (
+                  <button
+                    onClick={nextImage}
+                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                    aria-label="Næste billede"
+                  >
+                    <ChevronRight className="w-6 h-6 text-white" />
+                  </button>
+                )}
+              </div>
             </div>
           </motion.div>
         )}

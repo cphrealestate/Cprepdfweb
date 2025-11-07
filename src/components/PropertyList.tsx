@@ -40,7 +40,7 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + index * 0.1 }}
               onClick={() => onSelectProperty(property)}
-              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow cursor-pointer group"
+              className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group"
             >
               {/* Image */}
               <div className="aspect-[4/3] bg-[#e5e5e0] overflow-hidden">
@@ -49,13 +49,13 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
                     image={property.images[0]}
                     alt={property.name}
                     width={800}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
                   />
                 ) : (
                   <ImageWithFallback
                     src={property.images[0] as string}
                     alt={property.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
                   />
                 )}
               </div>
