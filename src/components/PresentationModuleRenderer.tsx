@@ -122,56 +122,111 @@ export function PresentationModuleRenderer({ module }: PresentationModuleRendere
     const property = module.property;
     return (
       <div className="space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[77px] text-black mb-4">
+            {property.name}
+          </h1>
+          <p className="font-['Albert_Sans',sans-serif] text-[18px] text-[#767A57] flex items-center gap-2">
+            <MapPin className="w-5 h-5" />
+            {property.location}
+          </p>
+        </div>
+
+        {/* Main Grid */}
         <div className="grid grid-cols-2 gap-8">
+          {/* Image */}
           <div>
             {property.image && (
-              <div className="rounded-lg overflow-hidden shadow-lg">
+              <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-lg">
                 <SanityImage
                   image={property.image}
                   alt={property.name}
-                  className="w-full h-[400px] object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
             )}
           </div>
 
-          <div>
-            <div className="mb-6">
-              <h1 className="font-['Crimson_Text',serif] text-[52px] leading-[62px] text-black mb-2">
-                {property.name}
-              </h1>
-              <p className="font-['Albert_Sans',sans-serif] text-[18px] text-[#767A57] flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                {property.location}
-              </p>
-            </div>
+          {/* Key Stats */}
+          <div className="bg-white rounded-lg p-8 shadow-sm">
+            <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6">
+              Nøgletal
+            </h2>
 
-            <div className="grid grid-cols-2 gap-4">
-              {property.keyFacts?.map((fact, index) => (
-                <motion.div
-                  key={fact.label}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                  className="bg-white rounded-lg p-5 shadow-sm"
-                >
-                  <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mb-1">
-                    {fact.label}
-                  </p>
-                  <p className="font-['Crimson_Text',serif] text-[24px] text-black">
-                    {fact.value}
-                  </p>
-                </motion.div>
-              ))}
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
+                <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Type</span>
+                <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.type}</span>
+              </div>
+              <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
+                <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Areal</span>
+                <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.area}</span>
+              </div>
+              <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
+                <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Værdi</span>
+                <span className="font-['Crimson_Text',serif] text-[24px] text-[#767A57]">{property.value}</span>
+              </div>
+              <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
+                <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Udlejningsgrad</span>
+                <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.occupancy}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Byggeår</span>
+                <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.yearBuilt}</span>
+              </div>
             </div>
           </div>
         </div>
 
+        {/* Description */}
         <div className="bg-white rounded-lg p-8 shadow-sm">
+          <h2 className="font-['Crimson_Text',serif] text-[28px] text-black mb-4">
+            Om Ejendommen
+          </h2>
           <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
             {property.description}
           </p>
         </div>
+
+        {/* Additional Info - Key Facts */}
+        {property.keyFacts && property.keyFacts.length > 0 && (
+          <div className="grid grid-cols-3 gap-6">
+            {property.keyFacts.map((fact, index) => (
+              <motion.div
+                key={fact.label}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="bg-white rounded-lg p-6 shadow-sm"
+              >
+                <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mb-2">
+                  {fact.label}
+                </p>
+                <p className="font-['Crimson_Text',serif] text-[28px] text-black">
+                  {fact.value}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        )}
+
+        {/* Distances */}
+        {property.distances && property.distances.length > 0 && (
+          <div className="bg-white rounded-lg p-8 shadow-sm">
+            <h2 className="font-['Crimson_Text',serif] text-[28px] text-black mb-6">
+              Afstande
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              {property.distances.map((distance, index) => (
+                <div key={index} className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
+                  <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">{distance.location}</span>
+                  <span className="font-['Albert_Sans',sans-serif] text-[16px] text-black">{distance.distance}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -223,89 +278,155 @@ export function PresentationModuleRenderer({ module }: PresentationModuleRendere
   if (module.moduleType === 'capex' && module.capexProject) {
     const project = module.capexProject;
     const statusColors = {
-      'Planlagt': 'bg-blue-100 text-blue-800',
-      'I gang': 'bg-yellow-100 text-yellow-800',
+      'Planlagt': 'bg-orange-100 text-orange-800',
+      'I gang': 'bg-blue-100 text-blue-800',
       'Afsluttet': 'bg-green-100 text-green-800'
     };
 
     return (
       <div className="space-y-8">
+        {/* Hero Section */}
         <div>
-          <div className="flex items-center gap-4 mb-4">
-            <h1 className="font-['Crimson_Text',serif] text-[52px] leading-[62px] text-black">
+          <div className="flex items-center gap-4 mb-6">
+            <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[76px] text-black">
               {project.name}
             </h1>
-            <span className={`px-4 py-2 rounded-lg font-['Albert_Sans',sans-serif] text-[14px] ${statusColors[project.status]}`}>
-              {project.status}
-            </span>
+            <div className={`px-4 py-2 rounded-full ${statusColors[project.status]}`}>
+              <span className="font-['Albert_Sans',sans-serif] text-[14px]">
+                {project.status}
+              </span>
+            </div>
           </div>
-          <p className="font-['Albert_Sans',sans-serif] text-[18px] text-[#595959] mb-6">
-            {project.propertyName} • {project.location}
-          </p>
-          <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
+
+          <div className="flex items-center gap-8 mb-6">
+            <div className="flex items-center gap-2 text-[#595959]">
+              <MapPin className="w-5 h-5" />
+              <span className="font-['Albert_Sans',sans-serif] text-[18px]">
+                {project.propertyName}, {project.location}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-[#767A57]">
+              <TrendingUp className="w-5 h-5" />
+              <span className="font-['Albert_Sans',sans-serif] text-[18px]">
+                Investering: {project.investment}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-[#595959]">
+              <Calendar className="w-5 h-5" />
+              <span className="font-['Albert_Sans',sans-serif] text-[18px]">
+                {project.startDate} - {project.completionDate}
+              </span>
+            </div>
+          </div>
+
+          <p className="font-['Albert_Sans',sans-serif] text-[20px] leading-[30px] text-[#595959] max-w-[900px]">
             {project.description}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8">
-          <div>
-            <h3 className="font-['Albert_Sans',sans-serif] text-[20px] text-black mb-4">
-              Før
-            </h3>
-            {project.beforeImage && (
-              <div className="rounded-lg overflow-hidden shadow-lg mb-4">
-                <SanityImage
-                  image={project.beforeImage}
-                  alt={`${project.name} - før`}
-                  className="w-full h-[300px] object-cover"
-                />
-              </div>
-            )}
-            <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-              {project.beforeDescription}
-            </p>
-          </div>
+        {/* Before & After Images */}
+        <div>
+          <h2 className="font-['Crimson_Text',serif] text-[48px] leading-[58px] text-black mb-8">
+            Før & Efter
+          </h2>
 
-          <div>
-            <h3 className="font-['Albert_Sans',sans-serif] text-[20px] text-black mb-4">
-              Efter
-            </h3>
-            {project.afterImage && (
-              <div className="rounded-lg overflow-hidden shadow-lg mb-4">
-                <SanityImage
-                  image={project.afterImage}
-                  alt={`${project.name} - efter`}
-                  className="w-full h-[300px] object-cover"
-                />
+          <div className="grid grid-cols-2 gap-8">
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+              {project.beforeImage && (
+                <div className="h-80 overflow-hidden">
+                  <SanityImage
+                    image={project.beforeImage}
+                    alt={`${project.name} - før`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <h3 className="font-['Albert_Sans',sans-serif] text-[24px] text-black mb-3">
+                  Før
+                </h3>
+                <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
+                  {project.beforeDescription}
+                </p>
               </div>
-            )}
-            <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-              {project.afterDescription}
-            </p>
+            </div>
+
+            <div className="bg-white rounded-lg overflow-hidden shadow-sm">
+              {project.afterImage && (
+                <div className="h-80 overflow-hidden">
+                  <SanityImage
+                    image={project.afterImage}
+                    alt={`${project.name} - efter`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="p-6">
+                <h3 className="font-['Albert_Sans',sans-serif] text-[24px] text-black mb-3">
+                  Efter
+                </h3>
+                <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
+                  {project.afterDescription}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
+        {/* Key Metrics */}
         {project.keyMetrics && project.keyMetrics.length > 0 && (
           <div className="bg-white rounded-lg p-8 shadow-sm">
-            <h3 className="font-['Albert_Sans',sans-serif] text-[20px] text-black mb-4">
-              Nøgletal
-            </h3>
-            <div className="grid grid-cols-3 gap-6">
+            <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6">
+              Nøgletal - Forbedringer
+            </h2>
+            <div className="grid grid-cols-3 gap-8">
               {project.keyMetrics.map((metric, index) => (
-                <div key={index}>
-                  <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mb-2">
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mb-3">
                     {metric.label}
                   </p>
                   <div className="flex items-center gap-3">
-                    <span className="font-['Crimson_Text',serif] text-[24px] text-[#999]">
+                    <span className="font-['Crimson_Text',serif] text-[28px] text-[#999] line-through">
                       {metric.before}
                     </span>
-                    <span className="text-[#767A57]">→</span>
-                    <span className="font-['Crimson_Text',serif] text-[24px] text-[#767A57]">
+                    <span className="text-[#767A57] text-[20px]">→</span>
+                    <span className="font-['Crimson_Text',serif] text-[32px] text-[#767A57] font-semibold">
                       {metric.after}
                     </span>
                   </div>
-                </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Benefits */}
+        {project.benefits && project.benefits.length > 0 && (
+          <div className="bg-white rounded-lg p-8 shadow-sm">
+            <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6">
+              Resultater & Fordele
+            </h2>
+            <div className="grid grid-cols-2 gap-4">
+              {project.benefits.map((benefit, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="flex items-start gap-3"
+                >
+                  <div className="w-6 h-6 rounded-full bg-[#767A57] flex items-center justify-center flex-shrink-0 mt-1">
+                    <span className="text-white text-[14px]">✓</span>
+                  </div>
+                  <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
+                    {benefit}
+                  </p>
+                </motion.div>
               ))}
             </div>
           </div>
