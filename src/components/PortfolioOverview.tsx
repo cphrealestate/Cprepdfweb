@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Building2, TrendingUp, MapPin, Award, X } from 'lucide-react';
+import { Building2, TrendingUp, MapPin, Award, Loader2 } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImage from '../assets/cdb9893bb0a895cc5f8c245820867dd1cfc47d3b.png';
@@ -21,12 +21,20 @@ interface PortfolioOverviewProps {
   onNavigateToPresentations?: () => void;
 }
 
+interface RegionProperty {
+  name: string;
+  address: string;
+  area: string;
+  totalRent: string;
+}
+
 export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, onNavigateToPresentations }: PortfolioOverviewProps) {
   // Fallback to hardcoded data initially
   const [data, setData] = useState(portfolioData);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const [regionPropertiesData, setRegionPropertiesData] = useState<any>({});
+  const [regionPropertiesData, setRegionPropertiesData] = useState<Record<string, RegionProperty[]>>({});
   const [loading, setLoading] = useState(true);
+  const [loadingRegionProperties, setLoadingRegionProperties] = useState(false);
 
   // Fetch data from Sanity
   useEffect(() => {
@@ -69,7 +77,8 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
   // Fetch region properties when dialog opens
   useEffect(() => {
     async function loadRegionProperties() {
-      if (selectedRegion) {
+      if (selectedRegion && !regionPropertiesData[selectedRegion]) {
+        setLoadingRegionProperties(true);
         try {
           const properties = await getPropertiesByRegion(selectedRegion);
           setRegionPropertiesData(prev => ({
@@ -78,16 +87,32 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
           }));
         } catch (error) {
           console.error('Error loading region properties:', error);
+        } finally {
+          setLoadingRegionProperties(false);
         }
       }
     }
-    
+
     loadRegionProperties();
-  }, [selectedRegion]);
+  }, [selectedRegion, regionPropertiesData]);
 
   const { title, description, stats, regions, highlights, regionProperties } = data;
   const currentRegionProperties = regionPropertiesData[selectedRegion || ''] || regionProperties[selectedRegion || ''] || [];
-  
+
+  // Show loading state while initial data is being fetched
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-[#767A57] animate-spin mx-auto mb-4" />
+          <p className="font-['Albert_Sans',sans-serif] text-[18px] text-[#595959]">
+            Indlæser portefølje data...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
       <LogoButton onClick={() => {}} disabled={true} />
@@ -268,7 +293,7 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
       </section>
 
       {/* Region Properties Dialog */}
-      {selectedRegion && regionProperties[selectedRegion] && (
+      {selectedRegion && (
         <Dialog open={true} onOpenChange={() => setSelectedRegion(null)}>
           <DialogContent className="max-w-[1000px]">
             <DialogHeader>
@@ -279,50 +304,65 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
                 Her er en liste over ejendomme i {selectedRegion}.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="mt-6">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2 border-[#767A57]">
-                    <th className="text-left pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
-                      Ejendomsnavn
-                    </th>
-                    <th className="text-left pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
-                      Adresse
-                    </th>
-                    <th className="text-right pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
-                      Areal
-                    </th>
-                    <th className="text-right pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
-                      Leje
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentRegionProperties.map((property, index) => (
-                    <motion.tr
-                      key={property.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="border-b border-[#e5e5e5] hover:bg-[#f5f5f0] transition-colors"
-                    >
-                      <td className="py-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
-                        {property.name}
-                      </td>
-                      <td className="py-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-                        {property.address}
-                      </td>
-                      <td className="py-4 text-right font-['Albert_Sans',sans-serif] text-[16px] text-black">
-                        {property.area}
-                      </td>
-                      <td className="py-4 text-right font-['Albert_Sans',sans-serif] text-[16px] text-[#767A57]">
-                        {property.totalRent}
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
+              {loadingRegionProperties ? (
+                <div className="text-center py-12">
+                  <Loader2 className="w-8 h-8 text-[#767A57] animate-spin mx-auto mb-3" />
+                  <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+                    Indlæser ejendomme...
+                  </p>
+                </div>
+              ) : currentRegionProperties.length > 0 ? (
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b-2 border-[#767A57]">
+                      <th className="text-left pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
+                        Ejendomsnavn
+                      </th>
+                      <th className="text-left pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
+                        Adresse
+                      </th>
+                      <th className="text-right pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
+                        Areal
+                      </th>
+                      <th className="text-right pb-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
+                        Leje
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentRegionProperties.map((property, index) => (
+                      <motion.tr
+                        key={property.name}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="border-b border-[#e5e5e5] hover:bg-[#f5f5f0] transition-colors"
+                      >
+                        <td className="py-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
+                          {property.name}
+                        </td>
+                        <td className="py-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+                          {property.address}
+                        </td>
+                        <td className="py-4 text-right font-['Albert_Sans',sans-serif] text-[16px] text-black">
+                          {property.area}
+                        </td>
+                        <td className="py-4 text-right font-['Albert_Sans',sans-serif] text-[16px] text-[#767A57]">
+                          {property.totalRent}
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+                    Ingen ejendomme fundet i denne region.
+                  </p>
+                </div>
+              )}
             </div>
           </DialogContent>
         </Dialog>
