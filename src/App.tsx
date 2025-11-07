@@ -146,22 +146,6 @@ export default function App() {
     setCurrentView('presentation-list');
   };
 
-  const handleNextProperty = () => {
-    if (!selectedProperty) return;
-    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
-    if (currentIndex < propertiesData.length - 1) {
-      setSelectedProperty(propertiesData[currentIndex + 1]);
-    }
-  };
-
-  const handlePreviousProperty = () => {
-    if (!selectedProperty) return;
-    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
-    if (currentIndex > 0) {
-      setSelectedProperty(propertiesData[currentIndex - 1]);
-    }
-  };
-
   return (
     <>
       {currentView === 'overview' && (
