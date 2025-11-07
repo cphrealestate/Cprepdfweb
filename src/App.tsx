@@ -13,6 +13,13 @@ type View = 'overview' | 'list' | 'detail' | 'capex-list' | 'capex-detail' | 'pr
 
 // Temporary adapter to use Sanity properties with existing Property type
 function adaptSanityProperty(sanityProp: SanityProperty): Property {
+  // Use images array if available, otherwise fallback to single image or empty array
+  const images = sanityProp.images && sanityProp.images.length > 0
+    ? sanityProp.images
+    : sanityProp.image
+    ? [sanityProp.image]
+    : [];
+
   return {
     id: sanityProp._id,
     name: sanityProp.name,
@@ -24,7 +31,7 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
     occupancy: sanityProp.occupancy,
     yearBuilt: sanityProp.yearBuilt,
     description: sanityProp.description,
-    image: '', // Will be handled with Sanity image
+    images: images, // Now using images array
     keyFacts: sanityProp.keyFacts || [],
     distances: sanityProp.distances,
   };

@@ -70,11 +70,20 @@ export default {
     },
     {
       name: 'image',
-      title: 'Hovedbillede',
+      title: 'Hovedbillede (legacy)',
       type: 'image',
       options: {
         hotspot: true,
       },
+      description: 'Brug venligst "Billedgalleri" i stedet',
+      hidden: true,
+    },
+    {
+      name: 'images',
+      title: 'Billedgalleri',
+      type: 'array',
+      of: [{type: 'image', options: {hotspot: true}}],
+      validation: (Rule: any) => Rule.min(1).required().error('Tilføj mindst ét billede'),
     },
     {
       name: 'keyFacts',

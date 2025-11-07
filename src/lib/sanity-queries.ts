@@ -21,7 +21,8 @@ export interface Property {
   occupancy: string;
   yearBuilt: number;
   description: string;
-  image?: any; // Sanity image object
+  image?: any; // Sanity image object (legacy)
+  images?: any[]; // Sanity image array
   keyFacts: Array<{
     label: string;
     value: string;
@@ -185,6 +186,7 @@ export async function getProperties(): Promise<Property[]> {
     yearBuilt,
     description,
     image,
+    images,
     keyFacts,
     distances,
     region->{
@@ -221,6 +223,7 @@ export async function getPropertyById(id: string): Promise<Property | null> {
     yearBuilt,
     description,
     image,
+    images,
     keyFacts,
     distances,
     region->{
@@ -337,6 +340,7 @@ export async function getPresentations(): Promise<Presentation[]> {
         yearBuilt,
         description,
         image,
+        images,
         keyFacts,
         distances,
         region->{
@@ -407,6 +411,7 @@ export async function getPresentationById(id: string): Promise<Presentation | nu
         yearBuilt,
         description,
         image,
+        images,
         keyFacts,
         distances,
         region->{
