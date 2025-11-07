@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useInView } from 'motion/react';
+import { motion } from 'motion/react';
 
 interface CounterAnimationProps {
   end: number;
   duration?: number;
   suffix?: string;
   prefix?: string;
-  className?: string;
   decimals?: number;
+  className?: string;
+  startOnView?: boolean;
 }
 
 export function CounterAnimation({
@@ -15,16 +16,40 @@ export function CounterAnimation({
   duration = 2,
   suffix = '',
   prefix = '',
-  className = '',
   decimals = 0,
+  className = '',
+  startOnView = true
 }: CounterAnimationProps) {
   const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, amount: 0.5 });
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const elementRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!startOnView || hasAnimated) {
+      // Start animation immediately
+      animateCounter();
+      return;
+    }
 
+    // Create intersection observer
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+          animateCounter();
+          setHasAnimated(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasAnimated]);
+
+  const animateCounter = () => {
     const startTime = Date.now();
     const endTime = startTime + duration * 1000;
 
@@ -32,35 +57,29 @@ export function CounterAnimation({
       const now = Date.now();
       const progress = Math.min((now - startTime) / (duration * 1000), 1);
 
-      // Easing function for smooth animation (ease-out)
-      const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentCount = easeOutQuart * end;
+      // Easing function (ease-out)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      const currentCount = easeOut * end;
 
       setCount(currentCount);
 
-      if (progress < 1) {
+      if (now < endTime) {
         requestAnimationFrame(updateCounter);
       } else {
-        setCount(end); // Ensure we end at exact value
+        setCount(end);
       }
     };
 
     requestAnimationFrame(updateCounter);
-  }, [isInView, end, duration]);
+  };
 
-  const formattedCount = count.toFixed(decimals);
+  const formatNumber = (num: number) => {
+    return num.toFixed(decimals);
+  };
 
   return (
-    <motion.span
-      ref={ref}
-      className={className}
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.5 }}
-    >
-      {prefix}
-      {formattedCount}
-      {suffix}
-    </motion.span>
+    <span ref={elementRef} className={className}>
+      {prefix}{formatNumber(count)}{suffix}
+    </span>
   );
 }

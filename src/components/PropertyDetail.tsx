@@ -288,7 +288,7 @@ export function PropertyDetail({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6 }}
-              className="bg-white rounded-lg p-8"
+              className="bg-white rounded-lg p-8 mb-8"
             >
               <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6">
                 Afstande
@@ -305,6 +305,62 @@ export function PropertyDetail({
                   </div>
                 ))}
               </div>
+            </motion.div>
+          )}
+
+          {/* Navigation between properties */}
+          {(onNext || onPrevious) && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7 }}
+              className="flex items-center justify-between pt-8 border-t-2 border-[#e5e5e0]"
+            >
+              {onPrevious ? (
+                <button
+                  onClick={onPrevious}
+                  className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  <div className="text-left">
+                    <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
+                      Forrige ejendom
+                    </p>
+                    <p className="font-['Crimson_Text',serif] text-[18px]">
+                      Se forrige
+                    </p>
+                  </div>
+                </button>
+              ) : (
+                <div></div>
+              )}
+
+              {currentIndex !== undefined && totalProperties !== undefined && (
+                <div className="text-center">
+                  <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+                    Ejendom {currentIndex + 1} af {totalProperties}
+                  </p>
+                </div>
+              )}
+
+              {onNext ? (
+                <button
+                  onClick={onNext}
+                  className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
+                >
+                  <div className="text-right">
+                    <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
+                      Næste ejendom
+                    </p>
+                    <p className="font-['Crimson_Text',serif] text-[18px]">
+                      Se næste
+                    </p>
+                  </div>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              ) : (
+                <div></div>
+              )}
             </motion.div>
           )}
         </div>

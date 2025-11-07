@@ -4,7 +4,8 @@ import { capexProjects, CapexProject } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
-import { CounterAnimation } from './CounterAnimation';
+import { useState, useEffect } from 'react';
+import { getCapexProjectById, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
 interface CapexDetailProps {
   capexId: string;
@@ -12,7 +13,63 @@ interface CapexDetailProps {
 }
 
 export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
-  const project = capexProjects.find((p) => p.id === capexId);
+  const [project, setProject] = useState<CapexProject | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProject() {
+      // First try to find in hardcoded data
+      const hardcodedProject = capexProjects.find((p) => p.id === capexId);
+
+      if (hardcodedProject) {
+        setProject(hardcodedProject);
+        setLoading(false);
+        return;
+      }
+
+      // If not found, try to fetch from Sanity
+      try {
+        const sanityProject = await getCapexProjectById(capexId);
+        if (sanityProject) {
+          // Adapt Sanity project to match CapexProject type
+          const adapted: CapexProject = {
+            id: sanityProject._id,
+            name: sanityProject.name,
+            propertyName: sanityProject.propertyName,
+            location: sanityProject.location,
+            status: sanityProject.status,
+            investment: sanityProject.investment,
+            startDate: sanityProject.startDate,
+            completionDate: sanityProject.completionDate,
+            description: sanityProject.description,
+            beforeDescription: sanityProject.beforeDescription,
+            afterDescription: sanityProject.afterDescription,
+            beforeImage: sanityProject.beforeImage || '',
+            afterImage: sanityProject.afterImage || '',
+            keyMetrics: sanityProject.keyMetrics,
+            benefits: sanityProject.benefits,
+          };
+          setProject(adapted);
+        }
+      } catch (error) {
+        console.error('Error loading capex project:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadProject();
+  }, [capexId]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f5f5f0] flex items-center justify-center">
+        <p className="font-['Albert_Sans',sans-serif] text-[24px] text-[#595959]">
+          Indlæser projekt...
+        </p>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -99,51 +156,12 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
             Før & Efter
           </motion.h2>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mb-8"
-          >
-            <BeforeAfterSlider
-              beforeImage={project.beforeImage}
-              afterImage={project.afterImage}
-              beforeLabel="Før"
-              afterLabel="Efter"
-              className="aspect-[16/9] rounded-lg"
-            />
-          </motion.div>
-
-          {/* Descriptions */}
-          <div className="grid grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              className="bg-white rounded-lg p-8"
-            >
-              <h3 className="font-['Albert_Sans',sans-serif] text-[24px] text-black mb-3">
-                Før
-              </h3>
-              <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
-                {project.beforeDescription}
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white rounded-lg p-8"
-            >
-              <h3 className="font-['Albert_Sans',sans-serif] text-[24px] text-black mb-3">
-                Efter
-              </h3>
-              <p className="font-['Albert_Sans',sans-serif] text-[16px] leading-[24px] text-[#595959]">
-                {project.afterDescription}
-              </p>
-            </motion.div>
-          </div>
+          <BeforeAfterSlider
+            beforeImage={project.beforeImage}
+            afterImage={project.afterImage}
+            beforeDescription={project.beforeDescription}
+            afterDescription={project.afterDescription}
+          />
         </div>
       </section>
 

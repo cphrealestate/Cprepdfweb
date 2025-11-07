@@ -109,6 +109,22 @@ export default function App() {
     setCurrentView('overview');
   };
 
+  const handleNextProperty = () => {
+    if (!selectedProperty) return;
+    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
+    if (currentIndex < propertiesData.length - 1) {
+      setSelectedProperty(propertiesData[currentIndex + 1]);
+    }
+  };
+
+  const handlePreviousProperty = () => {
+    if (!selectedProperty) return;
+    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
+    if (currentIndex > 0) {
+      setSelectedProperty(propertiesData[currentIndex - 1]);
+    }
+  };
+
   const handleNavigateToPresentations = () => {
     setCurrentView('presentation-list');
   };
@@ -128,22 +144,6 @@ export default function App() {
   const handleExitPresentation = () => {
     setSelectedPresentation(null);
     setCurrentView('presentation-list');
-  };
-
-  const handleNextProperty = () => {
-    if (!selectedProperty) return;
-    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
-    if (currentIndex < propertiesData.length - 1) {
-      setSelectedProperty(propertiesData[currentIndex + 1]);
-    }
-  };
-
-  const handlePreviousProperty = () => {
-    if (!selectedProperty) return;
-    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
-    if (currentIndex > 0) {
-      setSelectedProperty(propertiesData[currentIndex - 1]);
-    }
   };
 
   return (
@@ -169,16 +169,8 @@ export default function App() {
           property={selectedProperty}
           onBack={handleBackToList}
           onBackToHome={handleBackToOverview}
-          onNext={
-            propertiesData.findIndex(p => p.id === selectedProperty.id) < propertiesData.length - 1
-              ? handleNextProperty
-              : undefined
-          }
-          onPrevious={
-            propertiesData.findIndex(p => p.id === selectedProperty.id) > 0
-              ? handlePreviousProperty
-              : undefined
-          }
+          onNext={propertiesData.findIndex(p => p.id === selectedProperty.id) < propertiesData.length - 1 ? handleNextProperty : undefined}
+          onPrevious={propertiesData.findIndex(p => p.id === selectedProperty.id) > 0 ? handlePreviousProperty : undefined}
           currentIndex={propertiesData.findIndex(p => p.id === selectedProperty.id)}
           totalProperties={propertiesData.length}
         />
