@@ -1,9 +1,10 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight, Presentation } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
+import { PropertyPresentation } from './PropertyPresentation';
 import { useState } from 'react';
 
 interface PropertyDetailProps {
@@ -27,6 +28,12 @@ export function PropertyDetail({
 }: PropertyDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [showPresentation, setShowPresentation] = useState(false);
+
+  // Show presentation mode if active
+  if (showPresentation) {
+    return <PropertyPresentation property={property} onClose={() => setShowPresentation(false)} />;
+  }
 
   // Check if images are Sanity objects or URL strings
   const currentImage = property.images[currentImageIndex];
@@ -100,25 +107,43 @@ export function PropertyDetail({
         </div>
 
         <div className="max-w-[1400px] mx-auto">
-          {/* Header */}
+          {/* Header with Presentation Button */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-12"
+            className="mb-12 flex items-start justify-between"
           >
-            <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[77px] text-black mb-4">
-              {property.name}
-            </h1>
-            <div className="flex items-center gap-6 font-['Albert_Sans',sans-serif] text-[18px] text-[#595959]">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
-                {property.address}
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Bygget {property.yearBuilt}
+            <div>
+              <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[77px] text-black mb-4">
+                {property.name}
+              </h1>
+              <div className="flex items-center gap-6 font-['Albert_Sans',sans-serif] text-[18px] text-[#595959]">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5" />
+                  {property.address}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5" />
+                  Bygget {property.yearBuilt}
+                </div>
               </div>
             </div>
+
+            {/* Presentation Mode Button */}
+            <button
+              onClick={() => setShowPresentation(true)}
+              className="flex items-center gap-3 px-8 py-5 bg-gradient-to-br from-[#767A57] to-[#5f6345] text-white rounded-xl hover:shadow-2xl transition-all group shadow-lg"
+            >
+              <Presentation className="w-7 h-7" />
+              <div className="text-left">
+                <p className="font-['Albert_Sans',sans-serif] text-[14px] text-white/90 uppercase tracking-wide">
+                  Start
+                </p>
+                <p className="font-['Crimson_Text',serif] text-[24px]">
+                  Præsentation
+                </p>
+              </div>
+            </button>
           </motion.div>
 
           {/* Main Grid */}

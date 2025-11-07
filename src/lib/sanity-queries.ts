@@ -92,6 +92,8 @@ export interface Presentation {
   title: string;
   description?: string;
   modules: PresentationModule[];
+  presentationType?: 'slideshow' | 'property';
+  property?: Property;
 }
 
 // Fetch portfolio settings
@@ -396,6 +398,23 @@ export async function getPresentationById(id: string): Promise<Presentation | nu
     _id,
     title,
     description,
+    presentationType,
+    property->{
+      _id,
+      name,
+      location,
+      address,
+      type,
+      area,
+      value,
+      occupancy,
+      yearBuilt,
+      description,
+      image,
+      images,
+      keyFacts,
+      distances
+    },
     modules[]{
       moduleType,
       property->{
