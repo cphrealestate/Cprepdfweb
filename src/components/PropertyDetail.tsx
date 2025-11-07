@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { useState } from 'react';
 
@@ -14,6 +15,10 @@ interface PropertyDetailProps {
 export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Check if images are Sanity objects or URL strings
+  const currentImage = property.images[currentImageIndex];
+  const isSanityImage = typeof currentImage === 'object' && currentImage !== null;
 
   // Navigation mellem billeder
   const nextImage = () => {
@@ -84,11 +89,20 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
                 onClick={() => setIsLightboxOpen(true)}
                 className="cursor-pointer w-full h-full"
               >
-                <ImageWithFallback
-                  src={property.images[currentImageIndex]}
-                  alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                  className="w-full h-full object-cover"
-                />
+                {isSanityImage ? (
+                  <SanityImage
+                    image={currentImage}
+                    alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                    width={1200}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <ImageWithFallback
+                    src={currentImage as string}
+                    alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                )}
               </div>
 
               {/* Navigation knapper - vises kun hvis der er flere billeder */}
@@ -274,11 +288,20 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
               className="relative max-w-7xl max-h-[90vh] w-full px-20"
               onClick={(e) => e.stopPropagation()}
             >
-              <ImageWithFallback
-                src={property.images[currentImageIndex]}
-                alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                className="w-full h-full object-contain"
-              />
+              {isSanityImage ? (
+                <SanityImage
+                  image={currentImage}
+                  alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                  width={1920}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <ImageWithFallback
+                  src={currentImage as string}
+                  alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                  className="w-full h-full object-contain"
+                />
+              )}
 
               {/* Navigation i lightbox */}
               {property.images.length > 1 && (
@@ -301,23 +324,35 @@ export function PropertyDetail({ property, onBack, onBackToHome }: PropertyDetai
 
                   {/* Thumbnail strip */}
                   <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2 p-4 bg-black/50 rounded-lg">
-                    {property.images.map((img, index) => (
-                      <button
-                        key={index}
-                        onClick={() => goToImage(index)}
-                        className={`w-20 h-14 rounded overflow-hidden border-2 transition-all ${
-                          index === currentImageIndex
-                            ? 'border-white scale-110'
-                            : 'border-transparent opacity-60 hover:opacity-100'
-                        }`}
-                      >
-                        <ImageWithFallback
-                          src={img}
-                          alt={`Thumbnail ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </button>
-                    ))}
+                    {property.images.map((img, index) => {
+                      const isSanityThumb = typeof img === 'object' && img !== null;
+                      return (
+                        <button
+                          key={index}
+                          onClick={() => goToImage(index)}
+                          className={`w-20 h-14 rounded overflow-hidden border-2 transition-all ${
+                            index === currentImageIndex
+                              ? 'border-white scale-110'
+                              : 'border-transparent opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          {isSanityThumb ? (
+                            <SanityImage
+                              image={img}
+                              alt={`Thumbnail ${index + 1}`}
+                              width={160}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <ImageWithFallback
+                              src={img as string}
+                              alt={`Thumbnail ${index + 1}`}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </>
               )}
