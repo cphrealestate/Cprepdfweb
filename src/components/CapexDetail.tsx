@@ -144,7 +144,7 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
         </div>
       </section>
 
-      {/* Before & After Images */}
+      {/* Before & After Interactive Slider */}
       <section className="px-12 pb-12">
         <div className="max-w-[1400px] mx-auto">
           <motion.h2
