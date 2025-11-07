@@ -6,7 +6,6 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { useState, useEffect } from 'react';
 import { getCapexProjectById, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
-import { getImageUrl } from '../lib/sanity';
 
 interface CapexDetailProps {
   capexId: string;
@@ -33,14 +32,12 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
         const sanityProject = await getCapexProjectById(capexId);
         if (sanityProject) {
           // Adapt Sanity project to match CapexProject type
-          const beforeImageUrl = getImageUrl(sanityProject.beforeImage) || '';
-          const afterImageUrl = getImageUrl(sanityProject.afterImage) || '';
-
+          // Pass raw image objects - BeforeAfterSlider will handle both Sanity objects and URLs
           console.log('🔍 CAPEX Image Debug:', {
-            beforeImageObject: sanityProject.beforeImage,
-            beforeImageUrl,
-            afterImageObject: sanityProject.afterImage,
-            afterImageUrl,
+            beforeImage: sanityProject.beforeImage,
+            afterImage: sanityProject.afterImage,
+            beforeImageType: typeof sanityProject.beforeImage,
+            afterImageType: typeof sanityProject.afterImage,
           });
 
           const adapted: CapexProject = {
@@ -55,8 +52,8 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
             description: sanityProject.description,
             beforeDescription: sanityProject.beforeDescription,
             afterDescription: sanityProject.afterDescription,
-            beforeImage: beforeImageUrl,
-            afterImage: afterImageUrl,
+            beforeImage: sanityProject.beforeImage || '',
+            afterImage: sanityProject.afterImage || '',
             keyMetrics: sanityProject.keyMetrics,
             benefits: sanityProject.benefits,
           };
