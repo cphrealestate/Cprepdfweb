@@ -4,10 +4,12 @@ import { PropertyList } from './components/PropertyList';
 import { PropertyDetail } from './components/PropertyDetail';
 import { CapexList } from './components/CapexList';
 import { CapexDetail } from './components/CapexDetail';
+import { PresentationList } from './components/PresentationList';
+import { PresentationView } from './components/PresentationView';
 import { properties, Property } from './data/portfolio';
-import { getProperties, Property as SanityProperty } from './lib/sanity-queries';
+import { getProperties, Property as SanityProperty, getPresentations, getPresentationById, Presentation } from './lib/sanity-queries';
 
-type View = 'overview' | 'list' | 'detail' | 'capex-list' | 'capex-detail';
+type View = 'overview' | 'list' | 'detail' | 'capex-list' | 'capex-detail' | 'presentation-list' | 'presentation-view';
 
 // Temporary adapter to use Sanity properties with existing Property type
 function adaptSanityProperty(sanityProp: SanityProperty): Property {
@@ -32,6 +34,8 @@ export default function App() {
   const [currentView, setCurrentView] = useState<View>('overview');
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [selectedCapexId, setSelectedCapexId] = useState<string | null>(null);
+  const [selectedPresentation, setSelectedPresentation] = useState<Presentation | null>(null);
+  const [presentationsData, setPresentationsData] = useState<Presentation[]>([]);
   const [propertiesData, setPropertiesData] = useState<Property[]>(properties);
   const [loading, setLoading] = useState(true);
 
@@ -39,10 +43,18 @@ export default function App() {
   useEffect(() => {
     async function loadData() {
       try {
-        const sanityProperties = await getProperties();
+        const [sanityProperties, presentations] = await Promise.all([
+          getProperties(),
+          getPresentations()
+        ]);
+
         if (sanityProperties && sanityProperties.length > 0) {
           const adapted = sanityProperties.map(adaptSanityProperty);
           setPropertiesData(adapted);
+        }
+
+        if (presentations && presentations.length > 0) {
+          setPresentationsData(presentations);
         }
       } catch (error) {
         console.error('Error loading Sanity data:', error);
@@ -51,7 +63,7 @@ export default function App() {
         setLoading(false);
       }
     }
-    
+
     loadData();
   }, []);
 
@@ -86,15 +98,38 @@ export default function App() {
   const handleBackToOverview = () => {
     setSelectedProperty(null);
     setSelectedCapexId(null);
+    setSelectedPresentation(null);
     setCurrentView('overview');
+  };
+
+  const handleNavigateToPresentations = () => {
+    setCurrentView('presentation-list');
+  };
+
+  const handleSelectPresentation = async (presentationId: string) => {
+    try {
+      const presentation = await getPresentationById(presentationId);
+      if (presentation) {
+        setSelectedPresentation(presentation);
+        setCurrentView('presentation-view');
+      }
+    } catch (error) {
+      console.error('Error loading presentation:', error);
+    }
+  };
+
+  const handleExitPresentation = () => {
+    setSelectedPresentation(null);
+    setCurrentView('presentation-list');
   };
 
   return (
     <>
       {currentView === 'overview' && (
-        <PortfolioOverview 
+        <PortfolioOverview
           onNavigateToProperties={handleNavigateToProperties}
           onNavigateToCapex={handleNavigateToCapex}
+          onNavigateToPresentations={handleNavigateToPresentations}
         />
       )}
 
@@ -125,6 +160,21 @@ export default function App() {
         <CapexDetail
           capexId={selectedCapexId}
           onBack={handleBackToCapexList}
+        />
+      )}
+
+      {currentView === 'presentation-list' && (
+        <PresentationList
+          presentations={presentationsData}
+          onSelectPresentation={handleSelectPresentation}
+          onNavigateBack={handleBackToOverview}
+        />
+      )}
+
+      {currentView === 'presentation-view' && selectedPresentation && (
+        <PresentationView
+          presentation={selectedPresentation}
+          onExit={handleExitPresentation}
         />
       )}
     </>

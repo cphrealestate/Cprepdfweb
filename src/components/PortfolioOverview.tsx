@@ -18,9 +18,10 @@ import { getPortfolioSettings, getRegions, getPropertiesByRegion } from '../lib/
 interface PortfolioOverviewProps {
   onNavigateToProperties: () => void;
   onNavigateToCapex: () => void;
+  onNavigateToPresentations?: () => void;
 }
 
-export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex }: PortfolioOverviewProps) {
+export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, onNavigateToPresentations }: PortfolioOverviewProps) {
   // Fallback to hardcoded data initially
   const [data, setData] = useState(portfolioData);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -251,6 +252,17 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex }:
             >
               Se Capex Projekter
             </motion.button>
+            {onNavigateToPresentations && (
+              <motion.button
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.8 }}
+                onClick={onNavigateToPresentations}
+                className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
+              >
+                Præsentationer
+              </motion.button>
+            )}
           </div>
         </div>
       </section>
