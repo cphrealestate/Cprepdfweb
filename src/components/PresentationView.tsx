@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Presentation, PresentationModule } from '../lib/sanity-queries';
 import { PresentationModuleRenderer } from './PresentationModuleRenderer';
+import { PropertyPresentation } from './PropertyPresentation';
+import { Property } from '../data/portfolio';
 
 interface PresentationViewProps {
   presentation: Presentation;
@@ -10,8 +12,31 @@ interface PresentationViewProps {
 }
 
 export function PresentationView({ presentation, onExit }: PresentationViewProps) {
+  // Check if this is a property presentation
+  if (presentation.presentationType === 'property' && presentation.property) {
+    // Adapt Sanity property to Property type if needed
+    const propertyData: Property = {
+      id: presentation.property._id,
+      name: presentation.property.name,
+      location: presentation.property.location,
+      address: presentation.property.address,
+      type: presentation.property.type,
+      area: presentation.property.area,
+      value: presentation.property.value,
+      occupancy: presentation.property.occupancy,
+      yearBuilt: presentation.property.yearBuilt,
+      description: presentation.property.description,
+      images: presentation.property.images || [],
+      keyFacts: presentation.property.keyFacts || [],
+      distances: presentation.property.distances,
+    };
+
+    return <PropertyPresentation property={propertyData} onClose={onExit} />;
+  }
+
+  // Normal slideshow presentation
   const [currentSlide, setCurrentSlide] = useState(0);
-  const totalSlides = presentation.modules.length;
+  const totalSlides = presentation.modules?.length || 0;
 
   // Keyboard navigation
   useEffect(() => {
