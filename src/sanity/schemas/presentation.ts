@@ -18,9 +18,41 @@ export default defineType({
       rows: 3,
     },
     {
+      name: 'presentationType',
+      title: 'Præsentationstype',
+      type: 'string',
+      description: 'Vælg mellem standard slideshow eller ejendomspræsentation',
+      options: {
+        list: [
+          { title: 'Standard Slideshow', value: 'slideshow' },
+          { title: 'Ejendomspræsentation', value: 'property' },
+        ],
+        layout: 'radio',
+      },
+      initialValue: 'slideshow',
+      validation: (Rule) => Rule.required(),
+    },
+    {
+      name: 'property',
+      title: 'Vælg Ejendom',
+      type: 'reference',
+      to: [{ type: 'property' }],
+      description: 'Vælg den ejendom som skal præsenteres i slideshow format',
+      hidden: ({ document }) => document?.presentationType !== 'property',
+      validation: (Rule) =>
+        Rule.custom((value, context) => {
+          if (context.document?.presentationType === 'property' && !value) {
+            return 'Vælg venligst en ejendom for ejendomspræsentationer';
+          }
+          return true;
+        }),
+    },
+    {
       name: 'modules',
       title: 'Moduler',
       type: 'array',
+      description: 'Kun relevant for standard slideshow præsentationer',
+      hidden: ({ document }) => document?.presentationType === 'property',
       of: [
         {
           type: 'object',
@@ -115,11 +147,21 @@ export default defineType({
     select: {
       title: 'title',
       moduleCount: 'modules.length',
+      presentationType: 'presentationType',
+      propertyName: 'property.name',
     },
-    prepare({ title, moduleCount }) {
+    prepare({ title, moduleCount, presentationType, propertyName }) {
+      let subtitle = `${moduleCount || 0} moduler`;
+
+      if (presentationType === 'property') {
+        subtitle = propertyName
+          ? `Ejendomspræsentation: ${propertyName}`
+          : 'Ejendomspræsentation (ingen ejendom valgt)';
+      }
+
       return {
         title: title,
-        subtitle: `${moduleCount || 0} moduler`,
+        subtitle: subtitle,
       };
     },
   },
