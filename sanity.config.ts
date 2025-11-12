@@ -10,6 +10,7 @@ export default defineConfig({
 
   projectId: 'ayuikhh7',
   dataset: 'production',
+  apiVersion: '2024-01-01', // Use stable API version to avoid experimental API warnings
 
   plugins: [
     structureTool(),
