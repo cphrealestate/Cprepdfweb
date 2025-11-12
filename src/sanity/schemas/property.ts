@@ -236,7 +236,7 @@ export default {
             prepare({category, count, percentage}: any) {
               return {
                 title: category,
-                subtitle: `${count} lejere (${percentage.toFixed(1)}%)`,
+                subtitle: `${count} lejere (${percentage.toFixed(0)}%)`,
               };
             },
           },

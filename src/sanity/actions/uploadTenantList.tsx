@@ -281,7 +281,7 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
           console.log('========================');
 
           // Show success message with optional warnings about skipped rows
-          let message = `✅ Uploadet ${tenants.length} lejere!\n\nFordeling:\n${tenantDistribution.map(d => `${d.category}: ${d.count} (${d.percentage.toFixed(1)}%)`).join('\n')}`;
+          let message = `✅ Uploadet ${tenants.length} lejere!\n\nFordeling:\n${tenantDistribution.map(d => `${d.category}: ${d.count} (${d.percentage.toFixed(0)}%)`).join('\n')}`;
 
           if (skippedRows.length > 0) {
             message += `\n\n⚠️ ${skippedRows.length} rækker blev sprunget over:\n${skippedRows.slice(0, 5).map(s => `Række ${s.row}: ${s.name} - ${s.reason}`).join('\n')}`;
