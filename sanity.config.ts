@@ -37,9 +37,12 @@ export default defineConfig({
 
   vite: (config) => ({
     ...config,
-    optimizeDeps: {
-      ...config.optimizeDeps,
-      include: [...(config.optimizeDeps?.include || []), 'xlsx'],
+    build: {
+      ...config.build,
+      rollupOptions: {
+        ...config.build?.rollupOptions,
+        external: [...(config.build?.rollupOptions?.external || []), 'xlsx'],
+      },
     },
   }),
 });
