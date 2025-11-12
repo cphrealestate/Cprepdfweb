@@ -35,6 +35,19 @@ export interface Property {
     _id: string;
     name: string;
   };
+  tenants?: Array<{
+    name: string;
+    type: string;
+    address: string;
+    area: number;
+    yearlyRent: number;
+    rentPerSqm: number;
+  }>;
+  tenantDistribution?: Array<{
+    category: string;
+    count: number;
+    percentage: number;
+  }>;
 }
 
 export interface CapexProject {
@@ -191,6 +204,8 @@ export async function getProperties(): Promise<Property[]> {
     images,
     keyFacts,
     distances,
+    tenants,
+    tenantDistribution,
     region->{
       _id,
       name
@@ -228,6 +243,8 @@ export async function getPropertyById(id: string): Promise<Property | null> {
     images,
     keyFacts,
     distances,
+    tenants,
+    tenantDistribution,
     region->{
       _id,
       name
@@ -357,6 +374,8 @@ export async function getPresentations(): Promise<Presentation[]> {
         images,
         keyFacts,
         distances,
+        tenants,
+        tenantDistribution,
         region->{
           _id,
           name
@@ -431,7 +450,9 @@ export async function getPresentationById(id: string): Promise<Presentation | nu
       image,
       images,
       keyFacts,
-      distances
+      distances,
+      tenants,
+      tenantDistribution
     },
     modules[]{
       moduleType,
@@ -451,6 +472,8 @@ export async function getPresentationById(id: string): Promise<Presentation | nu
         images,
         keyFacts,
         distances,
+        tenants,
+        tenantDistribution,
         region->{
           _id,
           name

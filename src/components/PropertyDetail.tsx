@@ -596,7 +596,7 @@ export function PropertyDetail({
 
       {/* Tenant List Modal */}
       <Dialog open={showTenantList} onOpenChange={setShowTenantList}>
-        <DialogContent className="!max-w-[90vw] !w-[90vw] max-h-[85vh] overflow-y-auto sm:!max-w-[90vw]">
+        <DialogContent className="!max-w-[90vw] !min-w-[90vw] !w-[90vw] max-h-[85vh] overflow-y-auto" style={{ maxWidth: '90vw', width: '90vw', minWidth: '90vw' }}>
           <DialogHeader>
             <DialogTitle className="font-['Crimson_Text',serif] text-[36px] text-black">
               Lejeliste - {property.name}

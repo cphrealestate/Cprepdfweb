@@ -136,6 +136,113 @@ export default {
       to: [{type: 'region'}],
       description: 'Hvilken region/by tilhører denne ejendom?',
     },
+    {
+      name: 'tenants',
+      title: 'Lejere',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'name',
+              title: 'Lejer Navn',
+              type: 'string',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'type',
+              title: 'Type/Branche',
+              type: 'string',
+              description: 'Fx: IT, Marketing, Advokat, etc.',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'address',
+              title: 'Adresse',
+              type: 'string',
+              description: 'Fuld adresse inkl. etage',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'area',
+              title: 'Areal (m²)',
+              type: 'number',
+              validation: (Rule: any) => Rule.required().positive(),
+            },
+            {
+              name: 'yearlyRent',
+              title: 'Årlig Leje (kr.)',
+              type: 'number',
+              validation: (Rule: any) => Rule.required().positive(),
+            },
+            {
+              name: 'rentPerSqm',
+              title: 'Leje per m² (kr.)',
+              type: 'number',
+              validation: (Rule: any) => Rule.required().positive(),
+            },
+          ],
+          preview: {
+            select: {
+              title: 'name',
+              type: 'type',
+              area: 'area',
+            },
+            prepare({title, type, area}: any) {
+              return {
+                title,
+                subtitle: `${type} • ${area} m²`,
+              };
+            },
+          },
+        },
+      ],
+    },
+    {
+      name: 'tenantDistribution',
+      title: 'Lejer Fordeling',
+      type: 'array',
+      description: 'Automatisk beregnet distribution af lejere efter type. Opdater når lejere ændres.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'category',
+              title: 'Kategori',
+              type: 'string',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'count',
+              title: 'Antal',
+              type: 'number',
+              validation: (Rule: any) => Rule.required().positive(),
+            },
+            {
+              name: 'percentage',
+              title: 'Procentdel',
+              type: 'number',
+              validation: (Rule: any) => Rule.required().min(0).max(100),
+            },
+          ],
+          preview: {
+            select: {
+              category: 'category',
+              count: 'count',
+              percentage: 'percentage',
+            },
+            prepare({category, count, percentage}: any) {
+              return {
+                title: category,
+                subtitle: `${count} lejere (${percentage.toFixed(1)}%)`,
+              };
+            },
+          },
+        },
+      ],
+    },
   ],
   preview: {
     select: {
