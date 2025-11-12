@@ -28,6 +28,18 @@ export function BeforeAfterSlider({
   const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null;
   const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null;
 
+  // Debug logging for before/after slider
+  console.log('🎚️ BeforeAfterSlider Debug:', {
+    beforeImage,
+    afterImage,
+    isBeforeSanityImage,
+    isAfterSanityImage,
+    beforeImageType: typeof beforeImage,
+    afterImageType: typeof afterImage,
+    beforeImageKeys: beforeImage && typeof beforeImage === 'object' ? Object.keys(beforeImage) : [],
+    afterImageKeys: afterImage && typeof afterImage === 'object' ? Object.keys(afterImage) : [],
+  });
+
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
 
@@ -89,10 +101,17 @@ export function BeforeAfterSlider({
               alt="Efter renovering"
               width={1200}
               className="w-full h-full object-cover"
+              fallbackQuery="modern office building interior"
+            />
+          ) : afterImage ? (
+            <ImageWithFallback
+              src={afterImage as string}
+              alt="Efter renovering"
+              className="w-full h-full object-cover"
             />
           ) : (
             <ImageWithFallback
-              src={afterImage as string}
+              src=""
               alt="Efter renovering"
               className="w-full h-full object-cover"
             />
@@ -114,10 +133,17 @@ export function BeforeAfterSlider({
               alt="Før renovering"
               width={1200}
               className="w-full h-full object-cover"
+              fallbackQuery="old office building exterior"
+            />
+          ) : beforeImage ? (
+            <ImageWithFallback
+              src={beforeImage as string}
+              alt="Før renovering"
+              className="w-full h-full object-cover"
             />
           ) : (
             <ImageWithFallback
-              src={beforeImage as string}
+              src=""
               alt="Før renovering"
               className="w-full h-full object-cover"
             />
