@@ -1,11 +1,13 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight, Presentation } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight, Presentation, FileText } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { PropertyPresentation } from './PropertyPresentation';
 import { Breadcrumbs } from './Breadcrumbs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useState } from 'react';
 
 interface PropertyDetailProps {
@@ -30,6 +32,7 @@ export function PropertyDetail({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showPresentation, setShowPresentation] = useState(false);
+  const [showTenantList, setShowTenantList] = useState(false);
 
   // Show presentation mode if active
   if (showPresentation) {
@@ -306,6 +309,76 @@ export function PropertyDetail({
             </motion.div>
           )}
 
+          {/* Tenant Management Section */}
+          {property.tenants && property.tenants.length > 0 && (
+            <div className="grid grid-cols-2 gap-8 mb-8">
+              {/* Donut Chart - Tenant Distribution */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="bg-white rounded-lg p-8"
+              >
+                <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6 text-center">
+                  Fordeling af Lejere
+                </h2>
+                <div className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={property.tenantDistribution}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
+                        outerRadius={100}
+                        innerRadius={60}
+                        fill="#8884d8"
+                        dataKey="count"
+                      >
+                        {property.tenantDistribution?.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={['#767A57', '#8B8F64', '#9FA371', '#B3B77E', '#C7CB8B', '#DBDF98'][index % 6]}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value: number) => `${value} lejere`}
+                        contentStyle={{
+                          backgroundColor: 'white',
+                          border: '1px solid #e5e5e0',
+                          borderRadius: '8px',
+                          fontFamily: 'Albert Sans, sans-serif'
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              </motion.div>
+
+              {/* Clickable Card - Tenant List */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.65 }}
+                className="bg-white rounded-lg p-8 flex flex-col justify-center items-center cursor-pointer hover:shadow-xl transition-all group"
+                onClick={() => setShowTenantList(true)}
+              >
+                <FileText className="w-20 h-20 text-[#767A57] mb-6 group-hover:scale-110 transition-transform" />
+                <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-3 text-center">
+                  Lejeliste
+                </h2>
+                <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959] text-center mb-2">
+                  {property.tenants.length} lejere
+                </p>
+                <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#767A57] text-center group-hover:underline">
+                  Klik for at se detaljeret liste
+                </p>
+              </motion.div>
+            </div>
+          )}
+
           {/* Distances */}
           {property.distances && property.distances.length > 0 && (
             <motion.div
@@ -520,6 +593,77 @@ export function PropertyDetail({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Tenant List Modal */}
+      <Dialog open={showTenantList} onOpenChange={setShowTenantList}>
+        <DialogContent className="!max-w-[90vw] !w-[90vw] max-h-[85vh] overflow-y-auto sm:!max-w-[90vw]">
+          <DialogHeader>
+            <DialogTitle className="font-['Crimson_Text',serif] text-[36px] text-black">
+              Lejeliste - {property.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="mt-6">
+            <div className="bg-white rounded-lg overflow-hidden">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-[#767A57]">
+                    <th className="text-left py-4 px-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
+                      Lejer
+                    </th>
+                    <th className="text-left py-4 px-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
+                      Adresse
+                    </th>
+                    <th className="text-left py-4 px-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
+                      Type
+                    </th>
+                    <th className="text-right py-4 px-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
+                      Areal (m²)
+                    </th>
+                    <th className="text-right py-4 px-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
+                      Årlig leje (kr.)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {property.tenants && property.tenants.map((tenant, index) => (
+                    <tr key={index} className="border-b border-[#e5e5e0] hover:bg-[#f5f5f0] transition-colors">
+                      <td className="py-4 px-4 font-['Albert_Sans',sans-serif] text-[15px] text-black whitespace-nowrap">
+                        {tenant.name}
+                      </td>
+                      <td className="py-4 px-4 font-['Albert_Sans',sans-serif] text-[15px] text-[#595959] whitespace-nowrap">
+                        {tenant.address}
+                      </td>
+                      <td className="py-4 px-4 font-['Albert_Sans',sans-serif] text-[15px] text-[#595959] whitespace-nowrap">
+                        {tenant.type}
+                      </td>
+                      <td className="py-4 px-4 font-['Albert_Sans',sans-serif] text-[15px] text-black text-right whitespace-nowrap">
+                        {tenant.area.toLocaleString('da-DK')}
+                      </td>
+                      <td className="py-4 px-4 font-['Albert_Sans',sans-serif] text-[15px] text-black text-right whitespace-nowrap">
+                        {tenant.yearlyRent.toLocaleString('da-DK')}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr className="border-t-2 border-[#767A57] bg-[#f5f5f0]">
+                    <td colSpan={3} className="py-4 px-4 font-['Crimson_Text',serif] text-[18px] text-black">
+                      I alt
+                    </td>
+                    <td className="py-4 px-4 font-['Crimson_Text',serif] text-[18px] text-black text-right">
+                      {property.tenants?.reduce((sum, t) => sum + t.area, 0).toLocaleString('da-DK')}
+                    </td>
+                    <td className="py-4 px-4 font-['Crimson_Text',serif] text-[18px] text-black text-right">
+                      {property.tenants?.reduce((sum, t) => sum + t.yearlyRent, 0).toLocaleString('da-DK')}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

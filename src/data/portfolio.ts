@@ -82,6 +82,19 @@ export interface Property {
     location: string;
     distance: string;
   }>;
+  tenants?: Array<{
+    name: string;
+    type: string;
+    address: string;
+    area: number;
+    yearlyRent: number;
+    rentPerSqm: number;
+  }>;
+  tenantDistribution?: Array<{
+    category: string;
+    count: number;
+    percentage: number;
+  }>;
 }
 
 export const properties: Property[] = [
@@ -112,6 +125,22 @@ export const properties: Property[] = [
       { location: "Københavns Lufthavn", distance: "8 km" },
       { location: "København H", distance: "6 km" },
       { location: "Bella Center", distance: "2 km" }
+    ],
+    tenants: [
+      { name: "TechStart ApS", type: "IT", address: "Ørestads Boulevard 73, 2. sal", area: 1500, yearlyRent: 2850000, rentPerSqm: 1900 },
+      { name: "Creative Agency", type: "Marketing", address: "Ørestads Boulevard 73, 3. sal", area: 1000, yearlyRent: 1800000, rentPerSqm: 1800 },
+      { name: "Nordic Consulting", type: "Rådgivning", address: "Ørestads Boulevard 73, 4. sal", area: 1200, yearlyRent: 2160000, rentPerSqm: 1800 },
+      { name: "Wellness Klinik", type: "Sundhed", address: "Ørestads Boulevard 73, 5. sal", area: 800, yearlyRent: 1520000, rentPerSqm: 1900 },
+      { name: "Design Studio", type: "Design", address: "Ørestads Boulevard 73, 6. sal", area: 900, yearlyRent: 1620000, rentPerSqm: 1800 },
+      { name: "Law Partners", type: "Advokat", address: "Ørestads Boulevard 73, 7. sal", area: 1100, yearlyRent: 2090000, rentPerSqm: 1900 }
+    ],
+    tenantDistribution: [
+      { category: "IT", count: 1, percentage: 16.67 },
+      { category: "Marketing", count: 1, percentage: 16.67 },
+      { category: "Rådgivning", count: 1, percentage: 16.67 },
+      { category: "Sundhed", count: 1, percentage: 16.67 },
+      { category: "Design", count: 1, percentage: 16.67 },
+      { category: "Advokat", count: 1, percentage: 16.67 }
     ]
   },
   {
