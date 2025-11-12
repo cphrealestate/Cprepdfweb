@@ -63,22 +63,50 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
 
           // Read Excel file
           const data = await file.arrayBuffer();
-          const workbook = XLSX.read(data);
+          const workbook = XLSX.read(data, { type: 'array', cellDates: true, cellNF: false });
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-          const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[];
+          // Use raw: true to get unformatted cell values (actual numbers, not formatted strings)
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { raw: true, defval: '' }) as any[];
 
-          // Debug: Log first row to see column names
+          // Debug: Log first row to see column names and values
           console.log('First row from Excel:', jsonData[0]);
           console.log('All column names:', Object.keys(jsonData[0] || {}));
+          console.log('First row values:', Object.entries(jsonData[0] || {}).map(([key, val]) => `${key}: ${val} (${typeof val})`));
 
           // Helper function to parse numbers (handles commas, dots, and text)
           const parseNumber = (value: any): number => {
-            if (typeof value === 'number') return value;
-            if (!value) return 0;
-            // Remove spaces and convert comma to dot
-            const cleaned = String(value).replace(/\s/g, '').replace(',', '.');
+            console.log('parseNumber input:', value, 'type:', typeof value);
+
+            // If already a number, return it
+            if (typeof value === 'number') {
+              console.log('  -> Already number:', value);
+              return value;
+            }
+
+            // If null, undefined, or empty string
+            if (value === null || value === undefined || value === '') {
+              console.log('  -> Empty value, returning 0');
+              return 0;
+            }
+
+            // Convert to string and clean it
+            const str = String(value).trim();
+            console.log('  -> String value:', str);
+
+            // Remove thousands separators (spaces, dots in some locales) and convert comma to dot
+            // Handle formats like: "1.234,56" or "1 234,56" or "1,234.56"
+            let cleaned = str
+              .replace(/\s/g, '') // Remove all spaces
+              .replace(/\./g, '') // Remove dots (thousand separators in Danish)
+              .replace(',', '.'); // Replace comma with dot (decimal separator in Danish)
+
+            console.log('  -> Cleaned:', cleaned);
+
             const parsed = parseFloat(cleaned);
-            return isNaN(parsed) ? 0 : parsed;
+            const result = isNaN(parsed) ? 0 : parsed;
+            console.log('  -> Final result:', result);
+
+            return result;
           };
 
           // Parse tenant data
