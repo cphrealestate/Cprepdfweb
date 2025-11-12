@@ -23,8 +23,8 @@ const loadXLSX = (): Promise<void> => {
   });
 };
 
-export const uploadTenantListAction: DocumentActionComponent = (props) => {
-  const { id, type } = props;
+export const uploadTenantListAction = (context: any) => (props: any) => {
+  const { id, type, draft, published } = props;
 
   // Only show for property documents
   if (type !== 'property') {
@@ -86,8 +86,8 @@ export const uploadTenantListAction: DocumentActionComponent = (props) => {
             percentage: (count / totalTenants) * 100,
           }));
 
-          // Update document using Sanity client
-          const client = props.getClient({ apiVersion: '2024-01-01' });
+          // Get Sanity client from context
+          const client = context.getClient({ apiVersion: '2024-01-01' });
 
           await client
             .patch(id)
@@ -100,8 +100,12 @@ export const uploadTenantListAction: DocumentActionComponent = (props) => {
           // Show success message
           alert(`✅ Uploadet ${tenants.length} lejere!\n\nFordeling:\n${tenantDistribution.map(d => `${d.category}: ${d.count} (${d.percentage.toFixed(1)}%)`).join('\n')}`);
 
-          // Refresh the document
-          props.onComplete();
+          // Refresh the document - use window.location.reload as fallback
+          if (typeof props.onComplete === 'function') {
+            props.onComplete();
+          } else {
+            window.location.reload();
+          }
         } catch (error) {
           console.error('Error uploading tenant list:', error);
           alert(`❌ Fejl ved upload: ${error instanceof Error ? error.message : 'Ukendt fejl'}`);

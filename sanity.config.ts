@@ -28,7 +28,7 @@ export default defineConfig({
 
       // Add upload tenant list action for property documents
       if (context.schemaType === 'property') {
-        return [...prev, uploadTenantListAction];
+        return [...prev, uploadTenantListAction(context)];
       }
 
       return prev;
