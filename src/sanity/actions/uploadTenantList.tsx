@@ -1,6 +1,28 @@
 import { DocumentActionComponent } from 'sanity';
 import { UploadIcon } from '@sanity/icons';
 
+// Load XLSX from CDN
+declare global {
+  interface Window {
+    XLSX: any;
+  }
+}
+
+// Load XLSX library from CDN if not already loaded
+const loadXLSX = (): Promise<void> => {
+  if (window.XLSX) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('Failed to load XLSX library'));
+    document.head.appendChild(script);
+  });
+};
+
 export const uploadTenantListAction: DocumentActionComponent = (props) => {
   const { id, type } = props;
 
@@ -12,7 +34,15 @@ export const uploadTenantListAction: DocumentActionComponent = (props) => {
   return {
     label: 'Upload Lejeliste',
     icon: UploadIcon,
-    onHandle: () => {
+    onHandle: async () => {
+      try {
+        // Load XLSX library from CDN
+        await loadXLSX();
+      } catch (error) {
+        alert('❌ Kunne ikke indlæse Excel bibliotek');
+        return;
+      }
+
       // Create file input
       const input = document.createElement('input');
       input.type = 'file';
@@ -25,8 +55,7 @@ export const uploadTenantListAction: DocumentActionComponent = (props) => {
         if (!file) return;
 
         try {
-          // Dynamically import xlsx for browser compatibility
-          const XLSX = await import('xlsx');
+          const XLSX = window.XLSX;
 
           // Read Excel file
           const data = await file.arrayBuffer();
