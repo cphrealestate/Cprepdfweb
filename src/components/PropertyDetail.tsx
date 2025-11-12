@@ -7,7 +7,7 @@ import { LogoButton } from './LogoButton';
 import { PropertyPresentation } from './PropertyPresentation';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useState, useEffect } from 'react';
 
 interface PropertyDetailProps {
@@ -349,27 +349,21 @@ export function PropertyDetail({
                 {property.tenantDistribution && property.tenantDistribution.length > 0 ? (
                   <div className="h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={property.tenantDistribution}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ payload }) => `${payload.category} ${payload.percentage.toFixed(0)}%`}
-                          outerRadius={100}
-                          innerRadius={60}
-                          fill="#8884d8"
-                          dataKey="count"
-                        >
-                          {property.tenantDistribution?.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={['#767A57', '#8B8F64', '#9FA371', '#B3B77E', '#C7CB8B', '#DBDF98'][index % 6]}
-                            />
-                          ))}
-                        </Pie>
+                      <BarChart
+                        data={property.tenantDistribution}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e0" />
+                        <XAxis
+                          dataKey="category"
+                          tick={{ fill: '#595959', fontFamily: 'Albert Sans, sans-serif', fontSize: 14 }}
+                        />
+                        <YAxis
+                          label={{ value: 'Antal lejere', angle: -90, position: 'insideLeft', style: { fill: '#595959', fontFamily: 'Albert Sans, sans-serif' } }}
+                          tick={{ fill: '#595959', fontFamily: 'Albert Sans, sans-serif', fontSize: 14 }}
+                        />
                         <Tooltip
-                          formatter={(value: number) => `${value} lejere`}
+                          formatter={(value: number) => [`${value} lejere`, 'Antal']}
                           contentStyle={{
                             backgroundColor: 'white',
                             border: '1px solid #e5e5e0',
@@ -377,7 +371,15 @@ export function PropertyDetail({
                             fontFamily: 'Albert Sans, sans-serif'
                           }}
                         />
-                      </PieChart>
+                        <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                          {property.tenantDistribution?.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={['#767A57', '#8B8F64', '#9FA371', '#B3B77E', '#C7CB8B', '#DBDF98'][index % 6]}
+                            />
+                          ))}
+                        </Bar>
+                      </BarChart>
                     </ResponsiveContainer>
                   </div>
                 ) : (
