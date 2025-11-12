@@ -143,18 +143,38 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
           const parsedTenants = jsonData.map((row: any, index: number) => {
             console.log('Processing row:', row);
 
+            // Get raw values first - using exact column names from user's Excel plus variations
+            const nameRaw = getColumnValue(row, 'Lejer Navn', 'Navn', 'lejer navn', 'navn');
+            const typeRaw = getColumnValue(row, 'Type/Branche', 'Type', 'type/branche', 'type', 'branche');
+            const addressRaw = getColumnValue(row, 'Adresse', 'adresse');
+            const areaRaw = getColumnValue(row, 'Areal (m2)', 'Areal (m²)', 'Areal', 'areal (m2)', 'areal (m²)', 'areal');
+            const yearlyRentRaw = getColumnValue(row, 'Årlig leje (kr.)', 'Årlig Leje (kr.)', 'Årlig leje', 'Årlig Leje', 'årlig leje (kr.)', 'årlig leje');
+            const rentPerSqmRaw = getColumnValue(row, 'Leje per m2 (kr).', 'Leje per m2 (kr.)', 'Leje per m² (kr.)', 'Leje per m2 (kr)', 'Leje per m² (kr)', 'Leje per m²', 'Leje per m2', 'leje per m2 (kr).', 'leje per m² (kr.)', 'leje per m2 (kr.)', 'leje per m² (kr)', 'leje per m2 (kr)', 'leje per m²', 'leje per m2');
+
+            console.log('Raw values:', { nameRaw, typeRaw, addressRaw, areaRaw, yearlyRentRaw, rentPerSqmRaw });
+
+            // Parse and explicitly convert to number using Number() to ensure they're not strings
+            const area = Number(parseNumber(areaRaw));
+            const yearlyRent = Number(parseNumber(yearlyRentRaw));
+            const rentPerSqm = Number(parseNumber(rentPerSqmRaw));
+
             // Use flexible column matching
             const tenant = {
               _rowIndex: index + 2, // +2 because Excel is 1-indexed and has header row
-              name: getColumnValue(row, 'Lejer Navn', 'Navn', 'lejer navn', 'navn') || '',
-              type: getColumnValue(row, 'Type/Branche', 'Type', 'type/branche', 'type') || '',
-              address: getColumnValue(row, 'Adresse', 'adresse') || '',
-              area: parseNumber(getColumnValue(row, 'Areal (m²)', 'Areal (m2)', 'Areal', 'areal (m²)', 'areal (m2)', 'areal')),
-              yearlyRent: parseNumber(getColumnValue(row, 'Årlig Leje (kr.)', 'Årlig leje (kr.)', 'Årlig Leje', 'Årlig leje', 'årlig leje (kr.)', 'årlig leje')),
-              rentPerSqm: parseNumber(getColumnValue(row, 'Leje per m² (kr.)', 'Leje per m2 (kr.)', 'Leje per m² (kr)', 'Leje per m2 (kr)', 'Leje per m²', 'Leje per m2', 'leje per m² (kr.)', 'leje per m2 (kr.)', 'leje per m² (kr)', 'leje per m2 (kr)', 'leje per m²', 'leje per m2')),
+              name: nameRaw || '',
+              type: typeRaw || '',
+              address: addressRaw || '',
+              area,
+              yearlyRent,
+              rentPerSqm,
             };
 
-            console.log('Parsed tenant:', tenant);
+            console.log('Parsed tenant (final):', tenant);
+            console.log('Number types check:', {
+              area: `${area} (type: ${typeof area})`,
+              yearlyRent: `${yearlyRent} (type: ${typeof yearlyRent})`,
+              rentPerSqm: `${rentPerSqm} (type: ${typeof rentPerSqm})`
+            });
             return tenant;
           });
 
@@ -240,14 +260,25 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
             return;
           }
 
+          // Log what we're about to send to Sanity
+          console.log('==== DATA BEING SENT TO SANITY ====');
+          console.log('Number of tenants:', tenants.length);
+          console.log('First tenant (full object):', JSON.stringify(tenants[0], null, 2));
+          console.log('Tenant distribution:', JSON.stringify(tenantDistribution, null, 2));
+          console.log('====================================');
+
           // Use authenticated client from context
-          await client
+          const result = await client
             .patch(id)
             .set({
               tenants,
               tenantDistribution,
             })
             .commit();
+
+          console.log('==== SANITY RESPONSE ====');
+          console.log('Upload successful! Response:', result);
+          console.log('========================');
 
           // Show success message with optional warnings about skipped rows
           let message = `✅ Uploadet ${tenants.length} lejere!\n\nFordeling:\n${tenantDistribution.map(d => `${d.category}: ${d.count} (${d.percentage.toFixed(1)}%)`).join('\n')}`;
