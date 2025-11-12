@@ -54,8 +54,8 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
             description: sanityProject.description,
             beforeDescription: sanityProject.beforeDescription,
             afterDescription: sanityProject.afterDescription,
-            beforeImage: sanityProject.beforeImage || '',
-            afterImage: sanityProject.afterImage || '',
+            beforeImage: sanityProject.beforeImage, // Preserve Sanity image object
+            afterImage: sanityProject.afterImage, // Preserve Sanity image object
             keyMetrics: sanityProject.keyMetrics,
             benefits: sanityProject.benefits,
           };

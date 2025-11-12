@@ -506,6 +506,14 @@ export function PropertyDetail({
           className="w-full max-w-[calc(100%-2rem)] sm:max-w-7xl !max-w-[90vw] !w-[90vw] sm:!max-w-[90vw] flex flex-col p-0"
           style={{ maxWidth: '90vw', width: '90vw', maxHeight: '85vh' }}
         >
+          {/* Hidden titles for accessibility */}
+          <DialogTitle className="sr-only">
+            {property.name} - Billede {currentImageIndex + 1} af {property.images.length}
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Billedgalleri for {property.name} i {property.location}
+          </DialogDescription>
+
           {/* Image section with proper flex layout */}
           <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 180px)' }}>
             {isSanityImage ? (
