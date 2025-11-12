@@ -500,124 +500,92 @@ export function PropertyDetail({
         </div>
       </div>
 
-      {/* Lightbox/Modal - Copenhagen Real Estate Style */}
-      <AnimatePresence>
-        {isLightboxOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] p-4 md:p-8 flex items-center justify-center bg-black/70 backdrop-blur-sm py-16"
-            onClick={() => setIsLightboxOpen(false)}
-          >
-            {/* Modal Container - Hvid boks som Copenhagen Real Estate */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-screen-lg max-h-full bg-white rounded-xl overflow-hidden shadow-2xl flex flex-col"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Close button - Diskret i hjørnet */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsLightboxOpen(false);
-                }}
-                className="absolute top-4 right-4 z-50 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition-all opacity-50 hover:opacity-100"
-                aria-label="Luk"
-              >
-                <X className="w-5 h-5 text-black" />
-              </button>
+      {/* Lightbox/Modal - Copenhagen Real Estate Style matching Tenant List */}
+      <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
+        <DialogContent
+          className="w-full max-w-[calc(100%-2rem)] sm:max-w-7xl !max-w-[90vw] !w-[90vw] sm:!max-w-[90vw] flex flex-col p-0"
+          style={{ maxWidth: '90vw', width: '90vw', maxHeight: '85vh' }}
+        >
+          {/* Image section with proper flex layout */}
+          <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 140px)' }}>
+            {isSanityImage ? (
+              <SanityImage
+                image={currentImage}
+                alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                width={1920}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <ImageWithFallback
+                src={currentImage as string}
+                alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                className="w-full h-full object-contain"
+              />
+            )}
 
-              {/* Billede sektion */}
-              <div className="relative w-full flex flex-col" style={{ maxHeight: '70vh' }}>
-                <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white p-4">
-                  {isSanityImage ? (
-                    <SanityImage
-                      image={currentImage}
-                      alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                      width={1920}
-                      className="w-full h-full object-contain max-h-[60vh]"
-                    />
-                  ) : (
-                    <ImageWithFallback
-                      src={currentImage as string}
-                      alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                      className="w-full h-full object-contain max-h-[60vh]"
-                    />
-                  )}
-                </div>
-              </div>
+            {/* Navigation buttons - inside as overlays */}
+            {property.images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    previousImage(e);
+                  }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border border-gray-200 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all"
+                  aria-label="Forrige billede"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
 
-              {/* Property Info & Navigation Bottom Bar */}
-              <div className="p-6 flex flex-wrap gap-3 border-t border-gray-100">
-                {/* Property info venstre side */}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-['Crimson_Text',serif] text-xl leading-none text-black mb-1">
-                    {property.name}
-                  </h3>
-                  <p className="font-['Albert_Sans',sans-serif] text-lg text-gray-600">
-                    {property.location}
-                  </p>
-                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextImage(e);
+                  }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border border-gray-200 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all"
+                  aria-label="Næste billede"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </>
+            )}
+          </div>
 
-                {/* Slide indicators (prikker) */}
-                {property.images.length > 1 && (
-                  <div className="flex items-center gap-2.5">
-                    {property.images.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          goToImage(index);
-                        }}
-                        className={`rounded-full transition-all ${
-                          index === currentImageIndex
-                            ? 'bg-[#767A57] w-2 h-2 shadow-xl'
-                            : 'bg-gray-200 w-2 h-2'
-                        }`}
-                        aria-label={`Gå til billede ${index + 1}`}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+          {/* Property Info & Navigation Bottom Bar */}
+          <div className="flex-shrink-0 py-4 px-6 flex flex-wrap items-center gap-4 border-t border-gray-100 bg-white">
+            {/* Property info venstre side */}
+            <div className="flex-1 min-w-0">
+              <h3 className="font-['Crimson_Text',serif] text-[24px] leading-tight text-black mb-0.5">
+                {property.name}
+              </h3>
+              <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+                {property.location}
+              </p>
+            </div>
 
-              {/* Navigation knapper UNDER modal */}
-              {property.images.length > 1 && (
-                <div className="absolute -bottom-4 translate-y-full inset-x-0 flex justify-center gap-4">
+            {/* Slide indicators (prikker) */}
+            {property.images.length > 1 && (
+              <div className="flex items-center gap-2">
+                {property.images.map((_, index) => (
                   <button
+                    key={index}
                     onClick={(e) => {
                       e.stopPropagation();
-                      previousImage(e);
+                      goToImage(index);
                     }}
-                    className="lg:hover:opacity-50 lg:active:scale-90 transition-all flex items-center"
-                    aria-label="Forrige billede"
-                  >
-                    <span className="inline-block bg-white border border-gray-100 text-black p-2.5 rounded-full shadow-sm rotate-180">
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </button>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextImage(e);
-                    }}
-                    className="lg:hover:opacity-50 lg:active:scale-90 transition-all flex items-center"
-                    aria-label="Næste billede"
-                  >
-                    <span className="inline-block bg-white border border-gray-100 text-black p-2.5 rounded-full shadow-sm">
-                      <ChevronRight className="w-4 h-4" />
-                    </span>
-                  </button>
-                </div>
-              )}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                    className={`rounded-full transition-all ${
+                      index === currentImageIndex
+                        ? 'bg-[#767A57] w-2.5 h-2.5 shadow-md'
+                        : 'bg-gray-300 w-2 h-2 hover:bg-gray-400'
+                    }`}
+                    aria-label={`Gå til billede ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Tenant List Modal */}
       <Dialog open={showTenantList} onOpenChange={setShowTenantList}>
