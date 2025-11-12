@@ -34,6 +34,8 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
     images: images, // Now using images array
     keyFacts: sanityProp.keyFacts || [],
     distances: sanityProp.distances,
+    tenants: sanityProp.tenants,
+    tenantDistribution: sanityProp.tenantDistribution,
   };
 }
 
