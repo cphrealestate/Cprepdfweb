@@ -34,15 +34,4 @@ export default defineConfig({
       return prev;
     },
   },
-
-  vite: (config) => ({
-    ...config,
-    build: {
-      ...config.build,
-      rollupOptions: {
-        ...config.build?.rollupOptions,
-        external: [...(config.build?.rollupOptions?.external || []), 'xlsx'],
-      },
-    },
-  }),
 });
