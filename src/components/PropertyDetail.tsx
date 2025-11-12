@@ -355,7 +355,7 @@ export function PropertyDetail({
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
+                          label={({ payload }) => `${payload.category} ${payload.percentage.toFixed(0)}%`}
                           outerRadius={100}
                           innerRadius={60}
                           fill="#8884d8"
