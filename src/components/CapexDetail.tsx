@@ -60,11 +60,18 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
             description: sanityProject.description,
             beforeDescription: sanityProject.beforeDescription,
             afterDescription: sanityProject.afterDescription,
-            beforeImage: sanityProject.beforeImage, // Preserve Sanity image object
-            afterImage: sanityProject.afterImage, // Preserve Sanity image object
+            // Preserve Sanity image object, fallback to Unsplash if not available
+            beforeImage: sanityProject.beforeImage || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
+            afterImage: sanityProject.afterImage || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
             keyMetrics: sanityProject.keyMetrics,
             benefits: sanityProject.benefits,
           };
+          console.log('✅ Adapted project with images:', {
+            beforeImage: adapted.beforeImage,
+            afterImage: adapted.afterImage,
+            hasBeforeImage: !!adapted.beforeImage,
+            hasAfterImage: !!adapted.afterImage,
+          });
           setProject(adapted);
         }
       } catch (error) {

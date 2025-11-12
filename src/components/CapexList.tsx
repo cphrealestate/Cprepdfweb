@@ -36,11 +36,19 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
             description: p.description,
             beforeDescription: p.beforeDescription,
             afterDescription: p.afterDescription,
-            beforeImage: p.beforeImage, // Preserve Sanity image object
-            afterImage: p.afterImage, // Preserve Sanity image object
+            // Preserve Sanity image object, fallback to Unsplash if not available
+            beforeImage: p.beforeImage || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
+            afterImage: p.afterImage || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
             keyMetrics: p.keyMetrics,
             benefits: p.benefits,
           }));
+          console.log('📋 Adapted CAPEX projects:', adapted.map(p => ({
+            name: p.name,
+            hasBeforeImage: !!p.beforeImage,
+            hasAfterImage: !!p.afterImage,
+            beforeImageType: typeof p.beforeImage,
+            afterImageType: typeof p.afterImage,
+          })));
           setProjects(adapted as any);
         }
       } catch (error) {
