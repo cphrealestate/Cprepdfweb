@@ -524,15 +524,15 @@ export function PropertyDetail({
             )}
           </div>
 
-          {/* Navigation buttons - center bottom - subtle styling */}
+          {/* Navigation buttons - center bottom - nearly transparent (90% gradient) */}
           {property.images.length > 1 && (
-            <div className="flex-shrink-0 py-2 flex justify-center items-center gap-3 bg-gradient-to-t from-white/80 to-transparent backdrop-blur-sm">
+            <div className="flex-shrink-0 py-2 flex justify-center items-center gap-3 bg-gradient-to-t from-white/10 to-transparent">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   previousImage(e);
                 }}
-                className="bg-white/60 hover:bg-white/90 border border-gray-200/50 text-gray-700 hover:text-black p-2 rounded-full transition-all"
+                className="bg-white/20 hover:bg-white/40 border border-gray-200/30 text-gray-800 hover:text-black p-2 rounded-full transition-all shadow-sm"
                 aria-label="Forrige billede"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -550,7 +550,7 @@ export function PropertyDetail({
                     className={`rounded-full transition-all ${
                       index === currentImageIndex
                         ? 'bg-[#767A57] w-2 h-2'
-                        : 'bg-gray-400/40 w-1.5 h-1.5 hover:bg-gray-400/60'
+                        : 'bg-gray-400/30 w-1.5 h-1.5 hover:bg-gray-400/50'
                     }`}
                     aria-label={`Gå til billede ${index + 1}`}
                   />
@@ -562,7 +562,7 @@ export function PropertyDetail({
                   e.stopPropagation();
                   nextImage(e);
                 }}
-                className="bg-white/60 hover:bg-white/90 border border-gray-200/50 text-gray-700 hover:text-black p-2 rounded-full transition-all"
+                className="bg-white/20 hover:bg-white/40 border border-gray-200/30 text-gray-800 hover:text-black p-2 rounded-full transition-all shadow-sm"
                 aria-label="Næste billede"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -570,12 +570,12 @@ export function PropertyDetail({
             </div>
           )}
 
-          {/* Property Info Bottom Bar - subtle styling */}
-          <div className="flex-shrink-0 py-3 px-6 bg-gradient-to-b from-transparent to-white/90 backdrop-blur-sm">
-            <h3 className="font-['Crimson_Text',serif] text-[20px] leading-tight text-black/90">
+          {/* Property Info Bottom Bar - nearly transparent (90% gradient) */}
+          <div className="flex-shrink-0 py-3 px-6 bg-gradient-to-b from-transparent to-white/10">
+            <h3 className="font-['Crimson_Text',serif] text-[20px] leading-tight text-black drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)]">
               {property.name}
             </h3>
-            <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]/80 mt-0.5">
+            <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] mt-0.5">
               {property.location}
             </p>
           </div>
