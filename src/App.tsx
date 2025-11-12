@@ -20,6 +20,23 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
     ? [sanityProp.image]
     : [];
 
+  // Auto-calculate tenant distribution if not provided but tenants exist
+  let tenantDistribution = sanityProp.tenantDistribution;
+  if (!tenantDistribution && sanityProp.tenants && sanityProp.tenants.length > 0) {
+    // Group tenants by type and count them
+    const typeCounts = sanityProp.tenants.reduce((acc, tenant) => {
+      acc[tenant.type] = (acc[tenant.type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const totalTenants = sanityProp.tenants.length;
+    tenantDistribution = Object.entries(typeCounts).map(([category, count]) => ({
+      category,
+      count,
+      percentage: (count / totalTenants) * 100,
+    }));
+  }
+
   return {
     id: sanityProp._id,
     name: sanityProp.name,
@@ -35,7 +52,7 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
     keyFacts: sanityProp.keyFacts || [],
     distances: sanityProp.distances,
     tenants: sanityProp.tenants,
-    tenantDistribution: sanityProp.tenantDistribution,
+    tenantDistribution: tenantDistribution,
   };
 }
 
