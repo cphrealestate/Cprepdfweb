@@ -8,7 +8,7 @@ import { PropertyPresentation } from './PropertyPresentation';
 import { Breadcrumbs } from './Breadcrumbs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PropertyDetailProps {
   property: Property;
@@ -33,6 +33,30 @@ export function PropertyDetail({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showPresentation, setShowPresentation] = useState(false);
   const [showTenantList, setShowTenantList] = useState(false);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!isLightboxOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsLightboxOpen(false);
+      } else if (e.key === 'ArrowLeft') {
+        previousImage(e as any);
+      } else if (e.key === 'ArrowRight') {
+        nextImage(e as any);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    // Prevent scrolling in background when lightbox is open
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isLightboxOpen, currentImageIndex]);
 
   // Show presentation mode if active
   if (showPresentation) {
@@ -476,30 +500,34 @@ export function PropertyDetail({
         </div>
       </div>
 
-      {/* Lightbox/Modal for fuldskærms visning */}
+      {/* Lightbox/Modal for billedvisning */}
       <AnimatePresence>
         {isLightboxOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden"
             onClick={() => setIsLightboxOpen(false)}
           >
-            {/* Luk knap */}
+            {/* Luk knap - stor og synlig */}
             <button
-              onClick={() => setIsLightboxOpen(false)}
-              className="absolute top-6 right-6 bg-white/10 hover:bg-white/20 p-3 rounded-full transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsLightboxOpen(false);
+              }}
+              className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-white hover:bg-gray-200 p-3 sm:p-4 rounded-full transition-all shadow-lg z-[110] hover:scale-110"
               aria-label="Luk"
             >
-              <X className="w-6 h-6 text-white" />
+              <X className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
             </button>
 
-            {/* Billede container */}
+            {/* Billede container - Modal style */}
             <div
-              className="relative max-w-7xl max-h-[90vh] w-full px-20"
+              className="relative max-w-7xl w-full h-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
+              <div className="relative max-h-[80vh] max-w-full px-12 sm:px-16 md:px-20">
               {isSanityImage ? (
                 <SanityImage
                   image={currentImage}
@@ -515,37 +543,46 @@ export function PropertyDetail({
                 />
               )}
 
-              {/* Navigation i lightbox */}
+              {/* Navigation i lightbox - Store synlige knapper */}
               {property.images.length > 1 && (
                 <>
                   <button
-                    onClick={previousImage}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-4 rounded-full transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      previousImage(e);
+                    }}
+                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-200 p-3 sm:p-4 rounded-full transition-all shadow-lg z-[105] hover:scale-110"
                     aria-label="Forrige billede"
                   >
-                    <ChevronLeft className="w-8 h-8 text-white" />
+                    <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
                   </button>
 
                   <button
-                    onClick={nextImage}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 p-4 rounded-full transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage(e);
+                    }}
+                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-200 p-3 sm:p-4 rounded-full transition-all shadow-lg z-[105] hover:scale-110"
                     aria-label="Næste billede"
                   >
-                    <ChevronRight className="w-8 h-8 text-white" />
+                    <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
                   </button>
 
                   {/* Thumbnail strip */}
-                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 p-4 bg-black/50 rounded-lg">
+                  <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 flex gap-2 p-3 sm:p-4 bg-black/70 rounded-lg shadow-lg overflow-x-auto max-w-[90vw] z-[105]">
                     {property.images.map((img, index) => {
                       const isSanityThumb = typeof img === 'object' && img !== null;
                       return (
                         <button
                           key={index}
-                          onClick={() => goToImage(index)}
-                          className={`w-20 h-14 rounded overflow-hidden border-2 transition-all ${
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            goToImage(index);
+                          }}
+                          className={`w-16 h-12 sm:w-20 sm:h-14 rounded overflow-hidden border-2 transition-all flex-shrink-0 ${
                             index === currentImageIndex
-                              ? 'border-white scale-110'
-                              : 'border-transparent opacity-60 hover:opacity-100'
+                              ? 'border-white scale-110 shadow-xl'
+                              : 'border-white/30 opacity-60 hover:opacity-100 hover:border-white/50'
                           }`}
                         >
                           {isSanityThumb ? (
@@ -570,37 +607,52 @@ export function PropertyDetail({
               )}
 
               {/* Bottom controls - Navigation and Close */}
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/50 rounded-full px-6 py-3">
+              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-4 bg-black/70 rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-lg z-[105]">
+                {/* Image counter */}
+                <span className="text-white font-['Albert_Sans',sans-serif] text-sm sm:text-base px-2">
+                  {currentImageIndex + 1} / {property.images.length}
+                </span>
+
                 {/* Previous button */}
                 {property.images.length > 1 && (
                   <button
-                    onClick={previousImage}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      previousImage(e);
+                    }}
                     className="p-2 hover:bg-white/20 rounded-full transition-colors"
                     aria-label="Forrige billede"
                   >
-                    <ChevronLeft className="w-6 h-6 text-white" />
+                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </button>
                 )}
 
                 {/* Close button */}
                 <button
-                  onClick={() => setIsLightboxOpen(false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsLightboxOpen(false);
+                  }}
                   className="p-2 hover:bg-white/20 rounded-full transition-colors"
                   aria-label="Luk galleri"
                 >
-                  <X className="w-6 h-6 text-white" />
+                  <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </button>
 
                 {/* Next button */}
                 {property.images.length > 1 && (
                   <button
-                    onClick={nextImage}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nextImage(e);
+                    }}
                     className="p-2 hover:bg-white/20 rounded-full transition-colors"
                     aria-label="Næste billede"
                   >
-                    <ChevronRight className="w-6 h-6 text-white" />
+                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </button>
                 )}
+              </div>
               </div>
             </div>
           </motion.div>
