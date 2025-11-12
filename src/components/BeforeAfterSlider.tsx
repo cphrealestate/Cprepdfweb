@@ -108,9 +108,15 @@ export function BeforeAfterSlider({
       {/* Interactive Slider */}
       <div
         ref={containerRef}
-        className="relative w-full h-[500px] overflow-hidden select-none cursor-ew-resize group"
+        className="relative w-full select-none cursor-ew-resize group"
         onClick={handleContainerClick}
-        style={{ border: '2px solid red', minHeight: '500px' }}
+        style={{
+          border: '5px solid red',
+          minHeight: '500px',
+          height: '500px',
+          backgroundColor: 'lightblue',
+          position: 'relative'
+        }}
       >
         {/* After Image (Background) */}
         <div className="absolute inset-0">
