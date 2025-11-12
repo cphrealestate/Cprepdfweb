@@ -609,9 +609,9 @@ export function PropertyDetail({
 
       {/* Tenant List Modal */}
       <Dialog open={showTenantList} onOpenChange={setShowTenantList}>
-        <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-lg !max-w-[90vw] !w-[90vw] max-h-[85vh] overflow-y-auto sm:!max-w-[90vw]" style={{ maxWidth: '90vw', width: '90vw' }}>
-          <DialogHeader>
-            <DialogTitle className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black">
+        <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-lg !max-w-[90vw] !w-[90vw] sm:!max-w-[90vw] flex flex-col" style={{ maxWidth: '90vw', width: '90vw', maxHeight: '85vh' }}>
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black pr-8">
               Lejeliste - {property.name}
             </DialogTitle>
             <DialogDescription className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
@@ -619,10 +619,10 @@ export function PropertyDetail({
             </DialogDescription>
           </DialogHeader>
 
-          <div className="mt-6">
+          <div className="mt-6 overflow-y-auto flex-1" style={{ maxHeight: 'calc(85vh - 200px)' }}>
             <div className="bg-white rounded-lg overflow-hidden">
               <table className="w-full border-collapse">
-                <thead>
+                <thead className="sticky top-0 bg-white z-10">
                   <tr className="border-b-2 border-[#767A57]">
                     <th className="text-left py-4 px-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] uppercase tracking-wide">
                       Lejer
@@ -662,7 +662,7 @@ export function PropertyDetail({
                     </tr>
                   ))}
                 </tbody>
-                <tfoot>
+                <tfoot className="sticky bottom-0 bg-white">
                   <tr className="border-t-2 border-[#767A57] bg-[#f5f5f0]">
                     <td colSpan={3} className="py-4 px-4 font-['Crimson_Text',serif] text-[18px] text-black">
                       I alt
