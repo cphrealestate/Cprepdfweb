@@ -6,7 +6,7 @@ import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { PropertyPresentation } from './PropertyPresentation';
 import { Breadcrumbs } from './Breadcrumbs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { useState } from 'react';
 
@@ -596,11 +596,14 @@ export function PropertyDetail({
 
       {/* Tenant List Modal */}
       <Dialog open={showTenantList} onOpenChange={setShowTenantList}>
-        <DialogContent className="!max-w-[90vw] !w-[90vw] max-h-[85vh] overflow-y-auto sm:!max-w-[90vw]">
+        <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-lg !max-w-[90vw] !w-[90vw] max-h-[85vh] overflow-y-auto sm:!max-w-[90vw]" style={{ maxWidth: '90vw', width: '90vw' }}>
           <DialogHeader>
-            <DialogTitle className="font-['Crimson_Text',serif] text-[36px] text-black">
+            <DialogTitle className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black">
               Lejeliste - {property.name}
             </DialogTitle>
+            <DialogDescription className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+              Her kan du se en detaljeret liste over alle lejere i ejendommen.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="mt-6">
