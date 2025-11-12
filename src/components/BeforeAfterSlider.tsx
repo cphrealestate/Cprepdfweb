@@ -28,42 +28,62 @@ export function BeforeAfterSlider({
   const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null;
   const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null;
 
-  const handleMove = (clientX: number) => {
+  const updateSliderPosition = (clientX: number) => {
     if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
-    const x = clientX - rect.left;
-    const percentage = (x / rect.width) * 100;
+    let position = ((clientX - rect.left) / rect.width) * 100;
 
-    setSliderPosition(Math.min(Math.max(percentage, 0), 100));
+    // Limit position to 0-100%
+    position = Math.max(0, Math.min(100, position));
+
+    setSliderPosition(position);
   };
 
-  const handleMouseDown = () => setIsDragging(true);
-  const handleMouseUp = () => setIsDragging(false);
-
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging) return;
-    handleMove(e.clientX);
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
   };
 
-  const handleTouchMove = (e: TouchEvent) => {
-    if (!isDragging) return;
-    handleMove(e.touches[0].clientX);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleContainerClick = (e: React.MouseEvent) => {
+    // Don't jump if clicking on slider handle
+    if ((e.target as HTMLElement).closest('.slider-line')) {
+      return;
+    }
+    updateSliderPosition(e.clientX);
   };
 
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      updateSliderPosition(e.clientX);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      updateSliderPosition(e.touches[0].clientX);
+    };
+
+    const handleMouseUp = () => setIsDragging(false);
+    const handleTouchEnd = () => setIsDragging(false);
+
     if (isDragging) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
-      window.addEventListener('touchmove', handleTouchMove);
-      window.addEventListener('touchend', handleMouseUp);
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove);
+      document.addEventListener('touchend', handleTouchEnd);
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleMouseUp);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isDragging]);
 
@@ -78,8 +98,7 @@ export function BeforeAfterSlider({
       <div
         ref={containerRef}
         className="relative w-full h-[500px] overflow-hidden select-none cursor-ew-resize group"
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleMouseDown}
+        onClick={handleContainerClick}
       >
         {/* After Image (Background) */}
         <div className="absolute inset-0">
@@ -144,11 +163,13 @@ export function BeforeAfterSlider({
 
         {/* Slider Line and Handle */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-white shadow-lg transition-all"
-          style={{ left: `${sliderPosition}%` }}
+          className="slider-line absolute top-0 bottom-0 w-1 bg-white shadow-lg z-20"
+          style={{ left: `${sliderPosition}%`, transform: 'translateX(-50%)' }}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
         >
           {/* Handle */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-xl flex items-center justify-center group-hover:scale-110 transition-transform cursor-ew-resize">
             <div className="flex gap-1">
               <div className="w-0.5 h-6 bg-[#767A57]"></div>
               <div className="w-0.5 h-6 bg-[#767A57]"></div>
