@@ -23,15 +23,19 @@ const loadXLSX = (): Promise<void> => {
   });
 };
 
-export const uploadTenantListAction = (context: any) => (props: any) => {
-  const { id, type, draft, published } = props;
+export function uploadTenantListAction(context: any): DocumentActionComponent {
+  // Get authenticated client from context
+  const client = context.getClient({ apiVersion: '2024-01-01' });
 
-  // Only show for property documents
-  if (type !== 'property') {
-    return null;
-  }
+  return (props) => {
+    const { id, type } = props;
 
-  return {
+    // Only show for property documents
+    if (type !== 'property') {
+      return null;
+    }
+
+    return {
     label: 'Upload Lejeliste',
     icon: UploadIcon,
     onHandle: async () => {
@@ -86,9 +90,7 @@ export const uploadTenantListAction = (context: any) => (props: any) => {
             percentage: (count / totalTenants) * 100,
           }));
 
-          // Get Sanity client from context
-          const client = context.getClient({ apiVersion: '2024-01-01' });
-
+          // Use authenticated client from context
           await client
             .patch(id)
             .set({
@@ -114,5 +116,6 @@ export const uploadTenantListAction = (context: any) => (props: any) => {
 
       input.click();
     },
+    };
   };
-};
+}
