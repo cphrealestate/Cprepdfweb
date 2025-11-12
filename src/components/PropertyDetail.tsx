@@ -322,39 +322,52 @@ export function PropertyDetail({
                 <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6 text-center">
                   Fordeling af Lejere
                 </h2>
-                <div className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={property.tenantDistribution}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
-                        outerRadius={100}
-                        innerRadius={60}
-                        fill="#8884d8"
-                        dataKey="count"
-                      >
-                        {property.tenantDistribution?.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={['#767A57', '#8B8F64', '#9FA371', '#B3B77E', '#C7CB8B', '#DBDF98'][index % 6]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value: number) => `${value} lejere`}
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e5e0',
-                          borderRadius: '8px',
-                          fontFamily: 'Albert Sans, sans-serif'
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
+                {property.tenantDistribution && property.tenantDistribution.length > 0 ? (
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={property.tenantDistribution}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ category, percentage }) => `${category} ${percentage.toFixed(0)}%`}
+                          outerRadius={100}
+                          innerRadius={60}
+                          fill="#8884d8"
+                          dataKey="count"
+                        >
+                          {property.tenantDistribution?.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={['#767A57', '#8B8F64', '#9FA371', '#B3B77E', '#C7CB8B', '#DBDF98'][index % 6]}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value: number) => `${value} lejere`}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e5e0',
+                            borderRadius: '8px',
+                            fontFamily: 'Albert Sans, sans-serif'
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-[300px] flex items-center justify-center text-center">
+                    <div>
+                      <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959] mb-2">
+                        Ingen lejerfordeling tilgængelig
+                      </p>
+                      <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#999]">
+                        Udfyld "Lejer Fordeling" feltet i Sanity Studio
+                      </p>
+                    </div>
+                  </div>
+                )}
               </motion.div>
 
               {/* Clickable Card - Tenant List */}
