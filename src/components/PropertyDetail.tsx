@@ -5,6 +5,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { PropertyPresentation } from './PropertyPresentation';
+import { Breadcrumbs } from './Breadcrumbs';
 import { useState } from 'react';
 
 interface PropertyDetailProps {
@@ -61,19 +62,17 @@ export function PropertyDetail({
       <LogoButton onClick={onBackToHome} />
 
       <div className="px-12 py-12">
-        {/* Navigation header */}
-        <div className="flex items-center justify-between mb-8">
-          {/* Back button */}
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            onClick={onBack}
-            className="flex items-center gap-2 text-[#767A57] hover:text-[#5f6345] transition-colors font-['Albert_Sans',sans-serif]"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Tilbage til Ejendomme
-          </motion.button>
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Forside', onClick: onBackToHome },
+            { label: 'Ejendomme', onClick: onBack },
+            { label: property.name }
+          ]}
+        />
 
+        {/* Navigation header */}
+        <div className="flex items-center justify-end mb-8">
           {/* Property navigation */}
           {(onNext || onPrevious) && currentIndex !== undefined && totalProperties !== undefined && (
             <motion.div

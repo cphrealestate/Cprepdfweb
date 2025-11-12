@@ -23,19 +23,19 @@ interface SanityImageProps {
 export function SanityImage({ image, alt, width, className, fallbackQuery }: SanityImageProps) {
   // Get Sanity image URL if available
   const sanityUrl = image ? getImageUrl(image, width) : '';
-  
+
   // Use Sanity image if available, otherwise use fallback
   if (sanityUrl) {
     return (
-      <img 
-        src={sanityUrl} 
-        alt={alt} 
+      <img
+        src={sanityUrl}
+        alt={alt}
         className={className}
         loading="lazy"
       />
     );
   }
-  
+
   // Fallback to ImageWithFallback (which uses Unsplash)
   return (
     <ImageWithFallback

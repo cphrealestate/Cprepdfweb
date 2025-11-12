@@ -3,6 +3,7 @@ import { ArrowRight, Calendar, DollarSign, MapPin, CheckCircle, Clock, AlertCirc
 import { capexProjects } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { Breadcrumbs } from './Breadcrumbs';
 import { useState, useEffect } from 'react';
 import { getCapexProjects, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
@@ -80,9 +81,19 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
       <LogoButton onClick={onBack} />
-      
+
       {/* Header */}
       <section className="px-12 pt-20 pb-12">
+        <div className="max-w-[1400px] mx-auto">
+          {/* Breadcrumbs */}
+          <Breadcrumbs
+            items={[
+              { label: 'Forside', onClick: onBack },
+              { label: 'CAPEX Projekter' }
+            ]}
+          />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { Presentation } from '../lib/sanity-queries';
 import { Play, FileText } from 'lucide-react';
 import { LogoButton } from './LogoButton';
+import { Breadcrumbs } from './Breadcrumbs';
 
 interface PresentationListProps {
   presentations: Presentation[];
@@ -16,6 +17,16 @@ export function PresentationList({ presentations, onSelectPresentation, onNaviga
 
       {/* Header */}
       <section className="px-12 pt-20 pb-16">
+        <div className="max-w-[1400px] mx-auto">
+          {/* Breadcrumbs */}
+          <Breadcrumbs
+            items={[
+              { label: 'Forside', onClick: onNavigateBack },
+              { label: 'Præsentationer' }
+            ]}
+          />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

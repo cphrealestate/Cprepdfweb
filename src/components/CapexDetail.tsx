@@ -4,15 +4,17 @@ import { capexProjects, CapexProject } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
+import { Breadcrumbs } from './Breadcrumbs';
 import { useState, useEffect } from 'react';
 import { getCapexProjectById, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
 interface CapexDetailProps {
   capexId: string;
   onBack: () => void;
+  onBackToHome: () => void;
 }
 
-export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
+export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps) {
   const [project, setProject] = useState<CapexProject | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -104,11 +106,20 @@ export function CapexDetail({ capexId, onBack }: CapexDetailProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
-      <LogoButton onClick={onBack} />
+      <LogoButton onClick={onBackToHome} />
 
       {/* Hero Section */}
       <section className="px-12 pt-20 pb-12">
         <div className="max-w-[1400px] mx-auto">
+          {/* Breadcrumbs */}
+          <Breadcrumbs
+            items={[
+              { label: 'Forside', onClick: onBackToHome },
+              { label: 'CAPEX Projekter', onClick: onBack },
+              { label: project.name }
+            ]}
+          />
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
