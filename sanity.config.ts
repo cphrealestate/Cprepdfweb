@@ -34,4 +34,12 @@ export default defineConfig({
       return prev;
     },
   },
+
+  vite: (config) => ({
+    ...config,
+    optimizeDeps: {
+      ...config.optimizeDeps,
+      include: [...(config.optimizeDeps?.include || []), 'xlsx'],
+    },
+  }),
 });

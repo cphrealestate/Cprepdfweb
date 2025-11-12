@@ -1,6 +1,5 @@
 import { DocumentActionComponent } from 'sanity';
 import { UploadIcon } from '@sanity/icons';
-import * as XLSX from 'xlsx';
 
 export const uploadTenantListAction: DocumentActionComponent = (props) => {
   const { id, type } = props;
@@ -26,6 +25,9 @@ export const uploadTenantListAction: DocumentActionComponent = (props) => {
         if (!file) return;
 
         try {
+          // Dynamically import xlsx for browser compatibility
+          const XLSX = await import('xlsx');
+
           // Read Excel file
           const data = await file.arrayBuffer();
           const workbook = XLSX.read(data);
