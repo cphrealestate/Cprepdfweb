@@ -500,161 +500,121 @@ export function PropertyDetail({
         </div>
       </div>
 
-      {/* Lightbox/Modal for billedvisning */}
+      {/* Lightbox/Modal - Copenhagen Real Estate Style */}
       <AnimatePresence>
         {isLightboxOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-hidden"
+            className="fixed inset-0 z-[100] p-4 md:p-8 flex items-center justify-center bg-black/70 backdrop-blur-sm py-16"
             onClick={() => setIsLightboxOpen(false)}
           >
-            {/* Luk knap - stor og synlig */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsLightboxOpen(false);
-              }}
-              className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-white hover:bg-gray-200 p-3 sm:p-4 rounded-full transition-all shadow-lg z-[110] hover:scale-110"
-              aria-label="Luk"
-            >
-              <X className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
-            </button>
-
-            {/* Billede container - Modal style */}
-            <div
-              className="relative max-w-7xl w-full h-full flex items-center justify-center"
+            {/* Modal Container - Hvid boks som Copenhagen Real Estate */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="relative w-full max-w-screen-lg max-h-full bg-white rounded-xl overflow-hidden shadow-2xl flex flex-col"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative max-h-[80vh] max-w-full px-12 sm:px-16 md:px-20">
-              {isSanityImage ? (
-                <SanityImage
-                  image={currentImage}
-                  alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                  width={1920}
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <ImageWithFallback
-                  src={currentImage as string}
-                  alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                  className="w-full h-full object-contain"
-                />
-              )}
+              {/* Close button - Diskret i hjørnet */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsLightboxOpen(false);
+                }}
+                className="absolute top-4 right-4 z-50 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition-all opacity-50 hover:opacity-100"
+                aria-label="Luk"
+              >
+                <X className="w-5 h-5 text-black" />
+              </button>
 
-              {/* Navigation i lightbox - Store synlige knapper */}
-              {property.images.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      previousImage(e);
-                    }}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-200 p-3 sm:p-4 rounded-full transition-all shadow-lg z-[105] hover:scale-110"
-                    aria-label="Forrige billede"
-                  >
-                    <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
-                  </button>
+              {/* Billede sektion */}
+              <div className="relative w-full flex flex-col" style={{ maxHeight: '70vh' }}>
+                <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white p-4">
+                  {isSanityImage ? (
+                    <SanityImage
+                      image={currentImage}
+                      alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                      width={1920}
+                      className="w-full h-full object-contain max-h-[60vh]"
+                    />
+                  ) : (
+                    <ImageWithFallback
+                      src={currentImage as string}
+                      alt={`${property.name} - Billede ${currentImageIndex + 1}`}
+                      className="w-full h-full object-contain max-h-[60vh]"
+                    />
+                  )}
+                </div>
+              </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextImage(e);
-                    }}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white hover:bg-gray-200 p-3 sm:p-4 rounded-full transition-all shadow-lg z-[105] hover:scale-110"
-                    aria-label="Næste billede"
-                  >
-                    <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8 text-black" />
-                  </button>
+              {/* Property Info & Navigation Bottom Bar */}
+              <div className="p-6 flex flex-wrap gap-3 border-t border-gray-100">
+                {/* Property info venstre side */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-['Crimson_Text',serif] text-xl leading-none text-black mb-1">
+                    {property.name}
+                  </h3>
+                  <p className="font-['Albert_Sans',sans-serif] text-lg text-gray-600">
+                    {property.location}
+                  </p>
+                </div>
 
-                  {/* Thumbnail strip */}
-                  <div className="absolute bottom-16 sm:bottom-20 left-1/2 -translate-x-1/2 flex gap-2 p-3 sm:p-4 bg-black/70 rounded-lg shadow-lg overflow-x-auto max-w-[90vw] z-[105]">
-                    {property.images.map((img, index) => {
-                      const isSanityThumb = typeof img === 'object' && img !== null;
-                      return (
-                        <button
-                          key={index}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            goToImage(index);
-                          }}
-                          className={`w-16 h-12 sm:w-20 sm:h-14 rounded overflow-hidden border-2 transition-all flex-shrink-0 ${
-                            index === currentImageIndex
-                              ? 'border-white scale-110 shadow-xl'
-                              : 'border-white/30 opacity-60 hover:opacity-100 hover:border-white/50'
-                          }`}
-                        >
-                          {isSanityThumb ? (
-                            <SanityImage
-                              image={img}
-                              alt={`Thumbnail ${index + 1}`}
-                              width={160}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <ImageWithFallback
-                              src={img as string}
-                              alt={`Thumbnail ${index + 1}`}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </button>
-                      );
-                    })}
+                {/* Slide indicators (prikker) */}
+                {property.images.length > 1 && (
+                  <div className="flex items-center gap-2.5">
+                    {property.images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          goToImage(index);
+                        }}
+                        className={`rounded-full transition-all ${
+                          index === currentImageIndex
+                            ? 'bg-[#767A57] w-2 h-2 shadow-xl'
+                            : 'bg-gray-200 w-2 h-2'
+                        }`}
+                        aria-label={`Gå til billede ${index + 1}`}
+                      />
+                    ))}
                   </div>
-                </>
-              )}
+                )}
+              </div>
 
-              {/* Bottom controls - Navigation and Close */}
-              <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-4 bg-black/70 rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-lg z-[105]">
-                {/* Image counter */}
-                <span className="text-white font-['Albert_Sans',sans-serif] text-sm sm:text-base px-2">
-                  {currentImageIndex + 1} / {property.images.length}
-                </span>
-
-                {/* Previous button */}
-                {property.images.length > 1 && (
+              {/* Navigation knapper UNDER modal */}
+              {property.images.length > 1 && (
+                <div className="absolute -bottom-4 translate-y-full inset-x-0 flex justify-center gap-4">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       previousImage(e);
                     }}
-                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                    className="lg:hover:opacity-50 lg:active:scale-90 transition-all flex items-center"
                     aria-label="Forrige billede"
                   >
-                    <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <span className="inline-block bg-white border border-gray-100 text-black p-2.5 rounded-full shadow-sm rotate-180">
+                      <ChevronRight className="w-4 h-4" />
+                    </span>
                   </button>
-                )}
 
-                {/* Close button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsLightboxOpen(false);
-                  }}
-                  className="p-2 hover:bg-white/20 rounded-full transition-colors"
-                  aria-label="Luk galleri"
-                >
-                  <X className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-                </button>
-
-                {/* Next button */}
-                {property.images.length > 1 && (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       nextImage(e);
                     }}
-                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                    className="lg:hover:opacity-50 lg:active:scale-90 transition-all flex items-center"
                     aria-label="Næste billede"
                   >
-                    <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                    <span className="inline-block bg-white border border-gray-100 text-black p-2.5 rounded-full shadow-sm">
+                      <ChevronRight className="w-4 h-4" />
+                    </span>
                   </button>
-                )}
-              </div>
-              </div>
-            </div>
+                </div>
+              )}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
