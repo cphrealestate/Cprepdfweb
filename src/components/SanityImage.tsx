@@ -24,14 +24,6 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
   // Get Sanity image URL if available
   const sanityUrl = image ? getImageUrl(image, width) : '';
 
-  console.log('🖼️ SanityImage:', {
-    alt,
-    hasImage: !!image,
-    imageType: typeof image,
-    sanityUrl,
-    willUseFallback: !sanityUrl
-  });
-
   // Use Sanity image if available, otherwise use fallback
   if (sanityUrl) {
     return (
@@ -41,8 +33,6 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
         className={className}
         loading="lazy"
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-        onLoad={() => console.log('✅ Image loaded successfully:', alt, sanityUrl)}
-        onError={(e) => console.error('❌ Image failed to load:', alt, sanityUrl, e)}
       />
     );
   }
