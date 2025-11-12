@@ -524,22 +524,22 @@ export function PropertyDetail({
             )}
           </div>
 
-          {/* Navigation buttons - center bottom */}
+          {/* Navigation buttons - center bottom - subtle styling */}
           {property.images.length > 1 && (
-            <div className="flex-shrink-0 py-3 flex justify-center items-center gap-4 bg-white border-t border-gray-100">
+            <div className="flex-shrink-0 py-2 flex justify-center items-center gap-3 bg-gradient-to-t from-white/80 to-transparent backdrop-blur-sm">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   previousImage(e);
                 }}
-                className="bg-white hover:bg-gray-50 border border-gray-200 text-black p-2.5 rounded-full shadow-sm hover:shadow-md transition-all"
+                className="bg-white/60 hover:bg-white/90 border border-gray-200/50 text-gray-700 hover:text-black p-2 rounded-full transition-all"
                 aria-label="Forrige billede"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-4 h-4" />
               </button>
 
               {/* Slide indicators (prikker) */}
-              <div className="flex items-center gap-2 px-4">
+              <div className="flex items-center gap-1.5 px-3">
                 {property.images.map((_, index) => (
                   <button
                     key={index}
@@ -549,8 +549,8 @@ export function PropertyDetail({
                     }}
                     className={`rounded-full transition-all ${
                       index === currentImageIndex
-                        ? 'bg-[#767A57] w-2.5 h-2.5 shadow-md'
-                        : 'bg-gray-300 w-2 h-2 hover:bg-gray-400'
+                        ? 'bg-[#767A57] w-2 h-2'
+                        : 'bg-gray-400/40 w-1.5 h-1.5 hover:bg-gray-400/60'
                     }`}
                     aria-label={`Gå til billede ${index + 1}`}
                   />
@@ -562,20 +562,20 @@ export function PropertyDetail({
                   e.stopPropagation();
                   nextImage(e);
                 }}
-                className="bg-white hover:bg-gray-50 border border-gray-200 text-black p-2.5 rounded-full shadow-sm hover:shadow-md transition-all"
+                className="bg-white/60 hover:bg-white/90 border border-gray-200/50 text-gray-700 hover:text-black p-2 rounded-full transition-all"
                 aria-label="Næste billede"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           )}
 
-          {/* Property Info Bottom Bar */}
-          <div className="flex-shrink-0 py-4 px-6 border-t border-gray-100 bg-white">
-            <h3 className="font-['Crimson_Text',serif] text-[24px] leading-tight text-black mb-0.5">
+          {/* Property Info Bottom Bar - subtle styling */}
+          <div className="flex-shrink-0 py-3 px-6 bg-gradient-to-b from-transparent to-white/90 backdrop-blur-sm">
+            <h3 className="font-['Crimson_Text',serif] text-[20px] leading-tight text-black/90">
               {property.name}
             </h3>
-            <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+            <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]/80 mt-0.5">
               {property.location}
             </p>
           </div>
