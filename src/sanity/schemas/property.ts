@@ -188,11 +188,16 @@ export default {
               title: 'name',
               type: 'type',
               area: 'area',
+              yearlyRent: 'yearlyRent',
+              rentPerSqm: 'rentPerSqm',
             },
-            prepare({title, type, area}: any) {
+            prepare({title, type, area, yearlyRent, rentPerSqm}: any) {
+              // Format numbers without decimals and with thousand separators
+              const formatNumber = (num: number) => Math.round(num).toLocaleString('da-DK');
+
               return {
                 title,
-                subtitle: `${type} • ${area} m²`,
+                subtitle: `${type} • ${formatNumber(area)} m² • ${formatNumber(yearlyRent)} kr/år • ${formatNumber(rentPerSqm)} kr/m²`,
               };
             },
           },
@@ -236,7 +241,7 @@ export default {
             prepare({category, count, percentage}: any) {
               return {
                 title: category,
-                subtitle: `${count} lejere (${percentage.toFixed(1)}%)`,
+                subtitle: `${count} lejere (${percentage.toFixed(0)}%)`,
               };
             },
           },
