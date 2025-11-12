@@ -67,15 +67,32 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
           const jsonData = XLSX.utils.sheet_to_json(worksheet) as any[];
 
+          // Debug: Log first row to see column names
+          console.log('First row from Excel:', jsonData[0]);
+          console.log('All column names:', Object.keys(jsonData[0] || {}));
+
+          // Helper function to parse numbers (handles commas, dots, and text)
+          const parseNumber = (value: any): number => {
+            if (typeof value === 'number') return value;
+            if (!value) return 0;
+            // Remove spaces and convert comma to dot
+            const cleaned = String(value).replace(/\s/g, '').replace(',', '.');
+            const parsed = parseFloat(cleaned);
+            return isNaN(parsed) ? 0 : parsed;
+          };
+
           // Parse tenant data
-          const tenants = jsonData.map((row: any) => ({
-            name: row['Lejer Navn'] || row['Navn'] || '',
-            type: row['Type/Branche'] || row['Type'] || '',
-            address: row['Adresse'] || '',
-            area: Number(row['Areal (m²)'] || row['Areal'] || 0),
-            yearlyRent: Number(row['Årlig Leje (kr.)'] || row['Årlig Leje'] || 0),
-            rentPerSqm: Number(row['Leje per m² (kr.)'] || row['Leje per m²'] || 0),
-          }));
+          const tenants = jsonData.map((row: any) => {
+            console.log('Processing row:', row);
+            return {
+              name: row['Lejer Navn'] || row['Navn'] || '',
+              type: row['Type/Branche'] || row['Type'] || '',
+              address: row['Adresse'] || '',
+              area: parseNumber(row['Areal (m²)'] || row['Areal']),
+              yearlyRent: parseNumber(row['Årlig Leje (kr.)'] || row['Årlig Leje']),
+              rentPerSqm: parseNumber(row['Leje per m² (kr.)'] || row['Leje per m²']),
+            };
+          });
 
           // Calculate tenant distribution
           const typeCounts = tenants.reduce((acc: Record<string, number>, tenant) => {
