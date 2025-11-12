@@ -73,6 +73,36 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
           console.log('All column names:', Object.keys(jsonData[0] || {}));
           console.log('First row values:', Object.entries(jsonData[0] || {}).map(([key, val]) => `${key}: ${val} (${typeof val})`));
 
+          // Helper function to find column value by multiple possible names (case-insensitive)
+          const getColumnValue = (row: any, ...possibleNames: string[]): any => {
+            // First try exact match
+            for (const name of possibleNames) {
+              if (row[name] !== undefined) {
+                return row[name];
+              }
+            }
+
+            // Then try case-insensitive match and normalize spaces/punctuation
+            const rowKeys = Object.keys(row);
+            const normalize = (str: string) => str
+              .toLowerCase()
+              .replace(/\s+/g, ' ')  // normalize spaces
+              .replace(/[.]/g, '')    // remove dots
+              .replace(/m2/g, 'm²')   // normalize m2 to m²
+              .trim();
+
+            for (const name of possibleNames) {
+              const normalizedName = normalize(name);
+              const matchingKey = rowKeys.find(key => normalize(key) === normalizedName);
+              if (matchingKey && row[matchingKey] !== undefined) {
+                console.log(`Found match: "${name}" matched with "${matchingKey}"`);
+                return row[matchingKey];
+              }
+            }
+
+            return undefined;
+          };
+
           // Helper function to parse numbers (handles commas, dots, and text)
           const parseNumber = (value: any): number => {
             console.log('parseNumber input:', value, 'type:', typeof value);
@@ -112,14 +142,19 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
           // Parse tenant data
           const tenants = jsonData.map((row: any) => {
             console.log('Processing row:', row);
-            return {
-              name: row['Lejer Navn'] || row['Navn'] || '',
-              type: row['Type/Branche'] || row['Type'] || '',
-              address: row['Adresse'] || '',
-              area: parseNumber(row['Areal (m²)'] || row['Areal']),
-              yearlyRent: parseNumber(row['Årlig Leje (kr.)'] || row['Årlig Leje']),
-              rentPerSqm: parseNumber(row['Leje per m² (kr.)'] || row['Leje per m²']),
+
+            // Use flexible column matching
+            const tenant = {
+              name: getColumnValue(row, 'Lejer Navn', 'Navn', 'lejer navn', 'navn') || '',
+              type: getColumnValue(row, 'Type/Branche', 'Type', 'type/branche', 'type') || '',
+              address: getColumnValue(row, 'Adresse', 'adresse') || '',
+              area: parseNumber(getColumnValue(row, 'Areal (m²)', 'Areal (m2)', 'Areal', 'areal (m²)', 'areal (m2)', 'areal')),
+              yearlyRent: parseNumber(getColumnValue(row, 'Årlig Leje (kr.)', 'Årlig leje (kr.)', 'Årlig Leje', 'Årlig leje', 'årlig leje (kr.)', 'årlig leje')),
+              rentPerSqm: parseNumber(getColumnValue(row, 'Leje per m² (kr.)', 'Leje per m2 (kr.)', 'Leje per m² (kr)', 'Leje per m2 (kr)', 'Leje per m²', 'Leje per m2', 'leje per m² (kr.)', 'leje per m2 (kr.)', 'leje per m² (kr)', 'leje per m2 (kr)', 'leje per m²', 'leje per m2')),
             };
+
+            console.log('Parsed tenant:', tenant);
+            return tenant;
           });
 
           // Calculate tenant distribution
