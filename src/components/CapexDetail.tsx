@@ -32,22 +32,9 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
       // If not found, try to fetch from Sanity
       try {
         const sanityProject = await getCapexProjectById(capexId);
-        console.log('🔍 Full Sanity CAPEX Project:', sanityProject);
 
         if (sanityProject) {
           // Adapt Sanity project to match CapexProject type
-          // Pass raw image objects - BeforeAfterSlider will handle both Sanity objects and URLs
-          console.log('🔍 CAPEX Image Debug:', {
-            beforeImage: sanityProject.beforeImage,
-            afterImage: sanityProject.afterImage,
-            beforeImageType: typeof sanityProject.beforeImage,
-            afterImageType: typeof sanityProject.afterImage,
-            beforeImageKeys: sanityProject.beforeImage ? Object.keys(sanityProject.beforeImage) : [],
-            afterImageKeys: sanityProject.afterImage ? Object.keys(sanityProject.afterImage) : [],
-            beforeImageAsset: sanityProject.beforeImage?.asset,
-            afterImageAsset: sanityProject.afterImage?.asset,
-          });
-
           const adapted: CapexProject = {
             id: sanityProject._id,
             name: sanityProject.name,
@@ -66,12 +53,6 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
             keyMetrics: sanityProject.keyMetrics,
             benefits: sanityProject.benefits,
           };
-          console.log('✅ Adapted project with images:', {
-            beforeImage: adapted.beforeImage,
-            afterImage: adapted.afterImage,
-            hasBeforeImage: !!adapted.beforeImage,
-            hasAfterImage: !!adapted.afterImage,
-          });
           setProject(adapted);
         }
       } catch (error) {
