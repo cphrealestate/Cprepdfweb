@@ -12,7 +12,6 @@ import {
   DialogDescription,
 } from './ui/dialog';
 
-import { LogoButton } from './LogoButton';
 import { getPortfolioSettings, getRegions, getPropertiesByRegion } from '../lib/sanity-queries';
 
 interface PortfolioOverviewProps {
@@ -115,8 +114,6 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
-      <LogoButton onClick={() => {}} disabled={true} />
-      
       {/* Hero Section */}
       <section className="px-12 pt-20 pb-16">
         <motion.div
