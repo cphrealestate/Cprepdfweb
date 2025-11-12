@@ -28,18 +28,6 @@ export function BeforeAfterSlider({
   const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null;
   const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null;
 
-  // Debug logging for before/after slider
-  console.log('🎚️ BeforeAfterSlider Debug:', {
-    beforeImage,
-    afterImage,
-    isBeforeSanityImage,
-    isAfterSanityImage,
-    beforeImageType: typeof beforeImage,
-    afterImageType: typeof afterImage,
-    beforeImageKeys: beforeImage && typeof beforeImage === 'object' ? Object.keys(beforeImage) : [],
-    afterImageKeys: afterImage && typeof afterImage === 'object' ? Object.keys(afterImage) : [],
-  });
-
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
 

@@ -30,36 +30,23 @@ export function urlFor(source: any) {
 
 // Helper to get image URL with optional width
 export function getImageUrl(source: any, width?: number) {
-  console.log('🔧 getImageUrl called:', {
-    source,
-    hasSource: !!source,
-    hasBuilder: !!builder,
-    sourceType: typeof source,
-    sourceKeys: source ? Object.keys(source) : [],
-  });
-
   if (!source) {
-    console.warn('⚠️ getImageUrl: No source provided');
     return '';
   }
 
   // Try to extract direct URL if available (for some Sanity configurations)
   if (source.asset?.url) {
-    console.log('✅ Using direct asset URL:', source.asset.url);
     return source.asset.url;
   }
 
   if (!builder) {
-    console.warn('⚠️ getImageUrl: No builder available (Sanity not configured)');
     return '';
   }
 
   try {
     let url = urlFor(source);
-    console.log('🔧 urlFor result:', url);
 
     if (!url) {
-      console.warn('⚠️ getImageUrl: urlFor returned null');
       return '';
     }
 
@@ -69,11 +56,9 @@ export function getImageUrl(source: any, width?: number) {
       url = url.width(width);
     }
 
-    const finalUrl = url.url();
-    console.log('✅ Final image URL:', finalUrl);
-    return finalUrl;
+    return url.url();
   } catch (error) {
-    console.error('❌ Error generating Sanity image URL:', error);
+    console.error('Error generating Sanity image URL:', error);
     return '';
   }
 }

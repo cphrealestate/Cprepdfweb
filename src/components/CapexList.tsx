@@ -42,13 +42,6 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
             keyMetrics: p.keyMetrics,
             benefits: p.benefits,
           }));
-          console.log('📋 Adapted CAPEX projects:', adapted.map(p => ({
-            name: p.name,
-            hasBeforeImage: !!p.beforeImage,
-            hasAfterImage: !!p.afterImage,
-            beforeImageType: typeof p.beforeImage,
-            afterImageType: typeof p.afterImage,
-          })));
           setProjects(adapted as any);
         }
       } catch (error) {

@@ -21,22 +21,8 @@ interface SanityImageProps {
  * />
  */
 export function SanityImage({ image, alt, width, className, fallbackQuery }: SanityImageProps) {
-  // Debug logging
-  console.log('🖼️ SanityImage Debug:', {
-    image,
-    hasImage: !!image,
-    imageType: typeof image,
-    imageKeys: image ? Object.keys(image) : [],
-    hasAsset: image?.asset,
-    assetType: typeof image?.asset,
-    assetRef: image?.asset?._ref,
-    assetUrl: image?.asset?.url,
-  });
-
   // Get Sanity image URL if available
   const sanityUrl = image ? getImageUrl(image, width) : '';
-
-  console.log('🖼️ Generated URL:', sanityUrl);
 
   // Use Sanity image if available, otherwise use fallback
   if (sanityUrl) {
@@ -46,14 +32,12 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
         alt={alt}
         className={className}
         loading="lazy"
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
       />
     );
   }
 
   // Fallback to ImageWithFallback (which uses Unsplash)
-  console.warn('⚠️ No Sanity image URL generated, using fallback for:', alt, 'with query:', fallbackQuery);
-
-  // Use fallback query if provided, otherwise use generic query based on alt text
   const unsplashQuery = fallbackQuery || alt.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim() || 'architecture';
 
   return (
