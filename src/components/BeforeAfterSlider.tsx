@@ -28,6 +28,14 @@ export function BeforeAfterSlider({
   const isBeforeSanityImage = typeof beforeImage === 'object' && beforeImage !== null;
   const isAfterSanityImage = typeof afterImage === 'object' && afterImage !== null;
 
+  console.log('🎨 BeforeAfterSlider rendered:', {
+    beforeImageType: typeof beforeImage,
+    afterImageType: typeof afterImage,
+    isBeforeSanityImage,
+    isAfterSanityImage,
+    sliderPosition
+  });
+
   const updateSliderPosition = (clientX: number) => {
     if (!containerRef.current) return;
 
@@ -51,10 +59,13 @@ export function BeforeAfterSlider({
   };
 
   const handleContainerClick = (e: React.MouseEvent) => {
+    console.log('🖱️ Container clicked!');
     // Don't jump if clicking on slider handle
     if ((e.target as HTMLElement).closest('.slider-line')) {
+      console.log('❌ Clicked on slider line, ignoring');
       return;
     }
+    console.log('✅ Jumping slider to clicked position');
     updateSliderPosition(e.clientX);
   };
 

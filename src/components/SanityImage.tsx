@@ -24,6 +24,14 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
   // Get Sanity image URL if available
   const sanityUrl = image ? getImageUrl(image, width) : '';
 
+  console.log('🖼️ SanityImage:', {
+    alt,
+    hasImage: !!image,
+    imageType: typeof image,
+    sanityUrl,
+    willUseFallback: !sanityUrl
+  });
+
   // Use Sanity image if available, otherwise use fallback
   if (sanityUrl) {
     return (
