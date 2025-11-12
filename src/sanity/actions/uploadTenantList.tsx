@@ -140,11 +140,12 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
           };
 
           // Parse tenant data
-          const tenants = jsonData.map((row: any) => {
+          const parsedTenants = jsonData.map((row: any, index: number) => {
             console.log('Processing row:', row);
 
             // Use flexible column matching
             const tenant = {
+              _rowIndex: index + 2, // +2 because Excel is 1-indexed and has header row
               name: getColumnValue(row, 'Lejer Navn', 'Navn', 'lejer navn', 'navn') || '',
               type: getColumnValue(row, 'Type/Branche', 'Type', 'type/branche', 'type') || '',
               address: getColumnValue(row, 'Adresse', 'adresse') || '',
@@ -155,6 +156,69 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
 
             console.log('Parsed tenant:', tenant);
             return tenant;
+          });
+
+          // Filter out invalid tenants and track skipped rows
+          const skippedRows: Array<{row: number, name: string, reason: string}> = [];
+          const tenants = parsedTenants.filter((tenant: any) => {
+            // Check if all required fields are present and valid
+            if (!tenant.name || tenant.name.trim() === '') {
+              skippedRows.push({
+                row: tenant._rowIndex,
+                name: '(tom)',
+                reason: 'Mangler navn'
+              });
+              return false;
+            }
+
+            if (!tenant.type || tenant.type.trim() === '') {
+              skippedRows.push({
+                row: tenant._rowIndex,
+                name: tenant.name,
+                reason: 'Mangler type/branche'
+              });
+              return false;
+            }
+
+            if (!tenant.address || tenant.address.trim() === '') {
+              skippedRows.push({
+                row: tenant._rowIndex,
+                name: tenant.name,
+                reason: 'Mangler adresse'
+              });
+              return false;
+            }
+
+            if (tenant.area <= 0) {
+              skippedRows.push({
+                row: tenant._rowIndex,
+                name: tenant.name,
+                reason: `Areal er ${tenant.area} (skal være > 0)`
+              });
+              return false;
+            }
+
+            if (tenant.yearlyRent <= 0) {
+              skippedRows.push({
+                row: tenant._rowIndex,
+                name: tenant.name,
+                reason: `Årlig leje er ${tenant.yearlyRent} (skal være > 0)`
+              });
+              return false;
+            }
+
+            if (tenant.rentPerSqm <= 0) {
+              skippedRows.push({
+                row: tenant._rowIndex,
+                name: tenant.name,
+                reason: `Leje per m² er ${tenant.rentPerSqm} (skal være > 0)`
+              });
+              return false;
+            }
+
+            // Remove the _rowIndex helper field before sending to Sanity
+            delete tenant._rowIndex;
+            return true;
           });
 
           // Calculate tenant distribution
@@ -170,6 +234,12 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
             percentage: (count / totalTenants) * 100,
           }));
 
+          // Check if we have any valid tenants to upload
+          if (tenants.length === 0) {
+            alert(`❌ Ingen gyldige lejere fundet i Excel filen!\n\n${skippedRows.length} rækker blev sprunget over:\n${skippedRows.map(s => `Række ${s.row}: ${s.name} - ${s.reason}`).join('\n')}`);
+            return;
+          }
+
           // Use authenticated client from context
           await client
             .patch(id)
@@ -179,8 +249,17 @@ export function uploadTenantListAction(context: any): DocumentActionComponent {
             })
             .commit();
 
-          // Show success message
-          alert(`✅ Uploadet ${tenants.length} lejere!\n\nFordeling:\n${tenantDistribution.map(d => `${d.category}: ${d.count} (${d.percentage.toFixed(1)}%)`).join('\n')}`);
+          // Show success message with optional warnings about skipped rows
+          let message = `✅ Uploadet ${tenants.length} lejere!\n\nFordeling:\n${tenantDistribution.map(d => `${d.category}: ${d.count} (${d.percentage.toFixed(1)}%)`).join('\n')}`;
+
+          if (skippedRows.length > 0) {
+            message += `\n\n⚠️ ${skippedRows.length} rækker blev sprunget over:\n${skippedRows.slice(0, 5).map(s => `Række ${s.row}: ${s.name} - ${s.reason}`).join('\n')}`;
+            if (skippedRows.length > 5) {
+              message += `\n... og ${skippedRows.length - 5} flere`;
+            }
+          }
+
+          alert(message);
 
           // Refresh the document - use window.location.reload as fallback
           if (typeof props.onComplete === 'function') {
