@@ -261,8 +261,14 @@ export async function getCapexProjects(): Promise<CapexProject[]> {
     description,
     beforeDescription,
     afterDescription,
-    beforeImage,
-    afterImage,
+    beforeImage{
+      ...,
+      asset->
+    },
+    afterImage{
+      ...,
+      asset->
+    },
     keyMetrics,
     benefits,
     property->{
@@ -298,8 +304,14 @@ export async function getCapexProjectById(id: string): Promise<CapexProject | nu
     description,
     beforeDescription,
     afterDescription,
-    beforeImage,
-    afterImage,
+    beforeImage{
+      ...,
+      asset->
+    },
+    afterImage{
+      ...,
+      asset->
+    },
     keyMetrics,
     benefits,
     property->{
@@ -368,8 +380,14 @@ export async function getPresentations(): Promise<Presentation[]> {
         description,
         beforeDescription,
         afterDescription,
-        beforeImage,
-        afterImage,
+        beforeImage{
+          ...,
+          asset->
+        },
+        afterImage{
+          ...,
+          asset->
+        },
         keyMetrics,
         benefits
       },
@@ -456,8 +474,14 @@ export async function getPresentationById(id: string): Promise<Presentation | nu
         description,
         beforeDescription,
         afterDescription,
-        beforeImage,
-        afterImage,
+        beforeImage{
+          ...,
+          asset->
+        },
+        afterImage{
+          ...,
+          asset->
+        },
         keyMetrics,
         benefits
       },
