@@ -20,6 +20,13 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
     ? [sanityProp.image]
     : [];
 
+  // Debug logging for tenant data
+  if (sanityProp.tenants || sanityProp.tenantDistribution) {
+    console.log('Property:', sanityProp.name);
+    console.log('Tenants:', sanityProp.tenants);
+    console.log('TenantDistribution:', sanityProp.tenantDistribution);
+  }
+
   return {
     id: sanityProp._id,
     name: sanityProp.name,
