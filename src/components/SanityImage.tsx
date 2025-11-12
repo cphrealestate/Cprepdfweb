@@ -51,10 +51,14 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
   }
 
   // Fallback to ImageWithFallback (which uses Unsplash)
-  console.warn('⚠️ No Sanity image URL generated, using fallback for:', alt);
+  console.warn('⚠️ No Sanity image URL generated, using fallback for:', alt, 'with query:', fallbackQuery);
+
+  // Use fallback query if provided, otherwise use generic query based on alt text
+  const unsplashQuery = fallbackQuery || alt.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim() || 'architecture';
+
   return (
     <ImageWithFallback
-      src="" // Empty to trigger Unsplash
+      src={`https://source.unsplash.com/1200x800/?${encodeURIComponent(unsplashQuery)}`}
       alt={alt}
       className={className}
     />

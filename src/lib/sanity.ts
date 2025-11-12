@@ -38,28 +38,44 @@ export function getImageUrl(source: any, width?: number) {
     sourceKeys: source ? Object.keys(source) : [],
   });
 
-  if (!source || !builder) {
-    console.warn('⚠️ getImageUrl: Missing source or builder', { hasSource: !!source, hasBuilder: !!builder });
+  if (!source) {
+    console.warn('⚠️ getImageUrl: No source provided');
     return '';
   }
 
-  let url = urlFor(source);
-  console.log('🔧 urlFor result:', url);
+  // Try to extract direct URL if available (for some Sanity configurations)
+  if (source.asset?.url) {
+    console.log('✅ Using direct asset URL:', source.asset.url);
+    return source.asset.url;
+  }
 
-  if (!url) {
-    console.warn('⚠️ getImageUrl: urlFor returned null');
+  if (!builder) {
+    console.warn('⚠️ getImageUrl: No builder available (Sanity not configured)');
     return '';
   }
 
-  url = url.auto('format');
+  try {
+    let url = urlFor(source);
+    console.log('🔧 urlFor result:', url);
 
-  if (width) {
-    url = url.width(width);
+    if (!url) {
+      console.warn('⚠️ getImageUrl: urlFor returned null');
+      return '';
+    }
+
+    url = url.auto('format');
+
+    if (width) {
+      url = url.width(width);
+    }
+
+    const finalUrl = url.url();
+    console.log('✅ Final image URL:', finalUrl);
+    return finalUrl;
+  } catch (error) {
+    console.error('❌ Error generating Sanity image URL:', error);
+    return '';
   }
-
-  const finalUrl = url.url();
-  console.log('✅ Final image URL:', finalUrl);
-  return finalUrl;
 }
 
 // Export flag to check if Sanity is configured

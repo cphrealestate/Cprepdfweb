@@ -32,6 +32,8 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
       // If not found, try to fetch from Sanity
       try {
         const sanityProject = await getCapexProjectById(capexId);
+        console.log('🔍 Full Sanity CAPEX Project:', sanityProject);
+
         if (sanityProject) {
           // Adapt Sanity project to match CapexProject type
           // Pass raw image objects - BeforeAfterSlider will handle both Sanity objects and URLs
@@ -40,6 +42,10 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
             afterImage: sanityProject.afterImage,
             beforeImageType: typeof sanityProject.beforeImage,
             afterImageType: typeof sanityProject.afterImage,
+            beforeImageKeys: sanityProject.beforeImage ? Object.keys(sanityProject.beforeImage) : [],
+            afterImageKeys: sanityProject.afterImage ? Object.keys(sanityProject.afterImage) : [],
+            beforeImageAsset: sanityProject.beforeImage?.asset,
+            afterImageAsset: sanityProject.afterImage?.asset,
           });
 
           const adapted: CapexProject = {
