@@ -4,6 +4,7 @@ import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
+import { Breadcrumbs } from './Breadcrumbs';
 
 interface PropertyListProps {
   properties: Property[];
@@ -15,8 +16,16 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
       <LogoButton onClick={onBackToOverview} />
-      
+
       <div className="px-12 py-12">
+        {/* Breadcrumbs */}
+        <Breadcrumbs
+          items={[
+            { label: 'Forside', onClick: onBackToOverview },
+            { label: 'Ejendomme' }
+          ]}
+        />
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

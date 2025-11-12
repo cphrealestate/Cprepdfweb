@@ -187,6 +187,7 @@ export default function App() {
         <CapexDetail
           capexId={selectedCapexId}
           onBack={handleBackToCapexList}
+          onBackToHome={handleBackToOverview}
         />
       )}
 
