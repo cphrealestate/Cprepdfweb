@@ -41,6 +41,8 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
         className={className}
         loading="lazy"
         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        onLoad={() => console.log('✅ Image loaded successfully:', alt, sanityUrl)}
+        onError={(e) => console.error('❌ Image failed to load:', alt, sanityUrl, e)}
       />
     );
   }
