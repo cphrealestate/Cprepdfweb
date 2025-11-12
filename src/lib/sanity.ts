@@ -30,18 +30,36 @@ export function urlFor(source: any) {
 
 // Helper to get image URL with optional width
 export function getImageUrl(source: any, width?: number) {
-  if (!source || !builder) return '';
-  
+  console.log('🔧 getImageUrl called:', {
+    source,
+    hasSource: !!source,
+    hasBuilder: !!builder,
+    sourceType: typeof source,
+    sourceKeys: source ? Object.keys(source) : [],
+  });
+
+  if (!source || !builder) {
+    console.warn('⚠️ getImageUrl: Missing source or builder', { hasSource: !!source, hasBuilder: !!builder });
+    return '';
+  }
+
   let url = urlFor(source);
-  if (!url) return '';
-  
+  console.log('🔧 urlFor result:', url);
+
+  if (!url) {
+    console.warn('⚠️ getImageUrl: urlFor returned null');
+    return '';
+  }
+
   url = url.auto('format');
-  
+
   if (width) {
     url = url.width(width);
   }
-  
-  return url.url();
+
+  const finalUrl = url.url();
+  console.log('✅ Final image URL:', finalUrl);
+  return finalUrl;
 }
 
 // Export flag to check if Sanity is configured

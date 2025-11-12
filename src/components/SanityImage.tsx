@@ -11,18 +11,32 @@ interface SanityImageProps {
 
 /**
  * Component to display Sanity images with fallback to Unsplash
- * 
+ *
  * Usage:
- * <SanityImage 
- *   image={property.image} 
+ * <SanityImage
+ *   image={property.image}
  *   alt="Property image"
  *   width={800}
  *   fallbackQuery="modern office building"
  * />
  */
 export function SanityImage({ image, alt, width, className, fallbackQuery }: SanityImageProps) {
+  // Debug logging
+  console.log('🖼️ SanityImage Debug:', {
+    image,
+    hasImage: !!image,
+    imageType: typeof image,
+    imageKeys: image ? Object.keys(image) : [],
+    hasAsset: image?.asset,
+    assetType: typeof image?.asset,
+    assetRef: image?.asset?._ref,
+    assetUrl: image?.asset?.url,
+  });
+
   // Get Sanity image URL if available
   const sanityUrl = image ? getImageUrl(image, width) : '';
+
+  console.log('🖼️ Generated URL:', sanityUrl);
 
   // Use Sanity image if available, otherwise use fallback
   if (sanityUrl) {
@@ -37,6 +51,7 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
   }
 
   // Fallback to ImageWithFallback (which uses Unsplash)
+  console.warn('⚠️ No Sanity image URL generated, using fallback for:', alt);
   return (
     <ImageWithFallback
       src="" // Empty to trigger Unsplash
