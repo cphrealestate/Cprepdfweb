@@ -56,7 +56,6 @@ export const uploadTenantListAction: DocumentActionComponent = (props) => {
           }));
 
           // Update document using Sanity client
-          const { patch } = await import('@sanity/client');
           const client = props.getClient({ apiVersion: '2024-01-01' });
 
           await client
