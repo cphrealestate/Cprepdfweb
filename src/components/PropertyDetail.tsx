@@ -507,7 +507,7 @@ export function PropertyDetail({
           style={{ maxWidth: '90vw', width: '90vw', maxHeight: '85vh' }}
         >
           {/* Image section with proper flex layout */}
-          <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 140px)' }}>
+          <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 180px)' }}>
             {isSanityImage ? (
               <SanityImage
                 image={currentImage}
@@ -522,50 +522,24 @@ export function PropertyDetail({
                 className="w-full h-full object-contain"
               />
             )}
-
-            {/* Navigation buttons - inside as overlays */}
-            {property.images.length > 1 && (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    previousImage(e);
-                  }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border border-gray-200 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all"
-                  aria-label="Forrige billede"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextImage(e);
-                  }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white border border-gray-200 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all"
-                  aria-label="Næste billede"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </>
-            )}
           </div>
 
-          {/* Property Info & Navigation Bottom Bar */}
-          <div className="flex-shrink-0 py-4 px-6 flex flex-wrap items-center gap-4 border-t border-gray-100 bg-white">
-            {/* Property info venstre side */}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-['Crimson_Text',serif] text-[24px] leading-tight text-black mb-0.5">
-                {property.name}
-              </h3>
-              <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
-                {property.location}
-              </p>
-            </div>
+          {/* Navigation buttons - center bottom */}
+          {property.images.length > 1 && (
+            <div className="flex-shrink-0 py-3 flex justify-center items-center gap-4 bg-white border-t border-gray-100">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  previousImage(e);
+                }}
+                className="bg-white hover:bg-gray-50 border border-gray-200 text-black p-2.5 rounded-full shadow-sm hover:shadow-md transition-all"
+                aria-label="Forrige billede"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
 
-            {/* Slide indicators (prikker) */}
-            {property.images.length > 1 && (
-              <div className="flex items-center gap-2">
+              {/* Slide indicators (prikker) */}
+              <div className="flex items-center gap-2 px-4">
                 {property.images.map((_, index) => (
                   <button
                     key={index}
@@ -582,7 +556,28 @@ export function PropertyDetail({
                   />
                 ))}
               </div>
-            )}
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextImage(e);
+                }}
+                className="bg-white hover:bg-gray-50 border border-gray-200 text-black p-2.5 rounded-full shadow-sm hover:shadow-md transition-all"
+                aria-label="Næste billede"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+
+          {/* Property Info Bottom Bar */}
+          <div className="flex-shrink-0 py-4 px-6 border-t border-gray-100 bg-white">
+            <h3 className="font-['Crimson_Text',serif] text-[24px] leading-tight text-black mb-0.5">
+              {property.name}
+            </h3>
+            <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+              {property.location}
+            </p>
           </div>
         </DialogContent>
       </Dialog>
