@@ -2,7 +2,7 @@ import { motion } from 'motion/react';
 import { Building2, TrendingUp, MapPin, Award, Loader2 } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import logoImage from '../assets/cdb9893bb0a895cc5f8c245820867dd1cfc47d3b.png';
+import logoImage from '../assets/Symbol-Real-estate.png';
 import { useState, useEffect } from 'react';
 import {
   Dialog,

@@ -18,7 +18,7 @@
         'lucide-react@0.487.0': 'lucide-react',
         'input-otp@1.4.2': 'input-otp',
         'figma:asset/e29b2b8702cb4055468c042b68886dd8df9a2600.png': path.resolve(__dirname, './src/assets/e29b2b8702cb4055468c042b68886dd8df9a2600.png'),
-        'figma:asset/cdb9893bb0a895cc5f8c245820867dd1cfc47d3b.png': path.resolve(__dirname, './src/assets/cdb9893bb0a895cc5f8c245820867dd1cfc47d3b.png'),
+        'figma:asset/cdb9893bb0a895cc5f8c245820867dd1cfc47d3b.png': path.resolve(__dirname, './src/assets/Symbol-Real-estate.png'),
         'figma:asset/7b96f56a90b2ef6d40a0a24eca94cbc8c48bf43f.png': path.resolve(__dirname, './src/assets/7b96f56a90b2ef6d40a0a24eca94cbc8c48bf43f.png'),
         'embla-carousel-react@8.6.0': 'embla-carousel-react',
         'cmdk@1.1.1': 'cmdk',
