@@ -371,7 +371,7 @@ export function PropertyDetail({
                             fontFamily: 'Albert Sans, sans-serif'
                           }}
                         />
-                        <Bar dataKey="count" radius={[8, 8, 0, 0]}>
+                        <Bar dataKey="count" fill="#767A57" radius={[8, 8, 0, 0]}>
                           {property.tenantDistribution?.map((entry, index) => (
                             <Cell
                               key={`cell-${index}`}
