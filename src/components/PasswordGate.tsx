@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Lock, AlertCircle } from 'lucide-react';
 import logoImage from '../assets/Symbol-Real-estate.png';
 
@@ -79,7 +78,7 @@ export function PasswordGate({ children, correctPassword = "2024" }: PasswordGat
                 <div className="absolute inset-0 rounded-full border-2 border-[#767A57]/40 animate-pulse"></div>
                 <div className="absolute inset-2 rounded-full border border-[#767A57]/20"></div>
                 <div className="absolute inset-4 flex items-center justify-center">
-                  <ImageWithFallback
+                  <img
                     src={logoImage}
                     alt="Copenhagen Real Estate"
                     className="w-full h-full object-contain"
@@ -97,7 +96,7 @@ export function PasswordGate({ children, correctPassword = "2024" }: PasswordGat
                   Confidential Information
                 </h1>
                 <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] tracking-wide">
-                  Restricted Access • Members Only
+                  Restricted Access
                 </p>
               </motion.div>
             </div>
@@ -160,9 +159,6 @@ export function PasswordGate({ children, correctPassword = "2024" }: PasswordGat
 
               {/* Footer */}
               <div className="mt-8 pt-6 border-t border-[#767A57]/10 text-center">
-                <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] mb-2">
-                  Invitation Only
-                </p>
                 <button
                   className="font-['Albert_Sans',sans-serif] text-[13px] text-[#767A57] hover:text-[#595959] transition-colors underline"
                   onClick={() => alert('Kontakt venligst admin@copenhagenestate.dk for adgang')}
