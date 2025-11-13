@@ -84,24 +84,28 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
 
           {/* Content Container */}
           <div className="relative flex flex-col h-full">
+            {/* Close Button - Top Right */}
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              onClick={onClose}
+              className="absolute top-8 right-8 z-10 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors"
+              aria-label="Luk"
+            >
+              <X className="w-6 h-6 text-white" />
+            </motion.button>
+
             {/* Header */}
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="flex-shrink-0 flex items-center justify-between p-8"
+              className="flex-shrink-0 flex items-center p-8"
             >
               <h2 className="font-['Crimson_Text',serif] text-[32px] text-white">
                 Projekt Billeder
               </h2>
-
-              <button
-                onClick={onClose}
-                className="w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors"
-                aria-label="Luk"
-              >
-                <X className="w-6 h-6 text-white" />
-              </button>
             </motion.div>
 
             {/* Image Container with Navigation */}
