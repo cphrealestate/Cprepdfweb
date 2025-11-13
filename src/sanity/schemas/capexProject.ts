@@ -123,6 +123,24 @@ export default {
       },
     },
     {
+      name: 'images',
+      title: 'Projekt Galleri',
+      type: 'array',
+      description: 'Upload billeder og videoer fra projektet.',
+      of: [
+        {
+          type: 'image',
+          options: {hotspot: true}
+        },
+        {
+          type: 'file',
+          options: {
+            accept: 'video/*'
+          }
+        }
+      ],
+    },
+    {
       name: 'keyMetrics',
       title: 'Nøgletal',
       type: 'array',
