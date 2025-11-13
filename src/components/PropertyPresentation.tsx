@@ -8,7 +8,7 @@ import {
   Calendar,
   Building2,
   Square,
-  Percent,
+  Banknote,
   X
 } from 'lucide-react';
 import { Property } from '../data/portfolio';
@@ -246,7 +246,7 @@ function HeroSlide({ property, mainImage, isMainVideo, isSanityImage }: { proper
             <StatRow icon={Building2} label="Type" value={property.type} />
             <StatRow icon={Square} label="Areal" value={property.area} />
             <StatRow icon={TrendingUp} label="Værdi" value={property.value} primary />
-            <StatRow icon={Percent} label="Udlejningsgrad" value={property.occupancy} />
+            <StatRow icon={Banknote} label="Årlig Leje" value={property.totalRent || 'Ikke oplyst'} />
             <StatRow icon={Calendar} label="Byggeår" value={property.yearBuilt.toString()} />
           </div>
         </motion.div>
@@ -304,9 +304,9 @@ function StatsSlide({ property }: { property: Property }) {
             highlight
           />
           <StatCard
-            icon={Percent}
-            label="Udlejningsgrad"
-            value={property.occupancy}
+            icon={Banknote}
+            label="Årlig Leje"
+            value={property.totalRent || 'Ikke oplyst'}
             delay={0.4}
           />
           <StatCard

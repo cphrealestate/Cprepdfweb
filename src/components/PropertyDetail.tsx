@@ -311,8 +311,8 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
                   <span className="font-['Crimson_Text',serif] text-[24px] text-[#767A57]">{property.value}</span>
                 </div>
                 <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
-                  <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Udlejningsgrad</span>
-                  <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.occupancy}</span>
+                  <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Årlig Leje</span>
+                  <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.totalRent || 'Ikke oplyst'}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Byggeår</span>
