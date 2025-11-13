@@ -1,10 +1,11 @@
 import { motion } from 'motion/react';
-import { Building2, MapPin, ArrowLeft } from 'lucide-react';
+import { Building2, MapPin, ArrowLeft, Search } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { Breadcrumbs } from './Breadcrumbs';
+import { useState, useMemo } from 'react';
 
 interface PropertyListProps {
   properties: Property[];
@@ -13,6 +14,48 @@ interface PropertyListProps {
 }
 
 export function PropertyList({ properties, onSelectProperty, onBackToOverview }: PropertyListProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCities, setSelectedCities] = useState<Set<string>>(new Set());
+
+  // Get unique cities from properties
+  const uniqueCities = useMemo(() => {
+    const cities = new Set<string>();
+    properties.forEach(property => {
+      if (property.location) {
+        cities.add(property.location);
+      }
+    });
+    return Array.from(cities).sort();
+  }, [properties]);
+
+  // Toggle city filter
+  const toggleCity = (city: string) => {
+    setSelectedCities(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(city)) {
+        newSet.delete(city);
+      } else {
+        newSet.add(city);
+      }
+      return newSet;
+    });
+  };
+
+  // Filter properties based on search and selected cities
+  const filteredProperties = useMemo(() => {
+    return properties.filter(property => {
+      // Search filter
+      const matchesSearch = searchQuery === '' ||
+        property.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        property.location.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // City filter
+      const matchesCity = selectedCities.size === 0 || selectedCities.has(property.location);
+
+      return matchesSearch && matchesCity;
+    });
+  }, [properties, searchQuery, selectedCities]);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
       <LogoButton onClick={onBackToOverview} />
@@ -30,7 +73,7 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
+          className="mb-8"
         >
           <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[77px] text-black mb-4">
             Vores Ejendomme
@@ -40,9 +83,88 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
           </p>
         </motion.div>
 
+        {/* Search and Filters */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-8 space-y-4"
+        >
+          {/* Search Bar */}
+          <div className="flex items-stretch rounded-full px-3 h-13 min-w-0 transition-colors border border-gray-300 focus-within:border-[#767A57] max-w-md bg-white">
+            <input
+              type="text"
+              placeholder="Søg efter ejendom eller by..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 outline-none bg-transparent font-['Albert_Sans',sans-serif] text-base px-2 min-w-0 text-black"
+            />
+            <label className="flex items-center">
+              <span className="text-white inline-block bg-[#767A57] size-7 p-1.5 rounded-full">
+                <Search className="w-full h-full" />
+              </span>
+            </label>
+          </div>
+
+          {/* City Filters */}
+          {uniqueCities.length > 0 && (
+            <div className="flex gap-2 relative flex-nowrap overflow-x-auto w-full min-w-0 max-md:scrollbar-none">
+              {uniqueCities.map((city) => (
+                <div key={city}>
+                  <input
+                    className="sr-only"
+                    id={`city-${city}`}
+                    type="checkbox"
+                    checked={selectedCities.has(city)}
+                    onChange={() => toggleCity(city)}
+                  />
+                  <label htmlFor={`city-${city}`} className="cursor-pointer">
+                    <div
+                      className={`flex items-center gap-1 rounded-full w-fit font-medium min-w-fit border px-3 h-8 text-sm transition-colors cursor-pointer ${
+                        selectedCities.has(city)
+                          ? 'bg-[#767A57] text-white border-[#767A57]'
+                          : 'border-gray-300 text-black bg-white hover:bg-gray-50 hover:border-[#767A57]'
+                      }`}
+                    >
+                      {city}
+                    </div>
+                  </label>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Results count */}
+          <div className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+            Viser {filteredProperties.length} af {properties.length} ejendomme
+          </div>
+        </motion.div>
+
         {/* Properties Grid */}
-        <div className="grid grid-cols-3 gap-8 max-w-[1400px]">
-          {properties.map((property, index) => (
+        {filteredProperties.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Building2 className="w-16 h-16 text-[#767A57] mb-4" />
+            <h3 className="font-['Crimson_Text',serif] text-[32px] text-black mb-2">
+              Ingen ejendomme fundet
+            </h3>
+            <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959] mb-6">
+              Prøv at justere din søgning eller fjern nogle filtre
+            </p>
+            {(searchQuery || selectedCities.size > 0) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCities(new Set());
+                }}
+                className="px-6 py-3 bg-[#767A57] text-white rounded-full font-['Albert_Sans',sans-serif] text-[14px] hover:bg-[#5f6345] transition-colors"
+              >
+                Nulstil filtre
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-8 max-w-[1400px]">
+            {filteredProperties.map((property, index) => (
             <motion.div
               key={property.id}
               initial={{ opacity: 0, y: 20 }}
@@ -112,7 +234,8 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
               </div>
             </motion.div>
           ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
