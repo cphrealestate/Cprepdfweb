@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ArrowLeft, Calendar, DollarSign, MapPin, TrendingUp, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, TrendingUp, CheckCircle } from 'lucide-react';
 import { capexProjects, CapexProject } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -137,7 +137,6 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
                 </span>
               </div>
               <div className="flex items-center gap-2 text-[#767A57]">
-                <DollarSign className="w-5 h-5" />
                 <span className="font-['Albert_Sans',sans-serif] text-[18px]">
                   Investering: {project.investment}
                 </span>
