@@ -364,6 +364,49 @@ export async function getCapexProjectById(id: string): Promise<CapexProject | nu
   }
 }
 
+// Fetch Capex projects for a specific property
+export async function getCapexProjectsByPropertyId(propertyId: string): Promise<CapexProject[]> {
+  if (!sanityClient) {
+    console.log('Sanity not configured - using fallback data');
+    return [];
+  }
+
+  const query = `*[_type == "capexProject" && property._ref == $propertyId] | order(startDate desc){
+    _id,
+    name,
+    propertyName,
+    location,
+    status,
+    investment,
+    startDate,
+    completionDate,
+    description,
+    beforeDescription,
+    afterDescription,
+    beforeImage{
+      ...,
+      asset->
+    },
+    afterImage{
+      ...,
+      asset->
+    },
+    keyMetrics,
+    benefits,
+    property->{
+      _id,
+      name
+    }
+  }`;
+
+  try {
+    return await sanityClient.fetch(query, { propertyId });
+  } catch (error) {
+    console.error('Error fetching capex projects for property:', error);
+    return [];
+  }
+}
+
 // Fetch all presentations
 export async function getPresentations(): Promise<Presentation[]> {
   if (!sanityClient) {
