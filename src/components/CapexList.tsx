@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ArrowRight, Calendar, MapPin, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { ArrowRight, Calendar, MapPin, CheckCircle, Clock, AlertCircle, Search, Filter } from 'lucide-react';
 import { capexProjects } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -16,6 +16,7 @@ interface CapexListProps {
 export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
   const [projects, setProjects] = useState(capexProjects);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(new Set());
 
   // Fetch Capex projects from Sanity
@@ -82,13 +83,21 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
     }
   };
 
-  // Filter projects based on selected statuses
+  // Filter projects based on search query and selected statuses
   const filteredProjects = useMemo(() => {
     return projects.filter(project => {
+      // Search filter
+      const matchesSearch = searchQuery === '' ||
+        project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.propertyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.location.toLowerCase().includes(searchQuery.toLowerCase());
+
+      // Status filter
       const matchesStatus = selectedStatuses.size === 0 || selectedStatuses.has(project.status);
-      return matchesStatus;
+
+      return matchesSearch && matchesStatus;
     });
-  }, [projects, selectedStatuses]);
+  }, [projects, searchQuery, selectedStatuses]);
 
   // Get unique statuses from projects
   const availableStatuses = useMemo(() => {
@@ -141,46 +150,57 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
         </motion.div>
       </section>
 
-      {/* Status Filter Section */}
+      {/* Search and Filter Section */}
       <section className="px-12 pb-8">
         <div className="max-w-[1400px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white/50 backdrop-blur-sm rounded-lg p-6"
+            className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6"
           >
-            {/* Filter chips */}
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mr-2">
-                Filtrer efter status:
-              </span>
-              {availableStatuses.map((status) => (
-                <button
-                  key={status}
-                  onClick={() => toggleStatus(status)}
-                  className={`flex items-center justify-center gap-1 rounded-full w-36 font-medium border px-3 h-8 text-sm transition-all ${
-                    selectedStatuses.has(status)
-                      ? 'bg-[#767A57] text-white border-[#767A57]'
-                      : 'bg-white text-[#595959] border-[#e5e5e0] hover:border-[#767A57]'
-                  }`}
-                >
-                  {status}
-                </button>
-              ))}
-              {selectedStatuses.size > 0 && (
-                <button
-                  onClick={resetFilters}
-                  className="ml-2 text-[#767A57] hover:text-[#5f6345] font-['Albert_Sans',sans-serif] text-[14px] underline"
-                >
-                  Nulstil filter
-                </button>
-              )}
+            {/* Search Bar */}
+            <div className="relative mb-6">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Søg efter projekt, ejendom eller lokation..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-12 w-full text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#767A57] focus:border-[#767A57] rounded-xl font-['Albert_Sans',sans-serif] px-4"
+              />
             </div>
 
-            {/* Result count */}
-            <div className="mt-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-              Viser {filteredProjects.length} af {projects.length} projekter
+            {/* Status Filters */}
+            {availableStatuses.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Filter className="w-4 h-4 text-slate-500" />
+                  <span className="text-sm text-slate-600 font-['Albert_Sans',sans-serif]">Filtrer efter status:</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {availableStatuses.map((status) => (
+                    <button
+                      key={status}
+                      onClick={() => toggleStatus(status)}
+                      className={`cursor-pointer px-4 py-2 transition-all hover:scale-105 rounded-xl inline-flex items-center justify-center font-['Albert_Sans',sans-serif] ${
+                        selectedStatuses.has(status)
+                          ? 'bg-[#767A57] hover:bg-[#5f6345] text-white shadow-md'
+                          : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300'
+                      }`}
+                    >
+                      {status}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Results Count */}
+            <div className="mt-6 pt-6 border-t border-slate-200">
+              <p className="text-sm text-slate-600 font-['Albert_Sans',sans-serif]">
+                Viser <span className="text-slate-900 font-medium">{filteredProjects.length}</span> af <span className="text-slate-900 font-medium">{projects.length}</span> projekter
+              </p>
             </div>
           </motion.div>
         </div>
