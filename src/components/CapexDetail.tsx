@@ -346,7 +346,7 @@ export function CapexDetail() {
                   <SanityImage
                     image={currentMedia}
                     alt={`${project.name} - Billede ${currentImageIndex + 1}`}
-                    width={1200}
+                    width={650}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -479,7 +479,7 @@ export function CapexDetail() {
                 <SanityImage
                   image={currentMedia}
                   alt={`${project.name} - Billede ${currentImageIndex + 1}`}
-                  width={1920}
+                  width={1400}
                   className="w-full h-full object-contain"
                 />
               ) : (

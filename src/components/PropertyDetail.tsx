@@ -220,7 +220,7 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
                   <SanityImage
                     image={currentMedia}
                     alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                    width={800}
+                    width={650}
                     className="w-full h-full object-cover"
                   />
                 ) : (

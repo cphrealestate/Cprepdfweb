@@ -219,7 +219,7 @@ function HeroSlide({ property, mainImage, isMainVideo, isSanityImage }: { proper
           <SanityImage
             image={mainImage}
             alt={property.name}
-            width={1600}
+            width={1400}
             className="w-full h-full object-cover"
           />
         ) : (
