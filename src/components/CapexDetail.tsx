@@ -12,9 +12,10 @@ interface CapexDetailProps {
   capexId: string;
   onBack: () => void;
   onBackToHome: () => void;
+  onSelectProperty?: (propertyId: string) => void;
 }
 
-export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps) {
+export function CapexDetail({ capexId, onBack, onBackToHome, onSelectProperty }: CapexDetailProps) {
   const [project, setProject] = useState<CapexProject | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -118,15 +119,27 @@ export function CapexDetail({ capexId, onBack, onBackToHome }: CapexDetailProps)
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="flex items-center gap-4 mb-6">
-              <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[76px] text-black">
-                {project.name}
-              </h1>
-              <div className={`px-4 py-2 rounded-full ${getStatusColor(project.status)} flex items-center gap-2`}>
-                <span className="font-['Albert_Sans',sans-serif] text-[14px]">
-                  {project.status}
-                </span>
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <h1 className="font-['Crimson_Text',serif] text-[64px] leading-[76px] text-black">
+                  {project.name}
+                </h1>
+                <div className={`px-4 py-2 rounded-full ${getStatusColor(project.status)} flex items-center gap-2`}>
+                  <span className="font-['Albert_Sans',sans-serif] text-[14px]">
+                    {project.status}
+                  </span>
+                </div>
               </div>
+
+              {/* Property Button - Only show if property is linked */}
+              {project.property?._id && onSelectProperty && (
+                <button
+                  onClick={() => onSelectProperty(project.property!._id)}
+                  className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
+                >
+                  Se Ejendom
+                </button>
+              )}
             </div>
             
             <div className="flex items-center gap-8 mb-6">
