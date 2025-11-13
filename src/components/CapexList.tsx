@@ -5,7 +5,7 @@ import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { Breadcrumbs } from './Breadcrumbs';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getCapexProjects, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
 interface CapexListProps {
@@ -16,6 +16,7 @@ interface CapexListProps {
 export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
   const [projects, setProjects] = useState(capexProjects);
   const [loading, setLoading] = useState(true);
+  const [selectedStatuses, setSelectedStatuses] = useState<Set<string>>(new Set());
 
   // Fetch Capex projects from Sanity
   useEffect(() => {
@@ -80,6 +81,35 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
     }
   };
 
+  // Filter projects based on selected statuses
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      const matchesStatus = selectedStatuses.size === 0 || selectedStatuses.has(project.status);
+      return matchesStatus;
+    });
+  }, [projects, selectedStatuses]);
+
+  // Get unique statuses from projects
+  const availableStatuses = useMemo(() => {
+    return ['Planlagt', 'I gang', 'Afsluttet'];
+  }, []);
+
+  const toggleStatus = (status: string) => {
+    setSelectedStatuses(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(status)) {
+        newSet.delete(status);
+      } else {
+        newSet.add(status);
+      }
+      return newSet;
+    });
+  };
+
+  const resetFilters = () => {
+    setSelectedStatuses(new Set());
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
       <LogoButton onClick={onBack} />
@@ -110,10 +140,77 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
         </motion.div>
       </section>
 
+      {/* Status Filter Section */}
+      <section className="px-12 pb-8">
+        <div className="max-w-[1400px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white/50 backdrop-blur-sm rounded-lg p-6"
+          >
+            {/* Filter chips */}
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mr-2">
+                Filtrer efter status:
+              </span>
+              {availableStatuses.map((status) => (
+                <button
+                  key={status}
+                  onClick={() => toggleStatus(status)}
+                  className={`flex items-center justify-center gap-1 rounded-full w-36 font-medium border px-3 h-8 text-sm transition-all ${
+                    selectedStatuses.has(status)
+                      ? 'bg-[#767A57] text-white border-[#767A57]'
+                      : 'bg-white text-[#595959] border-[#e5e5e0] hover:border-[#767A57]'
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+              {selectedStatuses.size > 0 && (
+                <button
+                  onClick={resetFilters}
+                  className="ml-2 text-[#767A57] hover:text-[#5f6345] font-['Albert_Sans',sans-serif] text-[14px] underline"
+                >
+                  Nulstil filter
+                </button>
+              )}
+            </div>
+
+            {/* Result count */}
+            <div className="mt-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+              Viser {filteredProjects.length} af {projects.length} projekter
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Projects Grid */}
       <section className="px-12">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, index) => (
+        {filteredProjects.length === 0 ? (
+          <div className="max-w-[1400px] mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white rounded-lg p-12 text-center"
+            >
+              <p className="font-['Crimson_Text',serif] text-[32px] text-black mb-4">
+                Ingen projekter fundet
+              </p>
+              <p className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959] mb-6">
+                Prøv at justere dine filtre for at se flere projekter
+              </p>
+              <button
+                onClick={resetFilters}
+                className="px-6 py-3 bg-[#767A57] text-white rounded-lg font-['Albert_Sans',sans-serif] text-[16px] hover:bg-[#5f6345] transition-colors"
+              >
+                Nulstil filtre
+              </button>
+            </motion.div>
+          </div>
+        ) : (
+          <div className="max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredProjects.map((project, index) => (
             <motion.div
               key={project.id}
               initial={{ opacity: 0, y: 20 }}
@@ -189,8 +286,9 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
                 </div>
               </div>
             </motion.div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
