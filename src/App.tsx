@@ -106,6 +106,14 @@ export default function App() {
     setCurrentView('detail');
   };
 
+  const handleSelectPropertyById = (propertyId: string) => {
+    const property = propertiesData.find(p => p.id === propertyId);
+    if (property) {
+      setSelectedProperty(property);
+      setCurrentView('detail');
+    }
+  };
+
   const handleSelectCapex = (capexId: string) => {
     setSelectedCapexId(capexId);
     setCurrentView('capex-detail');
@@ -208,6 +216,7 @@ export default function App() {
           capexId={selectedCapexId}
           onBack={handleBackToCapexList}
           onBackToHome={handleBackToOverview}
+          onSelectProperty={handleSelectPropertyById}
         />
       )}
 
