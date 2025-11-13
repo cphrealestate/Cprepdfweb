@@ -121,7 +121,7 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
                   />
                   <label htmlFor={`city-${city}`} className="cursor-pointer">
                     <div
-                      className={`flex items-center gap-1 rounded-full w-fit font-medium min-w-fit border px-3 h-8 text-sm transition-colors cursor-pointer ${
+                      className={`flex items-center justify-center gap-1 rounded-full w-36 font-medium border px-3 h-8 text-sm transition-colors cursor-pointer ${
                         selectedCities.has(city)
                           ? 'bg-[#767A57] text-white border-[#767A57]'
                           : 'border-gray-300 text-black bg-white hover:bg-gray-50 hover:border-[#767A57]'
