@@ -124,9 +124,9 @@ export default {
     },
     {
       name: 'images',
-      title: 'Projekt Galleri',
+      title: 'Projekt Galleri (Legacy)',
       type: 'array',
-      description: 'Upload billeder og videoer fra projektet.',
+      description: 'Upload billeder og videoer fra projektet. (Bruges til gamle projekter)',
       of: [
         {
           type: 'image',
@@ -138,6 +138,61 @@ export default {
             accept: 'video/*'
           }
         }
+      ],
+    },
+    {
+      name: 'gallery',
+      title: 'Projekt Billeder (Masonry Grid)',
+      type: 'array',
+      description: 'Kurateret galleri med captions og kategorier til masonry grid visning.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'image',
+              title: 'Billede',
+              type: 'image',
+              options: {hotspot: true},
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'caption',
+              title: 'Billedtekst',
+              type: 'string',
+              description: 'Beskrivelse af billedet (fx "Facaden efter renovering")',
+              validation: (Rule: any) => Rule.required(),
+            },
+            {
+              name: 'category',
+              title: 'Kategori',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Før', value: 'Før'},
+                  {title: 'Efter', value: 'Efter'},
+                  {title: 'Proces', value: 'Proces'},
+                  {title: 'Detalje', value: 'Detalje'},
+                ],
+              },
+              description: 'Klassificer billedet i en kategori',
+            },
+          ],
+          preview: {
+            select: {
+              title: 'caption',
+              category: 'category',
+              media: 'image',
+            },
+            prepare({title, category, media}: any) {
+              return {
+                title: title || 'Uden titel',
+                subtitle: category || 'Ingen kategori',
+                media,
+              };
+            },
+          },
+        },
       ],
     },
     {

@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+import { SanityImage } from './SanityImage';
+import { getImageUrl } from '../lib/sanity';
 
 interface GalleryItem {
-  image: string;
+  image: string | any; // Can be URL string or Sanity image object
   caption: string;
   category?: "Før" | "Efter" | "Proces" | "Detalje";
 }
@@ -61,6 +63,11 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
 
   const currentItem = images[currentIndex];
 
+  // Helper to check if image is from Sanity
+  const isSanityImage = (img: any) => {
+    return img && typeof img === 'object' && (img._type === 'image' || img.asset);
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -107,11 +114,20 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
               className="relative flex items-center justify-center"
               style={{ maxWidth: '85vw', maxHeight: '70vh' }}
             >
-              <ImageWithFallback
-                src={currentItem.image}
-                alt={currentItem.caption}
-                className="max-w-full max-h-[70vh] object-contain rounded-lg"
-              />
+              {isSanityImage(currentItem.image) ? (
+                <SanityImage
+                  image={currentItem.image}
+                  alt={currentItem.caption}
+                  width={1400}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                />
+              ) : (
+                <ImageWithFallback
+                  src={currentItem.image as string}
+                  alt={currentItem.caption}
+                  className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                />
+              )}
             </motion.div>
 
             {/* Image Info */}
@@ -181,11 +197,20 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                         : 'opacity-50 hover:opacity-75'
                     }`}
                   >
-                    <ImageWithFallback
-                      src={item.image}
-                      alt={item.caption}
-                      className="w-full h-full object-cover"
-                    />
+                    {isSanityImage(item.image) ? (
+                      <SanityImage
+                        image={item.image}
+                        alt={item.caption}
+                        width={80}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <ImageWithFallback
+                        src={item.image as string}
+                        alt={item.caption}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
                   </button>
                 ))}
               </motion.div>

@@ -88,7 +88,12 @@ export interface CapexProject {
   afterDescription: string;
   beforeImage?: any; // Sanity image object
   afterImage?: any; // Sanity image object
-  images?: MediaItem[]; // Sanity image/video array
+  images?: MediaItem[]; // Sanity image/video array (legacy)
+  gallery?: Array<{
+    image: any; // Sanity image object
+    caption: string;
+    category?: 'Før' | 'Efter' | 'Proces' | 'Detalje';
+  }>;
   keyMetrics: Array<{
     label: string;
     before: string;
@@ -315,6 +320,14 @@ export async function getCapexProjects(): Promise<CapexProject[]> {
       asset->
     },
     images,
+    gallery[]{
+      image{
+        ...,
+        asset->
+      },
+      caption,
+      category
+    },
     keyMetrics,
     benefits,
     property->{
@@ -362,6 +375,14 @@ export async function getCapexProjectById(id: string): Promise<CapexProject | nu
       asset->
     },
     images,
+    gallery[]{
+      image{
+        ...,
+        asset->
+      },
+      caption,
+      category
+    },
     keyMetrics,
     benefits,
     property->{
@@ -409,6 +430,14 @@ export async function getCapexProjectsByPropertyId(propertyId: string): Promise<
       asset->
     },
     images,
+    gallery[]{
+      image{
+        ...,
+        asset->
+      },
+      caption,
+      category
+    },
     keyMetrics,
     benefits,
     property->{
