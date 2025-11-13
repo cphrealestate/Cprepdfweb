@@ -162,10 +162,10 @@ export function PropertyDetail({
             >
               <Presentation className="w-7 h-7 text-black" />
               <div className="text-left">
-                <p className="font-['Albert_Sans',sans-serif] text-[14px] text-black/90 uppercase tracking-wide">
+                <p className="font-['Albert_Sans',sans-serif] text-[12px] text-black/90 uppercase tracking-wide">
                   Start
                 </p>
-                <p className="font-['Crimson_Text',serif] text-[24px] text-black">
+                <p className="font-['Crimson_Text',serif] text-[20px] text-black">
                   Præsentation
                 </p>
               </div>
@@ -484,7 +484,7 @@ export function PropertyDetail({
                   onClick={onNext}
                   className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
                 >
-                  <div className="text-right">
+                  <div className="text-center">
                     <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
                       Næste ejendom
                     </p>
