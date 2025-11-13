@@ -192,6 +192,7 @@ export default function App() {
           onPrevious={propertiesData.findIndex(p => p.id === selectedProperty.id) > 0 ? handlePreviousProperty : undefined}
           currentIndex={propertiesData.findIndex(p => p.id === selectedProperty.id)}
           totalProperties={propertiesData.length}
+          onSelectCapex={handleSelectCapex}
         />
       )}
 

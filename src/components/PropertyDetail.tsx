@@ -20,6 +20,7 @@ interface PropertyDetailProps {
   onPrevious?: () => void;
   currentIndex?: number;
   totalProperties?: number;
+  onSelectCapex?: (capexId: string) => void;
 }
 
 export function PropertyDetail({
@@ -29,7 +30,8 @@ export function PropertyDetail({
   onNext,
   onPrevious,
   currentIndex,
-  totalProperties
+  totalProperties,
+  onSelectCapex
 }: PropertyDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -40,13 +42,13 @@ export function PropertyDetail({
   // Fetch CAPEX projects for this property
   useEffect(() => {
     async function fetchCapexProjects() {
-      if (property._id) {
-        const projects = await getCapexProjectsByPropertyId(property._id);
+      if (property.id) {
+        const projects = await getCapexProjectsByPropertyId(property.id);
         setCapexProjects(projects);
       }
     }
     fetchCapexProjects();
-  }, [property._id]);
+  }, [property.id]);
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -173,11 +175,13 @@ export function PropertyDetail({
             {/* Action Buttons */}
             <div className="flex items-center gap-4">
               {/* CAPEX Projects Button - Only show if projects exist */}
-              {capexProjects.length > 0 && (
+              {capexProjects.length > 0 && onSelectCapex && (
                 <button
                   onClick={() => {
-                    // TODO: Navigate to CAPEX projects view
-                    console.log('Show CAPEX projects:', capexProjects);
+                    // Navigate to the first CAPEX project linked to this property
+                    if (capexProjects[0]?._id) {
+                      onSelectCapex(capexProjects[0]._id);
+                    }
                   }}
                   className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
                 >
