@@ -327,7 +327,7 @@ export function PropertyDetail({
                   <span className="font-['Albert_Sans',sans-serif] text-[18px] text-black">{property.area}</span>
                 </div>
                 <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
-                  <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Værdi</span>
+                  <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">Bogført værdi</span>
                   <span className="font-['Crimson_Text',serif] text-[24px] text-[#767A57]">{property.value}</span>
                 </div>
                 <div className="flex items-center justify-between pb-4 border-b border-[#e5e5e0]">
