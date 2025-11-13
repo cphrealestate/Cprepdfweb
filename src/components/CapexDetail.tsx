@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { ArrowLeft, Calendar, MapPin, TrendingUp, CheckCircle, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, MapPin, TrendingUp, CheckCircle, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { capexProjects, CapexProject } from '../data/portfolio';
 import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -7,6 +7,7 @@ import { SanityImage } from './SanityImage';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { Breadcrumbs } from './Breadcrumbs';
 import { ProjectTimeline } from './ProjectTimeline';
+import { ImageLightbox } from './ImageLightbox';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
@@ -22,8 +23,8 @@ export function CapexDetail() {
   }
   const [project, setProject] = useState<CapexProject | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
 
   useEffect(() => {
     async function loadProject() {
@@ -77,53 +78,11 @@ export function CapexDetail() {
     loadProject();
   }, [capexId]);
 
-  // Gallery navigation functions
-  const images = project?.images || [];
-  const currentMedia = images[currentImageIndex];
-  const isCurrentVideo = currentMedia && isVideo(currentMedia);
-  const isSanityImage = currentMedia && currentMedia._type === 'image';
-
-  const nextImage = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    if (images.length > 0) {
-      setCurrentImageIndex((prev) => (prev + 1) % images.length);
-    }
+  // Open lightbox at specific index
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
   };
-
-  const previousImage = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    if (images.length > 0) {
-      setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-    }
-  };
-
-  const goToImage = (index: number) => {
-    setCurrentImageIndex(index);
-  };
-
-  // Keyboard navigation for lightbox
-  useEffect(() => {
-    if (!isLightboxOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsLightboxOpen(false);
-      } else if (e.key === 'ArrowLeft') {
-        previousImage();
-      } else if (e.key === 'ArrowRight') {
-        nextImage();
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    // Prevent body scroll when lightbox is open
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isLightboxOpen, currentImageIndex, images.length]);
 
   if (loading) {
     return (
@@ -309,108 +268,82 @@ export function CapexDetail() {
         </div>
       </section>
 
-      {/* Project Gallery */}
-      {images && images.length > 0 && (
+      {/* Project Gallery - Masonry Grid */}
+      {project.gallery && project.gallery.length > 0 && (
         <section className="px-12 pb-12">
           <div className="max-w-[1400px] mx-auto">
-            <motion.h2
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.85 }}
-              className="font-['Crimson_Text',serif] text-[48px] leading-[58px] text-black mb-8"
-            >
-              Projekt Galleri
-            </motion.h2>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="aspect-[16/9] bg-[#e5e5e0] rounded-lg overflow-hidden relative group"
-            >
-              {/* Main media - clickable */}
-              <div
-                onClick={() => setIsLightboxOpen(true)}
-                className="cursor-pointer w-full h-full"
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.85 }}
+                className="font-['Crimson_Text',serif] text-[48px] leading-[58px] text-black"
               >
-                {isCurrentVideo ? (
-                  <video
-                    src={getFileUrl(currentMedia)}
-                    controls
-                    autoPlay={currentImageIndex === 0}
-                    muted={currentImageIndex === 0}
-                    loop
-                    className="w-full h-full object-cover"
-                  />
-                ) : isSanityImage ? (
-                  <SanityImage
-                    image={currentMedia}
-                    alt={`${project.name} - Billede ${currentImageIndex + 1}`}
-                    width={650}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
+                Projekt Billeder
+              </motion.h2>
+
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9 }}
+                className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]"
+              >
+                {project.gallery.length} billeder
+              </motion.span>
+            </div>
+
+            {/* Masonry Grid */}
+            <div className="grid grid-cols-3 gap-4">
+              {project.gallery.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.9 + index * 0.05 }}
+
+                  className={`relative group cursor-pointer overflow-hidden rounded-lg ${
+                    index === 0 ? 'col-span-2 row-span-2' : ''
+                  }`}
+                  onClick={() => openLightbox(index)}
+                  style={{ height: index === 0 ? '400px' : '190px' }}
+                >
+                  {/* Image */}
                   <ImageWithFallback
-                    src={currentMedia as string}
-                    alt={`${project.name} - Billede ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover"
+                    src={item.image}
+                    alt={item.caption}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
-                )}
-              </div>
 
-              {/* Navigation buttons - show only if multiple images */}
-              {images.length > 1 && (
-                <>
-                  {/* Previous button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      previousImage();
-                    }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-70 group-hover:opacity-100 transition-opacity"
-                    aria-label="Forrige billede"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-black" />
-                  </button>
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-[#767A57]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
+                    {/* Zoom Icon */}
+                    <ImageIcon className="w-12 h-12 text-white mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300" />
 
-                  {/* Next button */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      nextImage();
-                    }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-70 group-hover:opacity-100 transition-opacity"
-                    aria-label="Næste billede"
-                  >
-                    <ChevronRight className="w-6 h-6 text-black" />
-                  </button>
+                    {/* Caption */}
+                    <p className="font-['Albert_Sans',sans-serif] text-[16px] text-white text-center px-4">
+                      {item.caption}
+                    </p>
 
-                  {/* Dot navigation */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                    {images.map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          goToImage(index);
-                        }}
-                        className={`w-2 h-2 rounded-full transition-all ${
-                          index === currentImageIndex
-                            ? 'bg-white w-6'
-                            : 'bg-white/50 hover:bg-white/75'
-                        }`}
-                        aria-label={`Gå til billede ${index + 1}`}
-                      />
-                    ))}
+                    {/* Category Badge (in overlay) */}
+                    {item.category && (
+                      <span className="mt-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm font-['Albert_Sans',sans-serif] text-[12px] text-white">
+                        {item.category}
+                      </span>
+                    )}
                   </div>
 
-                  {/* Counter */}
-                  <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full font-['Albert_Sans',sans-serif] text-[14px]">
-                    {currentImageIndex + 1} / {images.length}
-                  </div>
-                </>
-              )}
-            </motion.div>
+                  {/* Category Badge (top-right corner) */}
+                  {item.category && (
+                    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#767A57]/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                      <span className="font-['Albert_Sans',sans-serif] text-[12px] text-white">
+                        {item.category}
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -448,106 +381,15 @@ export function CapexDetail() {
         </div>
       </section>
 
-      {/* Lightbox/Modal for Gallery */}
-      {images && images.length > 0 && (
-        <Dialog open={isLightboxOpen} onOpenChange={setIsLightboxOpen}>
-          <DialogContent
-            className="w-full max-w-[calc(100%-2rem)] sm:max-w-7xl !max-w-[90vw] !w-[90vw] sm:!max-w-[90vw] flex flex-col p-0"
-            style={{ maxWidth: '90vw', width: '90vw', maxHeight: '85vh' }}
-          >
-            {/* Hidden titles for accessibility */}
-            <DialogTitle className="sr-only">
-              {project.name} - Billede {currentImageIndex + 1} af {images.length}
-            </DialogTitle>
-            <DialogDescription className="sr-only">
-              Projekt galleri for {project.name}
-            </DialogDescription>
-
-            {/* Media section with proper flex layout */}
-            <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 180px)' }}>
-              {isCurrentVideo ? (
-                <video
-                  key={currentImageIndex} // Force re-mount on index change
-                  src={getFileUrl(currentMedia)}
-                  controls
-                  autoPlay={currentImageIndex === 0}
-                  muted={currentImageIndex === 0}
-                  className="w-full h-full object-contain"
-                  style={{ maxHeight: 'calc(85vh - 180px)' }}
-                />
-              ) : isSanityImage ? (
-                <SanityImage
-                  image={currentMedia}
-                  alt={`${project.name} - Billede ${currentImageIndex + 1}`}
-                  width={1400}
-                  className="w-full h-full object-contain"
-                />
-              ) : (
-                <ImageWithFallback
-                  src={currentMedia as string}
-                  alt={`${project.name} - Billede ${currentImageIndex + 1}`}
-                  className="w-full h-full object-contain"
-                />
-              )}
-            </div>
-
-            {/* Navigation buttons - center bottom - subtle like navbar */}
-            {images.length > 1 && (
-              <div className="flex-shrink-0 py-2.5 flex justify-center items-center gap-3 bg-white/95 shadow-[0_-2px_10px_rgba(0,0,0,0.075)]">
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    previousImage(e);
-                  }}
-                  className="bg-transparent hover:bg-gray-50 text-gray-600 hover:text-black p-2 rounded-full transition-all"
-                  aria-label="Forrige billede"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-
-                {/* Slide indicators (prikker) */}
-                <div className="flex items-center gap-1.5 px-4">
-                  {images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        goToImage(index);
-                      }}
-                      className={`rounded-full transition-all ${
-                        index === currentImageIndex
-                          ? 'bg-[#767A57] w-2 h-2'
-                          : 'bg-gray-300 w-1.5 h-1.5 hover:bg-gray-400'
-                      }`}
-                      aria-label={`Gå til billede ${index + 1}`}
-                    />
-                  ))}
-                </div>
-
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextImage(e);
-                  }}
-                  className="bg-transparent hover:bg-gray-50 text-gray-600 hover:text-black p-2 rounded-full transition-all"
-                  aria-label="Næste billede"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Project Info Bottom Bar - subtle like navbar */}
-            <div className="flex-shrink-0 py-3 px-6 bg-white/95 shadow-[0_0_10px_rgba(0,0,0,0.075)]">
-              <h3 className="font-['Crimson_Text',serif] text-[20px] leading-tight text-black">
-                {project.name}
-              </h3>
-              <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mt-0.5">
-                {project.location}
-              </p>
-            </div>
-          </DialogContent>
-        </Dialog>
+      {/* Lightbox Modal */}
+      {lightboxOpen && project.gallery && (
+        <ImageLightbox
+          images={project.gallery}
+          isOpen={lightboxOpen}
+          currentIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+          onNavigate={setLightboxIndex}
+        />
       )}
     </div>
   );

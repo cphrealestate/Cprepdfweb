@@ -220,6 +220,11 @@ export interface CapexProject {
   beforeImage: string | any; // Can be URL string or Sanity image object
   afterImage: string | any;  // Can be URL string or Sanity image object
   images?: any[]; // Array of image/video media items
+  gallery?: Array<{
+    image: string;
+    caption: string;
+    category?: "Før" | "Efter" | "Proces" | "Detalje";
+  }>;
   keyMetrics: Array<{
     label: string;
     before: string;
@@ -246,6 +251,38 @@ export const capexProjects: CapexProject[] = [
     afterDescription: "Ny moderne facade med trelagsrude, forbedret isolering og automatiseret solafskærmning. Energimærke opgraderet fra C til A.",
     beforeImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
     afterImage: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80",
+    gallery: [
+      {
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
+        caption: "Bygningen før renovering med forældet facade",
+        category: "Før"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80",
+        caption: "Byggeplads under renovering",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=80",
+        caption: "Monteringsarbejde på facade",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80",
+        caption: "Facaden efter renovering med nye vinduer",
+        category: "Efter"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=1200&q=80",
+        caption: "Detalje af nye energieffektive vinduer",
+        category: "Detalje"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&q=80",
+        caption: "Close-up af moderne glasfacade",
+        category: "Detalje"
+      }
+    ],
     keyMetrics: [
       { label: "Energiforbrug", before: "145 kWh/m²/år", after: "65 kWh/m²/år" },
       { label: "CO2 Reduktion", before: "-", after: "55%" },
@@ -277,6 +314,38 @@ export const capexProjects: CapexProject[] = [
     afterDescription: "Moderne skandinavisk design med naturlige materialer, digital adgangskontrol, og fleksible loungeområder.",
     beforeImage: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80",
     afterImage: "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1200&q=80",
+    gallery: [
+      {
+        image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=1200&q=80",
+        caption: "Lobby før renovering med utidssvarende design",
+        category: "Før"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80",
+        caption: "Nedrivning af gamle overflader",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80",
+        caption: "Installation af nye naturlige materialer",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1497215842964-222b430dc094?w=1200&q=80",
+        caption: "Moderne lobby med skandinavisk design",
+        category: "Efter"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200&q=80",
+        caption: "Digital adgangskontrol og sikkerhedssystem",
+        category: "Detalje"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1574643156929-51fa098b0394?w=1200&q=80",
+        caption: "Fleksibelt loungeområde",
+        category: "Efter"
+      }
+    ],
     keyMetrics: [
       { label: "Lejertilfredshed", before: "72%", after: "94%" },
       { label: "Besøgstal", before: "850/måned", after: "1,200/måned" },
@@ -305,6 +374,38 @@ export const capexProjects: CapexProject[] = [
     afterDescription: "1,200 m² tagterrasse med beplantning, siddepladser, udendørs mødelokaler og BBQ-område.",
     beforeImage: "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?w=1200&q=80",
     afterImage: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&q=80",
+    gallery: [
+      {
+        image: "https://images.unsplash.com/photo-1511452885600-a3d2c9148a31?w=1200&q=80",
+        caption: "Ubrugt tagområde før projektet",
+        category: "Før"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1628744404839-00936a8ab515?w=1200&q=80",
+        caption: "Forberedelse af tagterrasse",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80",
+        caption: "Plantning af grønne områder",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&q=80",
+        caption: "Færdig tagterrasse med beplantning",
+        category: "Efter"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&q=80",
+        caption: "Udendørs arbejdsplads med udsigt",
+        category: "Detalje"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1200&q=80",
+        caption: "Sociale zoner og BBQ-område",
+        category: "Detalje"
+      }
+    ],
     keyMetrics: [
       { label: "Anvendelig Areal", before: "0 m²", after: "1,200 m²" },
       { label: "Grøn Dækning", before: "0%", after: "40%" },
@@ -333,6 +434,38 @@ export const capexProjects: CapexProject[] = [
     afterDescription: "Delvis selvforsyning med grøn energi, reduceret afhængighed af net og lavere driftsomkostninger.",
     beforeImage: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
     afterImage: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80",
+    gallery: [
+      {
+        image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80",
+        caption: "Tagareal før installation",
+        category: "Før"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=1200&q=80",
+        caption: "3D visualisering af planlagt solcelleanlæg",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80",
+        caption: "Teknisk plan for solcellepaneler",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80",
+        caption: "Forventet resultat med 800 m² solceller",
+        category: "Efter"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1200&q=80",
+        caption: "Close-up af moderne solcellepaneler",
+        category: "Detalje"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&q=80",
+        caption: "Inverter og energistyringssystem",
+        category: "Detalje"
+      }
+    ],
     keyMetrics: [
       { label: "Årlig Produktion", before: "0 kWh", after: "145,000 kWh" },
       { label: "Selvforsyning", before: "0%", after: "35%" },
@@ -361,6 +494,38 @@ export const capexProjects: CapexProject[] = [
     afterDescription: "Fuldt automatiseret system med AI-baseret optimering af energi, belysning og ventilation baseret på realtidsdata.",
     beforeImage: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
     afterImage: "https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=80",
+    gallery: [
+      {
+        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80",
+        caption: "Kontorlokale med manuel styring",
+        category: "Før"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&q=80",
+        caption: "Installation af IoT sensorer",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1580894894513-541e068a3e2b?w=1200&q=80",
+        caption: "Konfiguration af styringssystem",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=80",
+        caption: "Moderne kontor med smart building automation",
+        category: "Efter"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&q=80",
+        caption: "Dashboard til real-time overvågning",
+        category: "Detalje"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&q=80",
+        caption: "AI-baseret energioptimering analytics",
+        category: "Detalje"
+      }
+    ],
     keyMetrics: [
       { label: "Energibesparelse", before: "-", after: "22%" },
       { label: "Indeklima Score", before: "78/100", after: "Est. 92/100" },
@@ -389,6 +554,38 @@ export const capexProjects: CapexProject[] = [
     afterDescription: "30 intelligente ladestandere med app-styring og betalingssystem.",
     beforeImage: "https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=1200&q=80",
     afterImage: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1200&q=80",
+    gallery: [
+      {
+        image: "https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=1200&q=80",
+        caption: "P-kælder uden EV-faciliteter",
+        category: "Før"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1200&q=80",
+        caption: "Planlægning af ladeinfrastruktur",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=1200&q=80",
+        caption: "Visualisering af kommende installationer",
+        category: "Proces"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1200&q=80",
+        caption: "P-kælder med 30 intelligente ladestandere",
+        category: "Efter"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1617704548623-340376564e68?w=1200&q=80",
+        caption: "Moderne elbil ladestander med app-styring",
+        category: "Detalje"
+      },
+      {
+        image: "https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?w=1200&q=80",
+        caption: "Elbil under opladning",
+        category: "Detalje"
+      }
+    ],
     keyMetrics: [
       { label: "Ladestandere", before: "0", after: "30" },
       { label: "Ladekapacitet", before: "0 kW", after: "660 kW" },
