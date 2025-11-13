@@ -13,7 +13,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { getCapexProjectById, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 import { isVideo, getFileUrl } from '../lib/sanity';
-import SymbolRealEstate from '../assets/Symbol-Real-estate.png';
 
 export function CapexDetail() {
   const { id: capexId } = useParams<{ id: string }>();
@@ -334,13 +333,6 @@ export function CapexDetail() {
 
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-[#767A57]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
-                      {/* Logo */}
-                      <img
-                        src={SymbolRealEstate}
-                        alt="Copenhagen Real Estate"
-                        className="w-12 h-12 mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300"
-                      />
-
                       {/* Caption */}
                       <p className="font-['Albert_Sans',sans-serif] text-[16px] text-white text-center px-4">
                         {item.caption}
