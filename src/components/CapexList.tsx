@@ -148,7 +148,7 @@ export function CapexList() {
       </section>
 
       {/* Search and Filter Section */}
-      <section className="px-12 pb-8">
+      <section className="px-12 pb-16">
         <div className="max-w-[1400px] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
