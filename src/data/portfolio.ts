@@ -6,7 +6,7 @@ export const portfolioData = {
     totalProperties: 15,
     totalArea: "125,000 m²",
     totalValue: "2.5 mia. DKK",
-    occupancyRate: "96%"
+    totalRent: "240 mio. DKK/år"
   },
   regions: [
     { name: "Storkøbenhavn", percentage: 30, properties: 5 },

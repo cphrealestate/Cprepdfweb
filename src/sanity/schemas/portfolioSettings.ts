@@ -43,9 +43,10 @@ export default {
       type: 'string',
     },
     {
-      name: 'occupancyRate',
-      title: 'Udlejningsgrad',
+      name: 'totalRent',
+      title: 'Årlig Leje',
       type: 'string',
+      description: 'Fx: 50.3 mio. DKK/år',
     },
     {
       name: 'highlights',

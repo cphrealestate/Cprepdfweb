@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Building2, TrendingUp, MapPin, Award, Loader2 } from 'lucide-react';
+import { Building2, TrendingUp, MapPin, Banknote, Loader2 } from 'lucide-react';
 import { portfolioData } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImage from '../assets/Symbol-Real-estate.png';
@@ -49,7 +49,7 @@ export function PortfolioOverview() {
               totalProperties: settings.totalProperties || 0,
               totalArea: settings.totalArea || '',
               totalValue: settings.totalValue || '',
-              occupancyRate: settings.occupancyRate || '',
+              totalRent: settings.totalRent || '',
             },
             regions: regions.map(r => ({
               name: r.name,
@@ -143,7 +143,7 @@ export function PortfolioOverview() {
             { label: 'Ejendomme', value: stats.totalProperties, icon: Building2 },
             { label: 'Total Areal', value: stats.totalArea, icon: MapPin },
             { label: 'Samlet Værdi', value: stats.totalValue, icon: TrendingUp },
-            { label: 'Udlejningsgrad', value: stats.occupancyRate, icon: Award }
+            { label: 'Årlig Leje', value: stats.totalRent, icon: Banknote }
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
