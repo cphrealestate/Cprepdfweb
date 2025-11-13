@@ -89,55 +89,50 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mb-8 space-y-4"
+          className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8"
         >
           {/* Search Bar */}
-          <div className="flex items-stretch rounded-full px-3 h-13 transition-colors border border-gray-300 focus-within:border-[#767A57] w-fit bg-white">
+          <div className="relative mb-6">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
             <input
               type="text"
-              placeholder="Søg..."
+              placeholder="Søg efter ejendom eller lokation..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="outline-none bg-transparent font-['Albert_Sans',sans-serif] text-base px-2 w-64 text-black"
+              className="pl-12 h-12 w-full text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 rounded-xl font-['Albert_Sans',sans-serif] px-4"
             />
-            <label className="flex items-center">
-              <span className="text-white inline-block bg-[#767A57] size-7 p-1.5 rounded-full">
-                <Search className="w-full h-full" />
-              </span>
-            </label>
           </div>
 
           {/* City Filters */}
           {uniqueCities.length > 0 && (
-            <div className="flex gap-2 relative flex-nowrap overflow-x-auto w-full min-w-0 max-md:scrollbar-none">
-              {uniqueCities.map((city) => (
-                <div key={city}>
-                  <input
-                    className="sr-only"
-                    id={`city-${city}`}
-                    type="checkbox"
-                    checked={selectedCities.has(city)}
-                    onChange={() => toggleCity(city)}
-                  />
-                  <label htmlFor={`city-${city}`} className="cursor-pointer">
-                    <div
-                      className={`flex items-center justify-center gap-1 rounded-full w-36 font-medium border px-3 h-8 text-sm transition-colors cursor-pointer ${
-                        selectedCities.has(city)
-                          ? 'bg-[#767A57] text-white border-[#767A57]'
-                          : 'border-gray-300 text-black bg-white hover:bg-gray-50 hover:border-[#767A57]'
-                      }`}
-                    >
-                      {city}
-                    </div>
-                  </label>
-                </div>
-              ))}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin className="w-4 h-4 text-slate-500" />
+                <span className="text-sm text-slate-600 font-['Albert_Sans',sans-serif]">Filtrer efter lokation:</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {uniqueCities.map((city) => (
+                  <button
+                    key={city}
+                    onClick={() => toggleCity(city)}
+                    className={`cursor-pointer px-4 py-2 transition-all hover:scale-105 rounded-md inline-flex items-center justify-center font-['Albert_Sans',sans-serif] ${
+                      selectedCities.has(city)
+                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md'
+                        : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300'
+                    }`}
+                  >
+                    {city}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
-          {/* Results count */}
-          <div className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-            Viser {filteredProperties.length} af {properties.length} ejendomme
+          {/* Results Count */}
+          <div className="mt-6 pt-6 border-t border-slate-200">
+            <p className="text-sm text-slate-600 font-['Albert_Sans',sans-serif]">
+              Viser <span className="text-slate-900 font-medium">{filteredProperties.length}</span> af <span className="text-slate-900 font-medium">{properties.length}</span> ejendomme
+            </p>
           </div>
         </motion.div>
 
