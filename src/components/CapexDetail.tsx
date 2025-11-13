@@ -295,54 +295,67 @@ export function CapexDetail() {
 
             {/* Masonry Grid */}
             <div className="grid grid-cols-3 gap-4">
-              {project.gallery.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.9 + index * 0.05 }}
+              {project.gallery.map((item, index) => {
+                const isSanityImage = item.image && typeof item.image === 'object' && (item.image._type === 'image' || item.image.asset);
 
-                  className={`relative group cursor-pointer overflow-hidden rounded-lg ${
-                    index === 0 ? 'col-span-2 row-span-2' : ''
-                  }`}
-                  onClick={() => openLightbox(index)}
-                  style={{ height: index === 0 ? '400px' : '190px' }}
-                >
-                  {/* Image */}
-                  <ImageWithFallback
-                    src={item.image}
-                    alt={item.caption}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.9 + index * 0.05 }}
 
-                  {/* Hover Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-[#767A57]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
-                    {/* Zoom Icon */}
-                    <ImageIcon className="w-12 h-12 text-white mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300" />
-
-                    {/* Caption */}
-                    <p className="font-['Albert_Sans',sans-serif] text-[16px] text-white text-center px-4">
-                      {item.caption}
-                    </p>
-
-                    {/* Category Badge (in overlay) */}
-                    {item.category && (
-                      <span className="mt-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm font-['Albert_Sans',sans-serif] text-[12px] text-white">
-                        {item.category}
-                      </span>
+                    className={`relative group cursor-pointer overflow-hidden rounded-lg ${
+                      index === 0 ? 'col-span-2 row-span-2' : ''
+                    }`}
+                    onClick={() => openLightbox(index)}
+                    style={{ height: index === 0 ? '400px' : '190px' }}
+                  >
+                    {/* Image */}
+                    {isSanityImage ? (
+                      <SanityImage
+                        image={item.image}
+                        alt={item.caption}
+                        width={index === 0 ? 800 : 400}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    ) : (
+                      <ImageWithFallback
+                        src={item.image as string}
+                        alt={item.caption}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
                     )}
-                  </div>
 
-                  {/* Category Badge (top-right corner) */}
-                  {item.category && (
-                    <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#767A57]/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                      <span className="font-['Albert_Sans',sans-serif] text-[12px] text-white">
-                        {item.category}
-                      </span>
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-[#767A57]/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center">
+                      {/* Zoom Icon */}
+                      <ImageIcon className="w-12 h-12 text-white mb-3 transform scale-0 group-hover:scale-100 transition-transform duration-300" />
+
+                      {/* Caption */}
+                      <p className="font-['Albert_Sans',sans-serif] text-[16px] text-white text-center px-4">
+                        {item.caption}
+                      </p>
+
+                      {/* Category Badge (in overlay) */}
+                      {item.category && (
+                        <span className="mt-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-sm font-['Albert_Sans',sans-serif] text-[12px] text-white">
+                          {item.category}
+                        </span>
+                      )}
                     </div>
-                  )}
-                </motion.div>
-              ))}
+
+                    {/* Category Badge (top-right corner) */}
+                    {item.category && (
+                      <div className="absolute top-3 right-3 px-3 py-1 rounded-full bg-[#767A57]/90 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="font-['Albert_Sans',sans-serif] text-[12px] text-white">
+                          {item.category}
+                        </span>
+                      </div>
+                    )}
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
