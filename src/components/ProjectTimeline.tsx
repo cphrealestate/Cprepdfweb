@@ -92,12 +92,12 @@ export function ProjectTimeline({
 
         {/* Right - Status Badge */}
         <div
-          className="flex items-center gap-3 px-8 py-4 rounded-full mr-4"
+          className="flex items-center gap-2 px-4 py-2 rounded-full mr-4"
           style={{ backgroundColor: statusColor.bg }}
         >
-          <Clock className="w-6 h-6" style={{ color: statusColor.text }} />
+          <Clock className="w-4 h-4" style={{ color: statusColor.text }} />
           <span
-            className="font-['Albert_Sans',sans-serif] text-[18px] font-medium"
+            className="font-['Albert_Sans',sans-serif] text-[14px]"
             style={{ color: statusColor.text }}
           >
             {status}
