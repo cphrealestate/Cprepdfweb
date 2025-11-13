@@ -29,7 +29,7 @@ export function urlFor(source: any) {
 }
 
 // Helper to get image URL with optional width
-export function getImageUrl(source: any, width?: number) {
+export function getImageUrl(source: any, width?: number, quality: number = 75) {
   if (!source) {
     return '';
   }
@@ -50,7 +50,7 @@ export function getImageUrl(source: any, width?: number) {
       return '';
     }
 
-    url = url.auto('format');
+    url = url.auto('format').quality(quality);
 
     if (width) {
       url = url.width(width);

@@ -220,7 +220,7 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
                   <SanityImage
                     image={currentMedia}
                     alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                    width={1200}
+                    width={650}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -558,7 +558,7 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
               <SanityImage
                 image={currentMedia}
                 alt={`${property.name} - Billede ${currentImageIndex + 1}`}
-                width={1920}
+                width={1400}
                 className="w-full h-full object-contain"
               />
             ) : (
