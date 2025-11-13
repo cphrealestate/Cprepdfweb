@@ -79,25 +79,25 @@ export function ProjectTimeline({
       className="bg-white rounded-lg p-10 mb-12"
     >
       {/* Status Header */}
-      <div className="flex items-center justify-between mb-12">
+      <div className="flex items-center justify-between mb-16 px-4">
         {/* Left - Progress Percentage */}
-        <div>
-          <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] mb-2">
+        <div className="ml-4">
+          <p className="font-['Albert_Sans',sans-serif] text-[18px] text-[#595959] mb-3">
             Status
           </p>
-          <p className="font-['Crimson_Text',serif] text-[32px] text-[#767A57]">
+          <p className="font-['Crimson_Text',serif] text-[48px] leading-[56px] text-[#767A57]">
             {displayProgress}% Gennemført
           </p>
         </div>
 
         {/* Right - Status Badge */}
         <div
-          className="flex items-center gap-2 px-6 py-3 rounded-full"
+          className="flex items-center gap-3 px-8 py-4 rounded-full mr-4"
           style={{ backgroundColor: statusColor.bg }}
         >
-          <Clock className="w-5 h-5" style={{ color: statusColor.text }} />
+          <Clock className="w-6 h-6" style={{ color: statusColor.text }} />
           <span
-            className="font-['Albert_Sans',sans-serif] text-[16px]"
+            className="font-['Albert_Sans',sans-serif] text-[18px] font-medium"
             style={{ color: statusColor.text }}
           >
             {status}
