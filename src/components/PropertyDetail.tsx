@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight, Presentation, FileText } from 'lucide-react';
+import { ArrowLeft, MapPin, Calendar, X, ChevronLeft, ChevronRight, Presentation, FileText, Hammer } from 'lucide-react';
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useState, useEffect } from 'react';
 import { isVideo, getFileUrl } from '../lib/sanity';
+import { getCapexProjectsByPropertyId, CapexProject } from '../lib/sanity-queries';
 
 interface PropertyDetailProps {
   property: Property;
@@ -34,6 +35,18 @@ export function PropertyDetail({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showPresentation, setShowPresentation] = useState(false);
   const [showTenantList, setShowTenantList] = useState(false);
+  const [capexProjects, setCapexProjects] = useState<CapexProject[]>([]);
+
+  // Fetch CAPEX projects for this property
+  useEffect(() => {
+    async function fetchCapexProjects() {
+      if (property._id) {
+        const projects = await getCapexProjectsByPropertyId(property._id);
+        setCapexProjects(projects);
+      }
+    }
+    fetchCapexProjects();
+  }, [property._id]);
 
   // Keyboard navigation for lightbox
   useEffect(() => {
@@ -157,21 +170,37 @@ export function PropertyDetail({
               </div>
             </div>
 
-            {/* Presentation Mode Button */}
-            <button
-              onClick={() => setShowPresentation(true)}
-              className="flex items-center gap-3 px-8 py-5 bg-white text-black rounded-full hover:shadow-2xl transition-all group shadow-lg"
-            >
-              <Presentation className="w-7 h-7 text-black" />
-              <div className="text-left">
-                <p className="font-['Albert_Sans',sans-serif] text-[12px] text-black/90 uppercase tracking-wide">
-                  Start
-                </p>
-                <p className="font-['Crimson_Text',serif] text-[20px] text-black">
-                  Præsentation
-                </p>
-              </div>
-            </button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-4">
+              {/* CAPEX Projects Button - Only show if projects exist */}
+              {capexProjects.length > 0 && (
+                <button
+                  onClick={() => {
+                    // TODO: Navigate to CAPEX projects view
+                    console.log('Show CAPEX projects:', capexProjects);
+                  }}
+                  className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
+                >
+                  Se Capex Projekter
+                </button>
+              )}
+
+              {/* Presentation Mode Button */}
+              <button
+                onClick={() => setShowPresentation(true)}
+                className="flex items-center gap-3 px-8 py-5 bg-white text-black rounded-full hover:shadow-2xl transition-all group shadow-lg"
+              >
+                <Presentation className="w-7 h-7 text-black" />
+                <div className="text-left">
+                  <p className="font-['Albert_Sans',sans-serif] text-[12px] text-black/90 uppercase tracking-wide">
+                    Start
+                  </p>
+                  <p className="font-['Crimson_Text',serif] text-[20px] text-black">
+                    Præsentation
+                  </p>
+                </div>
+              </button>
+            </div>
           </motion.div>
 
           {/* Main Grid */}
