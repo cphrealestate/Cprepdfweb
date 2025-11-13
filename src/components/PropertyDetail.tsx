@@ -9,6 +9,7 @@ import { Breadcrumbs } from './Breadcrumbs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useState, useEffect } from 'react';
+import { isVideo, getFileUrl } from '../lib/sanity';
 
 interface PropertyDetailProps {
   property: Property;
@@ -63,9 +64,10 @@ export function PropertyDetail({
     return <PropertyPresentation property={property} onClose={() => setShowPresentation(false)} />;
   }
 
-  // Check if images are Sanity objects or URL strings
-  const currentImage = property.images[currentImageIndex];
-  const isSanityImage = typeof currentImage === 'object' && currentImage !== null;
+  // Check if current media is video, Sanity image, or URL string
+  const currentMedia = property.images[currentImageIndex];
+  const isCurrentVideo = typeof currentMedia === 'object' && currentMedia !== null && isVideo(currentMedia);
+  const isSanityImage = typeof currentMedia === 'object' && currentMedia !== null && !isCurrentVideo;
 
   // Navigation mellem billeder
   const nextImage = () => {
@@ -181,21 +183,30 @@ export function PropertyDetail({
               transition={{ delay: 0.2 }}
               className="aspect-[4/3] bg-[#e5e5e0] rounded-lg overflow-hidden relative group"
             >
-              {/* Hoved billede - klikbart */}
+              {/* Hoved medie - klikbart */}
               <div
                 onClick={() => setIsLightboxOpen(true)}
                 className="cursor-pointer w-full h-full"
               >
-                {isSanityImage ? (
+                {isCurrentVideo ? (
+                  <video
+                    src={getFileUrl(currentMedia)}
+                    controls
+                    autoPlay={currentImageIndex === 0}
+                    muted={currentImageIndex === 0}
+                    loop
+                    className="w-full h-full object-cover"
+                  />
+                ) : isSanityImage ? (
                   <SanityImage
-                    image={currentImage}
+                    image={currentMedia}
                     alt={`${property.name} - Billede ${currentImageIndex + 1}`}
                     width={1200}
                     className="w-full h-full object-cover"
                   />
                 ) : (
                   <ImageWithFallback
-                    src={currentImage as string}
+                    src={currentMedia as string}
                     alt={`${property.name} - Billede ${currentImageIndex + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -516,18 +527,28 @@ export function PropertyDetail({
             Billedgalleri for {property.name} i {property.location}
           </DialogDescription>
 
-          {/* Image section with proper flex layout */}
+          {/* Media section with proper flex layout */}
           <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 180px)' }}>
-            {isSanityImage ? (
+            {isCurrentVideo ? (
+              <video
+                key={currentImageIndex} // Force re-mount on index change
+                src={getFileUrl(currentMedia)}
+                controls
+                autoPlay={currentImageIndex === 0}
+                muted={currentImageIndex === 0}
+                className="w-full h-full object-contain"
+                style={{ maxHeight: 'calc(85vh - 180px)' }}
+              />
+            ) : isSanityImage ? (
               <SanityImage
-                image={currentImage}
+                image={currentMedia}
                 alt={`${property.name} - Billede ${currentImageIndex + 1}`}
                 width={1920}
                 className="w-full h-full object-contain"
               />
             ) : (
               <ImageWithFallback
-                src={currentImage as string}
+                src={currentMedia as string}
                 alt={`${property.name} - Billede ${currentImageIndex + 1}`}
                 className="w-full h-full object-contain"
               />

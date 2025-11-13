@@ -80,10 +80,22 @@ export default {
     },
     {
       name: 'images',
-      title: 'Billedgalleri',
+      title: 'Medie Galleri',
       type: 'array',
-      of: [{type: 'image', options: {hotspot: true}}],
-      validation: (Rule: any) => Rule.min(1).required().error('Tilføj mindst ét billede'),
+      description: 'Upload billeder og videoer. Første video autoplay\'er.',
+      of: [
+        {
+          type: 'image',
+          options: {hotspot: true}
+        },
+        {
+          type: 'file',
+          options: {
+            accept: 'video/*'
+          }
+        }
+      ],
+      validation: (Rule: any) => Rule.min(1).required().error('Tilføj mindst ét medie'),
     },
     {
       name: 'keyFacts',
