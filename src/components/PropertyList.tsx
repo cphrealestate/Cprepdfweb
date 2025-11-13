@@ -99,7 +99,7 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
               placeholder="Søg efter ejendom eller lokation..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-12 w-full text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 rounded-xl font-['Albert_Sans',sans-serif] px-4"
+              className="pl-12 h-12 w-full text-base border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#767A57] focus:border-[#767A57] rounded-xl font-['Albert_Sans',sans-serif] px-4"
             />
           </div>
 
@@ -115,9 +115,9 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
                   <button
                     key={city}
                     onClick={() => toggleCity(city)}
-                    className={`cursor-pointer px-4 py-2 transition-all hover:scale-105 rounded-md inline-flex items-center justify-center font-['Albert_Sans',sans-serif] ${
+                    className={`cursor-pointer px-4 py-2 transition-all hover:scale-105 rounded-xl inline-flex items-center justify-center font-['Albert_Sans',sans-serif] ${
                       selectedCities.has(city)
-                        ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-md'
+                        ? 'bg-[#767A57] hover:bg-[#5f6345] text-white shadow-md'
                         : 'bg-white hover:bg-slate-50 text-slate-700 border border-slate-300'
                     }`}
                   >
