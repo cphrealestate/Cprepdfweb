@@ -69,12 +69,17 @@ export interface Property {
   }>;
 }
 
+export type ProjectPhase = 'Skitseprojekt' | 'Lokalplan' | 'Byggetilladelse' | 'Projektering' | 'Byggeri' | 'Udlejning';
+
 export interface CapexProject {
   _id: string;
   name: string;
   propertyName: string;
   location: string;
   status: 'Planlagt' | 'I gang' | 'Afsluttet';
+  currentPhase?: ProjectPhase;
+  completedPhases?: ProjectPhase[];
+  progressPercentage?: number;
   investment: string;
   startDate: string;
   completionDate: string;
@@ -291,6 +296,9 @@ export async function getCapexProjects(): Promise<CapexProject[]> {
     propertyName,
     location,
     status,
+    currentPhase,
+    completedPhases,
+    progressPercentage,
     investment,
     startDate,
     completionDate,
@@ -334,6 +342,9 @@ export async function getCapexProjectById(id: string): Promise<CapexProject | nu
     propertyName,
     location,
     status,
+    currentPhase,
+    completedPhases,
+    progressPercentage,
     investment,
     startDate,
     completionDate,
@@ -377,6 +388,9 @@ export async function getCapexProjectsByPropertyId(propertyId: string): Promise<
     propertyName,
     location,
     status,
+    currentPhase,
+    completedPhases,
+    progressPercentage,
     investment,
     startDate,
     completionDate,

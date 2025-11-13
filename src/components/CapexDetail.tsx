@@ -5,6 +5,7 @@ import { LogoButton } from './LogoButton';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { Breadcrumbs } from './Breadcrumbs';
+import { ProjectTimeline } from './ProjectTimeline';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { getCapexProjectById, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
@@ -227,6 +228,27 @@ export function CapexDetail() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Project Timeline */}
+      <section className="px-12 pb-12">
+        <div className="max-w-[1400px] mx-auto">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="font-['Crimson_Text',serif] text-[48px] leading-[58px] text-black mb-8"
+          >
+            Projekt Fremskridt
+          </motion.h2>
+
+          <ProjectTimeline
+            currentPhase={project.currentPhase}
+            completedPhases={project.completedPhases}
+            progressPercentage={project.progressPercentage}
+            status={project.status}
+          />
         </div>
       </section>
 
