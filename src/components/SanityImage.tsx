@@ -1,4 +1,4 @@
-import { getImageUrl } from '../lib/sanity';
+import { getImageUrl, isVideo } from '../lib/sanity';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 
 interface SanityImageProps {
@@ -21,6 +21,12 @@ interface SanityImageProps {
  * />
  */
 export function SanityImage({ image, alt, width, className, fallbackQuery }: SanityImageProps) {
+  // Skip if this is a video file (should use <video> tag instead)
+  if (isVideo(image)) {
+    console.warn('SanityImage received a video file. Use <video> tag instead.');
+    return null;
+  }
+
   // Get Sanity image URL if available
   const sanityUrl = image ? getImageUrl(image, width) : '';
 
