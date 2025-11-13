@@ -6,6 +6,7 @@ import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { Breadcrumbs } from './Breadcrumbs';
 import { useState, useMemo } from 'react';
+import { isVideo, getFileUrl } from '../lib/sanity';
 
 interface PropertyListProps {
   properties: Property[];
@@ -173,15 +174,24 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
               onClick={() => onSelectProperty(property)}
               className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group"
             >
-              {/* Image */}
+              {/* Image or Video Thumbnail */}
               <div className="aspect-[4/3] bg-[#e5e5e0] overflow-hidden">
                 {typeof property.images[0] === 'object' && property.images[0] !== null ? (
-                  <SanityImage
-                    image={property.images[0]}
-                    alt={property.name}
-                    width={800}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
+                  isVideo(property.images[0]) ? (
+                    <video
+                      src={getFileUrl(property.images[0])}
+                      className="w-full h-full object-cover"
+                      muted
+                      playsInline
+                    />
+                  ) : (
+                    <SanityImage
+                      image={property.images[0]}
+                      alt={property.name}
+                      width={800}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  )
                 ) : (
                   <ImageWithFallback
                     src={property.images[0] as string}
