@@ -37,6 +37,46 @@ export default {
       validation: (Rule: any) => Rule.required(),
     },
     {
+      name: 'currentPhase',
+      title: 'Nuværende Fase',
+      type: 'string',
+      options: {
+        list: [
+          {title: 'Skitseprojekt', value: 'Skitseprojekt'},
+          {title: 'Lokalplan', value: 'Lokalplan'},
+          {title: 'Byggetilladelse', value: 'Byggetilladelse'},
+          {title: 'Projektering', value: 'Projektering'},
+          {title: 'Byggeri', value: 'Byggeri'},
+          {title: 'Udlejning', value: 'Udlejning'},
+        ],
+      },
+      description: 'Hvilken fase er projektet i nu?',
+    },
+    {
+      name: 'completedPhases',
+      title: 'Gennemførte Faser',
+      type: 'array',
+      of: [{type: 'string'}],
+      options: {
+        list: [
+          {title: 'Skitseprojekt', value: 'Skitseprojekt'},
+          {title: 'Lokalplan', value: 'Lokalplan'},
+          {title: 'Byggetilladelse', value: 'Byggetilladelse'},
+          {title: 'Projektering', value: 'Projektering'},
+          {title: 'Byggeri', value: 'Byggeri'},
+          {title: 'Udlejning', value: 'Udlejning'},
+        ],
+      },
+      description: 'Hvilke faser er færdige?',
+    },
+    {
+      name: 'progressPercentage',
+      title: 'Fremskridt (%)',
+      type: 'number',
+      validation: (Rule: any) => Rule.min(0).max(100),
+      description: 'Hvor mange procent af projektet er gennemført? (0-100)',
+    },
+    {
       name: 'investment',
       title: 'Investering',
       type: 'string',

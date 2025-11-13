@@ -196,12 +196,17 @@ export const properties: Property[] = [
 ];
 
 // Capex Projects data
+export type ProjectPhase = 'Skitseprojekt' | 'Lokalplan' | 'Byggetilladelse' | 'Projektering' | 'Byggeri' | 'Udlejning';
+
 export interface CapexProject {
   id: string;
   name: string;
   propertyName: string;
   location: string;
   status: "Planlagt" | "I gang" | "Afsluttet";
+  currentPhase?: ProjectPhase;
+  completedPhases?: ProjectPhase[];
+  progressPercentage?: number;
   investment: string;
   startDate: string;
   completionDate: string;
@@ -225,6 +230,9 @@ export const capexProjects: CapexProject[] = [
     propertyName: "Kontorhuset Ørestad",
     location: "København",
     status: "Afsluttet",
+    currentPhase: "Udlejning",
+    completedPhases: ["Skitseprojekt", "Lokalplan", "Byggetilladelse", "Projektering", "Byggeri", "Udlejning"],
+    progressPercentage: 100,
     investment: "12.5 mio. DKK",
     startDate: "Januar 2024",
     completionDate: "Juni 2024",
@@ -252,7 +260,10 @@ export const capexProjects: CapexProject[] = [
     name: "Fællesarealer Modernisering",
     propertyName: "City Tower Aarhus",
     location: "Aarhus",
-    status: "Afsluttet",
+    status: "I gang",
+    currentPhase: "Projektering",
+    completedPhases: ["Skitseprojekt", "Lokalplan", "Byggetilladelse"],
+    progressPercentage: 60,
     investment: "8.2 mio. DKK",
     startDate: "Marts 2024",
     completionDate: "August 2024",
