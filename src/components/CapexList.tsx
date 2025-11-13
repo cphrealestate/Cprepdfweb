@@ -42,6 +42,7 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
             afterImage: p.afterImage || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
             keyMetrics: p.keyMetrics,
             benefits: p.benefits,
+            property: p.property,
           }));
           setProjects(adapted as any);
         }

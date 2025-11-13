@@ -53,6 +53,7 @@ export function CapexDetail({ capexId, onBack, onBackToHome, onSelectProperty }:
             afterImage: sanityProject.afterImage || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
             keyMetrics: sanityProject.keyMetrics,
             benefits: sanityProject.benefits,
+            property: sanityProject.property,
           };
           setProject(adapted);
         }
