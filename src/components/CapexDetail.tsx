@@ -28,16 +28,7 @@ export function CapexDetail() {
 
   useEffect(() => {
     async function loadProject() {
-      // First try to find in hardcoded data
-      const hardcodedProject = capexProjects.find((p) => p.id === capexId);
-
-      if (hardcodedProject) {
-        setProject(hardcodedProject);
-        setLoading(false);
-        return;
-      }
-
-      // If not found, try to fetch from Sanity
+      // Try to fetch from Sanity first
       try {
         const sanityProject = await getCapexProjectById(capexId);
 
@@ -62,17 +53,30 @@ export function CapexDetail() {
             beforeImage: sanityProject.beforeImage || 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200&q=80',
             afterImage: sanityProject.afterImage || 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1200&q=80',
             images: sanityProject.images,
+            gallery: sanityProject.gallery, // Include gallery data from Sanity
             keyMetrics: sanityProject.keyMetrics,
             benefits: sanityProject.benefits,
             property: sanityProject.property,
           };
           setProject(adapted);
+          setLoading(false);
+          return;
         }
       } catch (error) {
-        console.error('Error loading capex project:', error);
-      } finally {
-        setLoading(false);
+        console.error('Error loading capex project from Sanity:', error);
       }
+
+      // Fallback to hardcoded data if Sanity fetch fails or returns null
+      const hardcodedProject = capexProjects.find((p) => p.id === capexId);
+
+      if (hardcodedProject) {
+        setProject(hardcodedProject);
+        setLoading(false);
+        return;
+      }
+
+      // If nothing found, set loading to false
+      setLoading(false);
     }
 
     loadProject();
