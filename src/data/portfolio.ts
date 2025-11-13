@@ -73,7 +73,7 @@ export interface Property {
   occupancy: string;
   yearBuilt: number;
   description: string;
-  images: string[]; // ← ÆNDRET fra "image: string" til "images: string[]"
+  images: any[]; // Can be Sanity images, videos, or URL strings
   keyFacts: Array<{
     label: string;
     value: string;

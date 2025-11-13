@@ -63,5 +63,44 @@ export function getImageUrl(source: any, width?: number) {
   }
 }
 
+// Helper to get video/file URL from Sanity
+export function getFileUrl(source: any) {
+  if (!source) {
+    return '';
+  }
+
+  // Try to extract direct URL if available
+  if (source.asset?.url) {
+    return source.asset.url;
+  }
+
+  // Construct Sanity CDN URL for file
+  if (source.asset?._ref && sanityConfig.projectId !== 'YOUR_PROJECT_ID') {
+    const ref = source.asset._ref;
+    // Format: file-{assetId}-{extension}
+    const parts = ref.split('-');
+    if (parts.length >= 3) {
+      const assetId = parts.slice(1, -1).join('-');
+      const extension = parts[parts.length - 1];
+      return `https://cdn.sanity.io/files/${sanityConfig.projectId}/${sanityConfig.dataset}/${assetId}.${extension}`;
+    }
+  }
+
+  return '';
+}
+
+// Helper to check if media item is a video
+export function isVideo(mediaItem: any): boolean {
+  if (!mediaItem) return false;
+
+  // Check _type field
+  if (mediaItem._type === 'file') return true;
+
+  // Check asset reference for file pattern
+  if (mediaItem.asset?._ref?.startsWith('file-')) return true;
+
+  return false;
+}
+
 // Export flag to check if Sanity is configured
 export const isSanityConfigured = sanityClient !== null;

@@ -1,5 +1,24 @@
 import { sanityClient } from './sanity';
 
+// Media types for gallery (images and videos)
+export type MediaItem = {
+  _type: 'image';
+  _key: string;
+  asset: {
+    _ref: string;
+    _type: 'reference';
+  };
+  hotspot?: any;
+} | {
+  _type: 'file';
+  _key: string;
+  asset: {
+    _ref: string;
+    _type: 'reference';
+    url?: string;
+  };
+};
+
 // Types matching your current data structure
 export interface Region {
   _id: string;
@@ -22,7 +41,7 @@ export interface Property {
   yearBuilt: number;
   description: string;
   image?: any; // Sanity image object (legacy)
-  images?: any[]; // Sanity image array
+  images?: MediaItem[]; // Sanity image/video array
   keyFacts: Array<{
     label: string;
     value: string;
