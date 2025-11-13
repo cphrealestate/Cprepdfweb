@@ -14,6 +14,7 @@ import {
 import { Property } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
+import { isVideo, getFileUrl } from '../lib/sanity';
 
 interface PropertyPresentationProps {
   property: Property;
@@ -85,10 +86,12 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
   };
 
   const mainImage = property.images && property.images.length > 0 ? property.images[0] : '';
-  const isSanityImage = typeof mainImage === 'object' && mainImage !== null;
+  const isMainVideo = typeof mainImage === 'object' && mainImage !== null && isVideo(mainImage);
+  const isSanityImage = typeof mainImage === 'object' && mainImage !== null && !isMainVideo;
 
   // Debug logging
   console.log('PropertyPresentation - mainImage:', mainImage);
+  console.log('PropertyPresentation - isMainVideo:', isMainVideo);
   console.log('PropertyPresentation - isSanityImage:', isSanityImage);
   console.log('PropertyPresentation - property.images:', property.images);
 
@@ -138,10 +141,10 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
               }}
               className="absolute inset-0"
             >
-              {slides[currentSlide].type === 'hero' && <HeroSlide property={property} mainImage={mainImage} isSanityImage={isSanityImage} />}
+              {slides[currentSlide].type === 'hero' && <HeroSlide property={property} mainImage={mainImage} isMainVideo={isMainVideo} isSanityImage={isSanityImage} />}
               {slides[currentSlide].type === 'stats' && <StatsSlide property={property} />}
               {slides[currentSlide].type === 'description' && <DescriptionSlide property={property} />}
-              {slides[currentSlide].type === 'details' && <DetailsSlide property={property} mainImage={mainImage} isSanityImage={isSanityImage} />}
+              {slides[currentSlide].type === 'details' && <DetailsSlide property={property} mainImage={mainImage} isMainVideo={isMainVideo} isSanityImage={isSanityImage} />}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -193,17 +196,26 @@ export function PropertyPresentation({ property, onClose }: PropertyPresentation
 }
 
 // Hero Slide Component
-function HeroSlide({ property, mainImage, isSanityImage }: { property: Property; mainImage: any; isSanityImage: boolean }) {
+function HeroSlide({ property, mainImage, isMainVideo, isSanityImage }: { property: Property; mainImage: any; isMainVideo: boolean; isSanityImage: boolean }) {
   return (
     <div className="h-full flex items-stretch gap-8">
-      {/* Image - Left Side (55%) */}
+      {/* Image or Video - Left Side (55%) */}
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.2 }}
         className="w-[55%] rounded-3xl overflow-hidden shadow-2xl bg-white/10"
       >
-        {isSanityImage ? (
+        {isMainVideo ? (
+          <video
+            src={getFileUrl(mainImage)}
+            controls
+            autoPlay
+            muted
+            loop
+            className="w-full h-full object-cover"
+          />
+        ) : isSanityImage ? (
           <SanityImage
             image={mainImage}
             alt={property.name}
@@ -391,17 +403,26 @@ function DescriptionSlide({ property }: { property: Property }) {
 }
 
 // Details Slide Component
-function DetailsSlide({ property, mainImage, isSanityImage }: { property: Property; mainImage: any; isSanityImage: boolean }) {
+function DetailsSlide({ property, mainImage, isMainVideo, isSanityImage }: { property: Property; mainImage: any; isMainVideo: boolean; isSanityImage: boolean }) {
   return (
     <div className="h-full flex items-center justify-center">
       <div className="w-full max-w-[1200px] grid grid-cols-2 gap-10">
-        {/* Left Column - Image */}
+        {/* Left Column - Image or Video */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           className="rounded-3xl overflow-hidden shadow-2xl bg-white/10"
         >
-          {isSanityImage ? (
+          {isMainVideo ? (
+            <video
+              src={getFileUrl(mainImage)}
+              controls
+              autoPlay
+              muted
+              loop
+              className="w-full h-full object-cover"
+            />
+          ) : isSanityImage ? (
             <SanityImage
               image={mainImage}
               alt={property.name}
