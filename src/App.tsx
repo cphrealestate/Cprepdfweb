@@ -6,6 +6,7 @@ import { CapexList } from './components/CapexList';
 import { CapexDetail } from './components/CapexDetail';
 import { PresentationList } from './components/PresentationList';
 import { PresentationView } from './components/PresentationView';
+import { PasswordGate } from './components/PasswordGate';
 import { properties, Property } from './data/portfolio';
 import { getProperties, Property as SanityProperty, getPresentations, getPresentationById, Presentation } from './lib/sanity-queries';
 
@@ -174,7 +175,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <PasswordGate correctPassword="2024">
       {currentView === 'overview' && (
         <PortfolioOverview
           onNavigateToProperties={handleNavigateToProperties}
@@ -235,6 +236,6 @@ export default function App() {
           onExit={handleExitPresentation}
         />
       )}
-    </>
+    </PasswordGate>
   );
 }
