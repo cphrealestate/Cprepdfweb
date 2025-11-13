@@ -241,7 +241,7 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
                       e.stopPropagation();
                       previousImage();
                     }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-70 group-hover:opacity-100 transition-opacity"
                     aria-label="Forrige billede"
                   >
                     <ChevronLeft className="w-6 h-6 text-black" />
@@ -253,7 +253,7 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
                       e.stopPropagation();
                       nextImage();
                     }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg opacity-70 group-hover:opacity-100 transition-opacity"
                     aria-label="Næste billede"
                   >
                     <ChevronRight className="w-6 h-6 text-black" />
