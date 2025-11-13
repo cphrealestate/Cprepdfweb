@@ -70,6 +70,7 @@ export interface Property {
   type: string;
   area: string;
   value: string;
+  totalRent?: string;
   occupancy: string;
   yearBuilt: number;
   description: string;
@@ -106,6 +107,7 @@ export const properties: Property[] = [
     type: "Kontor",
     area: "8,500 m²",
     value: "185 mio. DKK",
+    totalRent: "12.0 mio. DKK/år",
     occupancy: "100%",
     yearBuilt: 2019,
     description: "Moderne kontorejendom i hjertet af Ørestad med fremragende offentlig transport og faciliteter.",
@@ -151,6 +153,7 @@ export const properties: Property[] = [
     type: "Blandet",
     area: "12,000 m²",
     value: "245 mio. DKK",
+    totalRent: "18.5 mio. DKK/år",
     occupancy: "95%",
     yearBuilt: 2021,
     description: "Ikonisk højhus i Aarhus centrum med kontorer, detailhandel og cafe i stueetagen.",
@@ -179,6 +182,7 @@ export const properties: Property[] = [
     type: "Kontor",
     area: "6,800 m²",
     value: "125 mio. DKK",
+    totalRent: "9.8 mio. DKK/år",
     occupancy: "92%",
     yearBuilt: 2018,
     description: "Fleksibel kontorejendom tæt på Odense Banegård med moderne faciliteter.",
