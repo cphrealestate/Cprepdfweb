@@ -37,6 +37,7 @@ export function PropertyDetail({
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showPresentation, setShowPresentation] = useState(false);
   const [showTenantList, setShowTenantList] = useState(false);
+  const [showCapexList, setShowCapexList] = useState(false);
   const [capexProjects, setCapexProjects] = useState<CapexProject[]>([]);
 
   // Fetch CAPEX projects for this property
@@ -178,14 +179,19 @@ export function PropertyDetail({
               {capexProjects.length > 0 && onSelectCapex && (
                 <button
                   onClick={() => {
-                    // Navigate to the first CAPEX project linked to this property
-                    if (capexProjects[0]?._id) {
-                      onSelectCapex(capexProjects[0]._id);
+                    if (capexProjects.length === 1) {
+                      // Navigate directly to the project if there's only one
+                      if (capexProjects[0]?._id) {
+                        onSelectCapex(capexProjects[0]._id);
+                      }
+                    } else {
+                      // Show selection dialog if there are multiple projects
+                      setShowCapexList(true);
                     }
                   }}
                   className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
                 >
-                  Se Capex Projekter
+                  Se Capex Projekter{capexProjects.length > 1 && ` (${capexProjects.length})`}
                 </button>
               )}
 
@@ -716,6 +722,57 @@ export function PropertyDetail({
                 </tfoot>
               </table>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* CAPEX Projects Selection Modal */}
+      <Dialog open={showCapexList} onOpenChange={setShowCapexList}>
+        <DialogContent className="w-full max-w-[calc(100%-2rem)] sm:max-w-2xl !max-w-[600px] flex flex-col" style={{ maxWidth: '600px', maxHeight: '85vh' }}>
+          <DialogHeader className="flex-shrink-0">
+            <DialogTitle className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black pr-8">
+              Vælg Capex Projekt
+            </DialogTitle>
+            <DialogDescription className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+              Denne ejendom har {capexProjects.length} tilknyttede projekter. Vælg det projekt du vil se.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-6 overflow-y-auto flex-1 space-y-3" style={{ maxHeight: 'calc(85vh - 200px)' }}>
+            {capexProjects.map((project, index) => (
+              <motion.button
+                key={project._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => {
+                  if (onSelectCapex && project._id) {
+                    setShowCapexList(false);
+                    onSelectCapex(project._id);
+                  }
+                }}
+                className="w-full text-left bg-white hover:bg-[#f5f5f0] border border-[#e5e5e0] rounded-lg p-6 transition-all hover:shadow-lg group"
+              >
+                <h3 className="font-['Crimson_Text',serif] text-[24px] text-black mb-2 group-hover:text-[#767A57] transition-colors">
+                  {project.name}
+                </h3>
+                <div className="flex items-center gap-4 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+                  {project.status && (
+                    <span className="px-3 py-1 bg-[#767A57]/10 text-[#767A57] rounded-full">
+                      {project.status}
+                    </span>
+                  )}
+                  {project.investment && (
+                    <span>Investering: {project.investment}</span>
+                  )}
+                </div>
+                {project.description && (
+                  <p className="mt-3 font-['Albert_Sans',sans-serif] text-[14px] text-[#595959] line-clamp-2">
+                    {project.description}
+                  </p>
+                )}
+              </motion.button>
+            ))}
           </div>
         </DialogContent>
       </Dialog>
