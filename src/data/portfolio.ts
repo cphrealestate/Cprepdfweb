@@ -215,6 +215,7 @@ export interface CapexProject {
   afterDescription: string;
   beforeImage: string | any; // Can be URL string or Sanity image object
   afterImage: string | any;  // Can be URL string or Sanity image object
+  images?: any[]; // Array of image/video media items
   keyMetrics: Array<{
     label: string;
     before: string;
