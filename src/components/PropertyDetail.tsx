@@ -314,7 +314,7 @@ export function PropertyDetail({
               className="bg-white rounded-lg p-8"
             >
               <h2 className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-black mb-6">
-                Nøgletal
+                Projekt udvikling
               </h2>
 
               <div className="space-y-6">
