@@ -92,13 +92,13 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
           className="mb-8 space-y-4"
         >
           {/* Search Bar */}
-          <div className="flex items-stretch rounded-full px-3 h-13 min-w-0 transition-colors border border-gray-300 focus-within:border-[#767A57] max-w-md bg-white">
+          <div className="flex items-stretch rounded-full px-3 h-13 transition-colors border border-gray-300 focus-within:border-[#767A57] w-fit bg-white">
             <input
               type="text"
-              placeholder="Søg efter ejendom eller by..."
+              placeholder="Søg..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 outline-none bg-transparent font-['Albert_Sans',sans-serif] text-base px-2 min-w-0 text-black"
+              className="outline-none bg-transparent font-['Albert_Sans',sans-serif] text-base px-2 w-64 text-black"
             />
             <label className="flex items-center">
               <span className="text-white inline-block bg-[#767A57] size-7 p-1.5 rounded-full">
