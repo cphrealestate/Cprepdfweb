@@ -112,20 +112,20 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
               className="relative flex items-center justify-center"
-              style={{ maxWidth: '85vw', maxHeight: '70vh' }}
+              style={{ maxWidth: '85vw', maxHeight: '55vh' }}
             >
               {isSanityImage(currentItem.image) ? (
                 <SanityImage
                   image={currentItem.image}
                   alt={currentItem.caption}
                   width={1400}
-                  className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                  className="max-w-full max-h-[55vh] object-contain rounded-lg"
                 />
               ) : (
                 <ImageWithFallback
                   src={currentItem.image as string}
                   alt={currentItem.caption}
-                  className="max-w-full max-h-[70vh] object-contain rounded-lg"
+                  className="max-w-full max-h-[55vh] object-contain rounded-lg"
                 />
               )}
             </motion.div>
@@ -135,7 +135,7 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className="absolute bottom-32 left-0 right-0 flex flex-col items-center gap-3"
+              className="absolute bottom-40 left-0 right-0 flex flex-col items-center gap-3"
             >
               {/* Caption */}
               <p className="font-['Albert_Sans',sans-serif] text-[20px] text-white text-center">
@@ -182,7 +182,7 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2 }}
-                className="absolute bottom-8 left-0 right-0 flex items-center justify-center gap-3 overflow-x-auto px-8"
+                className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-3 overflow-x-auto px-8"
               >
                 {images.map((item, index) => (
                   <button
