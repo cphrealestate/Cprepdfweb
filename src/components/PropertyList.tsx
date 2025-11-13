@@ -6,15 +6,15 @@ import { SanityImage } from './SanityImage';
 import { LogoButton } from './LogoButton';
 import { Breadcrumbs } from './Breadcrumbs';
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { isVideo, getFileUrl } from '../lib/sanity';
 
 interface PropertyListProps {
   properties: Property[];
-  onSelectProperty: (property: Property) => void;
-  onBackToOverview: () => void;
 }
 
-export function PropertyList({ properties, onSelectProperty, onBackToOverview }: PropertyListProps) {
+export function PropertyList({ properties }: PropertyListProps) {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCities, setSelectedCities] = useState<Set<string>>(new Set());
 
@@ -59,13 +59,13 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
-      <LogoButton onClick={onBackToOverview} />
+      <LogoButton onClick={() => navigate('/')} />
 
       <div className="px-12 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
-            { label: 'Forside', onClick: onBackToOverview },
+            { label: 'Forside', onClick: () => navigate('/') },
             { label: 'Ejendomme' }
           ]}
         />
@@ -166,7 +166,7 @@ export function PropertyList({ properties, onSelectProperty, onBackToOverview }:
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + index * 0.1 }}
-              onClick={() => onSelectProperty(property)}
+              onClick={() => navigate(`/properties/${property.id}`)}
               className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group"
             >
               {/* Image or Video Thumbnail */}

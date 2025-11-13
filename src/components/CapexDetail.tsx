@@ -6,16 +6,16 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { BeforeAfterSlider } from './BeforeAfterSlider';
 import { Breadcrumbs } from './Breadcrumbs';
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { getCapexProjectById, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
-interface CapexDetailProps {
-  capexId: string;
-  onBack: () => void;
-  onBackToHome: () => void;
-  onSelectProperty?: (propertyId: string) => void;
-}
+export function CapexDetail() {
+  const { id: capexId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
-export function CapexDetail({ capexId, onBack, onBackToHome, onSelectProperty }: CapexDetailProps) {
+  if (!capexId) {
+    return <Navigate to="/capex" replace />;
+  }
   const [project, setProject] = useState<CapexProject | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -102,7 +102,7 @@ export function CapexDetail({ capexId, onBack, onBackToHome, onSelectProperty }:
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
-      <LogoButton onClick={onBackToHome} />
+      <LogoButton onClick={() => navigate('/')} />
 
       {/* Hero Section */}
       <section className="px-12 pt-20 pb-12">
@@ -110,8 +110,8 @@ export function CapexDetail({ capexId, onBack, onBackToHome, onSelectProperty }:
           {/* Breadcrumbs */}
           <Breadcrumbs
             items={[
-              { label: 'Forside', onClick: onBackToHome },
-              { label: 'CAPEX Projekter', onClick: onBack },
+              { label: 'Forside', onClick: () => navigate('/') },
+              { label: 'CAPEX Projekter', onClick: () => navigate('/capex') },
               { label: project.name }
             ]}
           />
@@ -133,9 +133,9 @@ export function CapexDetail({ capexId, onBack, onBackToHome, onSelectProperty }:
               </div>
 
               {/* Property Button - Only show if property is linked */}
-              {project.property?._id && onSelectProperty && (
+              {project.property?._id && (
                 <button
-                  onClick={() => onSelectProperty(project.property!._id)}
+                  onClick={() => navigate(`/properties/${project.property!._id}`)}
                   className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
                 >
                   Se Ejendom

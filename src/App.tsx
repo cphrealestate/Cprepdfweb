@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { PortfolioOverview } from './components/PortfolioOverview';
 import { PropertyList } from './components/PropertyList';
 import { PropertyDetail } from './components/PropertyDetail';
@@ -9,8 +10,6 @@ import { PresentationView } from './components/PresentationView';
 import { PasswordGate } from './components/PasswordGate';
 import { properties, Property } from './data/portfolio';
 import { getProperties, Property as SanityProperty, getPresentations, getPresentationById, Presentation } from './lib/sanity-queries';
-
-type View = 'overview' | 'list' | 'detail' | 'capex-list' | 'capex-detail' | 'presentation-list' | 'presentation-view';
 
 // Temporary adapter to use Sanity properties with existing Property type
 function adaptSanityProperty(sanityProp: SanityProperty): Property {
@@ -58,10 +57,6 @@ function adaptSanityProperty(sanityProp: SanityProperty): Property {
 }
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<View>('overview');
-  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
-  const [selectedCapexId, setSelectedCapexId] = useState<string | null>(null);
-  const [selectedPresentation, setSelectedPresentation] = useState<Presentation | null>(null);
   const [presentationsData, setPresentationsData] = useState<Presentation[]>([]);
   const [propertiesData, setPropertiesData] = useState<Property[]>(properties);
   const [loading, setLoading] = useState(true);
@@ -94,148 +89,20 @@ export default function App() {
     loadData();
   }, []);
 
-  const handleNavigateToProperties = () => {
-    setCurrentView('list');
-  };
-
-  const handleNavigateToCapex = () => {
-    setCurrentView('capex-list');
-  };
-
-  const handleSelectProperty = (property: Property) => {
-    setSelectedProperty(property);
-    setCurrentView('detail');
-  };
-
-  const handleSelectPropertyById = (propertyId: string) => {
-    const property = propertiesData.find(p => p.id === propertyId);
-    if (property) {
-      setSelectedProperty(property);
-      setCurrentView('detail');
-    }
-  };
-
-  const handleSelectCapex = (capexId: string) => {
-    setSelectedCapexId(capexId);
-    setCurrentView('capex-detail');
-  };
-
-  const handleBackToList = () => {
-    setSelectedProperty(null);
-    setCurrentView('list');
-  };
-
-  const handleBackToCapexList = () => {
-    setSelectedCapexId(null);
-    setCurrentView('capex-list');
-  };
-
-  const handleBackToOverview = () => {
-    setSelectedProperty(null);
-    setSelectedCapexId(null);
-    setSelectedPresentation(null);
-    setCurrentView('overview');
-  };
-
-  const handleNextProperty = () => {
-    if (!selectedProperty) return;
-    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
-    if (currentIndex < propertiesData.length - 1) {
-      setSelectedProperty(propertiesData[currentIndex + 1]);
-    }
-  };
-
-  const handlePreviousProperty = () => {
-    if (!selectedProperty) return;
-    const currentIndex = propertiesData.findIndex(p => p.id === selectedProperty.id);
-    if (currentIndex > 0) {
-      setSelectedProperty(propertiesData[currentIndex - 1]);
-    }
-  };
-
-  const handleNavigateToPresentations = () => {
-    setCurrentView('presentation-list');
-  };
-
-  const handleSelectPresentation = async (presentationId: string) => {
-    try {
-      const presentation = await getPresentationById(presentationId);
-      if (presentation) {
-        setSelectedPresentation(presentation);
-        setCurrentView('presentation-view');
-      }
-    } catch (error) {
-      console.error('Error loading presentation:', error);
-    }
-  };
-
-  const handleExitPresentation = () => {
-    setSelectedPresentation(null);
-    setCurrentView('presentation-list');
-  };
-
   return (
-    <PasswordGate correctPassword="2024">
-      {currentView === 'overview' && (
-        <PortfolioOverview
-          onNavigateToProperties={handleNavigateToProperties}
-          onNavigateToCapex={handleNavigateToCapex}
-          onNavigateToPresentations={handleNavigateToPresentations}
-          onSelectProperty={handleSelectPropertyById}
-        />
-      )}
-
-      {currentView === 'list' && (
-        <PropertyList
-          properties={propertiesData}
-          onSelectProperty={handleSelectProperty}
-          onBackToOverview={handleBackToOverview}
-        />
-      )}
-
-      {currentView === 'detail' && selectedProperty && (
-        <PropertyDetail
-          property={selectedProperty}
-          onBack={handleBackToList}
-          onBackToHome={handleBackToOverview}
-          onNext={propertiesData.findIndex(p => p.id === selectedProperty.id) < propertiesData.length - 1 ? handleNextProperty : undefined}
-          onPrevious={propertiesData.findIndex(p => p.id === selectedProperty.id) > 0 ? handlePreviousProperty : undefined}
-          currentIndex={propertiesData.findIndex(p => p.id === selectedProperty.id)}
-          totalProperties={propertiesData.length}
-          onSelectCapex={handleSelectCapex}
-        />
-      )}
-
-      {currentView === 'capex-list' && (
-        <CapexList
-          onBack={handleBackToOverview}
-          onSelectCapex={handleSelectCapex}
-        />
-      )}
-
-      {currentView === 'capex-detail' && selectedCapexId && (
-        <CapexDetail
-          capexId={selectedCapexId}
-          onBack={handleBackToCapexList}
-          onBackToHome={handleBackToOverview}
-          onSelectProperty={handleSelectPropertyById}
-        />
-      )}
-
-      {currentView === 'presentation-list' && (
-        <PresentationList
-          presentations={presentationsData}
-          onSelectPresentation={handleSelectPresentation}
-          onNavigateBack={handleBackToOverview}
-        />
-      )}
-
-      {currentView === 'presentation-view' && selectedPresentation && (
-        <PresentationView
-          presentation={selectedPresentation}
-          onExit={handleExitPresentation}
-        />
-      )}
-    </PasswordGate>
+    <BrowserRouter>
+      <PasswordGate correctPassword="2024">
+        <Routes>
+          <Route path="/" element={<PortfolioOverview />} />
+          <Route path="/properties" element={<PropertyList properties={propertiesData} />} />
+          <Route path="/properties/:id" element={<PropertyDetail properties={propertiesData} />} />
+          <Route path="/capex" element={<CapexList />} />
+          <Route path="/capex/:id" element={<CapexDetail />} />
+          <Route path="/presentations" element={<PresentationList presentations={presentationsData} />} />
+          <Route path="/presentations/:id" element={<PresentationView />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PasswordGate>
+    </BrowserRouter>
   );
 }
