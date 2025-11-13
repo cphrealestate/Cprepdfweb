@@ -18,16 +18,18 @@ interface PortfolioOverviewProps {
   onNavigateToProperties: () => void;
   onNavigateToCapex: () => void;
   onNavigateToPresentations?: () => void;
+  onSelectProperty?: (propertyId: string) => void;
 }
 
 interface RegionProperty {
+  _id?: string;
   name: string;
   address: string;
   area: string;
   totalRent: string;
 }
 
-export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, onNavigateToPresentations }: PortfolioOverviewProps) {
+export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, onNavigateToPresentations, onSelectProperty }: PortfolioOverviewProps) {
   // Fallback to hardcoded data initially
   const [data, setData] = useState(portfolioData);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -335,7 +337,13 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
-                        className="border-b border-[#e5e5e5] hover:bg-[#f5f5f0] transition-colors"
+                        onClick={() => {
+                          if (property._id && onSelectProperty) {
+                            setSelectedRegion(null);
+                            onSelectProperty(property._id);
+                          }
+                        }}
+                        className={`border-b border-[#e5e5e5] hover:bg-[#f5f5f0] transition-colors ${property._id && onSelectProperty ? 'cursor-pointer' : ''}`}
                       >
                         <td className="py-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
                           {property.name}

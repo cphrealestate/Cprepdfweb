@@ -180,6 +180,7 @@ export default function App() {
           onNavigateToProperties={handleNavigateToProperties}
           onNavigateToCapex={handleNavigateToCapex}
           onNavigateToPresentations={handleNavigateToPresentations}
+          onSelectProperty={handleSelectPropertyById}
         />
       )}
 
