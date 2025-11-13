@@ -170,9 +170,9 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center gap-4">
-              {/* CAPEX Projects Button - Only show if projects exist */}
-              {capexProjects.length > 0 && (
+            {capexProjects.length > 0 && (
+              <div className="flex items-center gap-4">
+                {/* CAPEX Projects Button - Only show if projects exist */}
                 <button
                   onClick={() => {
                     if (capexProjects.length === 1) {
@@ -189,24 +189,8 @@ export function PropertyDetail({ properties }: PropertyDetailProps) {
                 >
                   Se Capex Projekter{capexProjects.length > 1 && ` (${capexProjects.length})`}
                 </button>
-              )}
-
-              {/* Presentation Mode Button */}
-              <button
-                onClick={() => setShowPresentation(true)}
-                className="flex items-center gap-3 px-8 py-5 bg-white text-black rounded-full hover:shadow-2xl transition-all group shadow-lg"
-              >
-                <Presentation className="w-7 h-7 text-black" />
-                <div className="text-left">
-                  <p className="font-['Albert_Sans',sans-serif] text-[12px] text-black/90 uppercase tracking-wide">
-                    Start
-                  </p>
-                  <p className="font-['Crimson_Text',serif] text-[20px] text-black">
-                    Præsentation
-                  </p>
-                </div>
-              </button>
-            </div>
+              </div>
+            )}
           </motion.div>
 
           {/* Main Grid */}
