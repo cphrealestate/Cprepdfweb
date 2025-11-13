@@ -6,14 +6,11 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { Breadcrumbs } from './Breadcrumbs';
 import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getCapexProjects, CapexProject as SanityCapexProject } from '../lib/sanity-queries';
 
-interface CapexListProps {
-  onBack: () => void;
-  onSelectCapex: (id: string) => void;
-}
-
-export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
+export function CapexList() {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState(capexProjects);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -122,7 +119,7 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
-      <LogoButton onClick={onBack} />
+      <LogoButton onClick={() => navigate('/')} />
 
       {/* Header */}
       <section className="px-12 pt-20 pb-12">
@@ -130,7 +127,7 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
           {/* Breadcrumbs */}
           <Breadcrumbs
             items={[
-              { label: 'Forside', onClick: onBack },
+              { label: 'Forside', onClick: () => navigate('/') },
               { label: 'CAPEX Projekter' }
             ]}
           />
@@ -237,7 +234,7 @@ export function CapexList({ onBack, onSelectCapex }: CapexListProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              onClick={() => onSelectCapex(project.id)}
+              onClick={() => navigate(`/capex/${project.id}`)}
               className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer group"
             >
               {/* Project Image */}

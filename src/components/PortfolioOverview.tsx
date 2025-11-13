@@ -4,6 +4,7 @@ import { portfolioData } from '../data/portfolio';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import logoImage from '../assets/Symbol-Real-estate.png';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
   DialogContent,
@@ -14,13 +15,6 @@ import {
 
 import { getPortfolioSettings, getRegions, getPropertiesByRegion } from '../lib/sanity-queries';
 
-interface PortfolioOverviewProps {
-  onNavigateToProperties: () => void;
-  onNavigateToCapex: () => void;
-  onNavigateToPresentations?: () => void;
-  onSelectProperty?: (propertyId: string) => void;
-}
-
 interface RegionProperty {
   _id?: string;
   name: string;
@@ -29,7 +23,8 @@ interface RegionProperty {
   totalRent: string;
 }
 
-export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, onNavigateToPresentations, onSelectProperty }: PortfolioOverviewProps) {
+export function PortfolioOverview() {
+  const navigate = useNavigate();
   // Fallback to hardcoded data initially
   const [data, setData] = useState(portfolioData);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
@@ -262,7 +257,7 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.6 }}
-              onClick={onNavigateToProperties}
+              onClick={() => navigate('/properties')}
               className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
             >
               Se Ejendomme
@@ -271,22 +266,20 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.7 }}
-              onClick={onNavigateToCapex}
+              onClick={() => navigate('/capex')}
               className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
             >
               Se Capex Projekter
             </motion.button>
-            {onNavigateToPresentations && (
-              <motion.button
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.8 }}
-                onClick={onNavigateToPresentations}
-                className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
-              >
-                Præsentationer
-              </motion.button>
-            )}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.8 }}
+              onClick={() => navigate('/presentations')}
+              className="bg-[#767A57] text-white px-12 py-5 rounded-lg font-['Albert_Sans',sans-serif] text-[18px] hover:bg-[#5f6345] transition-colors shadow-lg"
+            >
+              Præsentationer
+            </motion.button>
           </div>
         </div>
       </section>
@@ -338,12 +331,12 @@ export function PortfolioOverview({ onNavigateToProperties, onNavigateToCapex, o
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.05 }}
                         onClick={() => {
-                          if (property._id && onSelectProperty) {
+                          if (property._id) {
                             setSelectedRegion(null);
-                            onSelectProperty(property._id);
+                            navigate(`/properties/${property._id}`);
                           }
                         }}
-                        className={`border-b border-[#e5e5e5] hover:bg-[#f5f5f0] transition-colors ${property._id && onSelectProperty ? 'cursor-pointer' : ''}`}
+                        className={`border-b border-[#e5e5e5] hover:bg-[#f5f5f0] transition-colors ${property._id ? 'cursor-pointer' : ''}`}
                       >
                         <td className="py-4 font-['Albert_Sans',sans-serif] text-[16px] text-black">
                           {property.name}

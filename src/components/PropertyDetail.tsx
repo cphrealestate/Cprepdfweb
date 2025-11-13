@@ -9,30 +9,28 @@ import { Breadcrumbs } from './Breadcrumbs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip, Cell } from 'recharts';
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Navigate } from 'react-router-dom';
 import { isVideo, getFileUrl } from '../lib/sanity';
 import { getCapexProjectsByPropertyId, CapexProject } from '../lib/sanity-queries';
 
 interface PropertyDetailProps {
-  property: Property;
-  onBack: () => void;
-  onBackToHome: () => void;
-  onNext?: () => void;
-  onPrevious?: () => void;
-  currentIndex?: number;
-  totalProperties?: number;
-  onSelectCapex?: (capexId: string) => void;
+  properties: Property[];
 }
 
-export function PropertyDetail({
-  property,
-  onBack,
-  onBackToHome,
-  onNext,
-  onPrevious,
-  currentIndex,
-  totalProperties,
-  onSelectCapex
-}: PropertyDetailProps) {
+export function PropertyDetail({ properties }: PropertyDetailProps) {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  const property = properties.find(p => p.id === id);
+
+  if (!property) {
+    return <Navigate to="/properties" replace />;
+  }
+
+  const currentIndex = properties.findIndex(p => p.id === id);
+  const totalProperties = properties.length;
+  const hasPrevious = currentIndex > 0;
+  const hasNext = currentIndex < totalProperties - 1;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [showPresentation, setShowPresentation] = useState(false);
@@ -104,14 +102,14 @@ export function PropertyDetail({
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f5f5f0] via-[#e8e8dd] to-[#767A57] overflow-y-auto pb-20">
-      <LogoButton onClick={onBackToHome} />
+      <LogoButton onClick={() => navigate('/')} />
 
       <div className="px-12 py-12">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
-            { label: 'Forside', onClick: onBackToHome },
-            { label: 'Ejendomme', onClick: onBack },
+            { label: 'Forside', onClick: () => navigate('/') },
+            { label: 'Ejendomme', onClick: () => navigate('/properties') },
             { label: property.name }
           ]}
         />
@@ -119,35 +117,33 @@ export function PropertyDetail({
         {/* Navigation header */}
         <div className="flex items-center justify-end mb-8">
           {/* Property navigation */}
-          {(onNext || onPrevious) && currentIndex !== undefined && totalProperties !== undefined && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex items-center gap-4"
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-4"
+          >
+            <button
+              onClick={() => hasPrevious && navigate(`/properties/${properties[currentIndex - 1].id}`)}
+              disabled={!hasPrevious}
+              className="p-2 rounded-full bg-white hover:bg-[#f5f5f0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              aria-label="Forrige ejendom"
             >
-              <button
-                onClick={onPrevious}
-                disabled={!onPrevious}
-                className="p-2 rounded-full bg-white hover:bg-[#f5f5f0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                aria-label="Forrige ejendom"
-              >
-                <ChevronLeft className="w-6 h-6 text-[#767A57]" />
-              </button>
+              <ChevronLeft className="w-6 h-6 text-[#767A57]" />
+            </button>
 
-              <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
-                Ejendom {currentIndex + 1} af {totalProperties}
-              </span>
+            <span className="font-['Albert_Sans',sans-serif] text-[16px] text-[#595959]">
+              Ejendom {currentIndex + 1} af {totalProperties}
+            </span>
 
-              <button
-                onClick={onNext}
-                disabled={!onNext}
-                className="p-2 rounded-full bg-white hover:bg-[#f5f5f0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                aria-label="Næste ejendom"
-              >
-                <ChevronRight className="w-6 h-6 text-[#767A57]" />
-              </button>
-            </motion.div>
-          )}
+            <button
+              onClick={() => hasNext && navigate(`/properties/${properties[currentIndex + 1].id}`)}
+              disabled={!hasNext}
+              className="p-2 rounded-full bg-white hover:bg-[#f5f5f0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              aria-label="Næste ejendom"
+            >
+              <ChevronRight className="w-6 h-6 text-[#767A57]" />
+            </button>
+          </motion.div>
         </div>
 
         <div className="max-w-[1400px] mx-auto">
@@ -176,13 +172,13 @@ export function PropertyDetail({
             {/* Action Buttons */}
             <div className="flex items-center gap-4">
               {/* CAPEX Projects Button - Only show if projects exist */}
-              {capexProjects.length > 0 && onSelectCapex && (
+              {capexProjects.length > 0 && (
                 <button
                   onClick={() => {
                     if (capexProjects.length === 1) {
                       // Navigate directly to the project if there's only one
                       if (capexProjects[0]?._id) {
-                        onSelectCapex(capexProjects[0]._id);
+                        navigate(`/capex/${capexProjects[0]._id}`);
                       }
                     } else {
                       // Show selection dialog if there are multiple projects
@@ -495,60 +491,56 @@ export function PropertyDetail({
           )}
 
           {/* Navigation between properties */}
-          {(onNext || onPrevious) && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="flex items-center justify-between pt-8 border-t-2 border-[#e5e5e0]"
-            >
-              {onPrevious ? (
-                <button
-                  onClick={onPrevious}
-                  className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                  <div className="text-left">
-                    <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
-                      Forrige ejendom
-                    </p>
-                    <p className="font-['Crimson_Text',serif] text-[18px]">
-                      Se forrige
-                    </p>
-                  </div>
-                </button>
-              ) : (
-                <div></div>
-              )}
-
-              {currentIndex !== undefined && totalProperties !== undefined && (
-                <div className="text-center">
-                  <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
-                    Ejendom {currentIndex + 1} af {totalProperties}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="flex items-center justify-between pt-8 border-t-2 border-[#e5e5e0]"
+          >
+            {hasPrevious ? (
+              <button
+                onClick={() => navigate(`/properties/${properties[currentIndex - 1].id}`)}
+                className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
+              >
+                <ChevronLeft className="w-5 h-5" />
+                <div className="text-left">
+                  <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
+                    Forrige ejendom
+                  </p>
+                  <p className="font-['Crimson_Text',serif] text-[18px]">
+                    Se forrige
                   </p>
                 </div>
-              )}
+              </button>
+            ) : (
+              <div></div>
+            )}
 
-              {onNext ? (
-                <button
-                  onClick={onNext}
-                  className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
-                >
-                  <div className="text-center">
-                    <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
-                      Næste ejendom
-                    </p>
-                    <p className="font-['Crimson_Text',serif] text-[18px]">
-                      Se næste
-                    </p>
-                  </div>
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              ) : (
-                <div></div>
-              )}
-            </motion.div>
-          )}
+            <div className="text-center">
+              <p className="font-['Albert_Sans',sans-serif] text-[14px] text-[#595959]">
+                Ejendom {currentIndex + 1} af {totalProperties}
+              </p>
+            </div>
+
+            {hasNext ? (
+              <button
+                onClick={() => navigate(`/properties/${properties[currentIndex + 1].id}`)}
+                className="flex items-center gap-3 px-6 py-4 bg-white rounded-lg hover:bg-[#767A57] hover:text-white transition-all group shadow-sm hover:shadow-lg"
+              >
+                <div className="text-center">
+                  <p className="font-['Albert_Sans',sans-serif] text-[12px] text-[#595959] group-hover:text-white/80">
+                    Næste ejendom
+                  </p>
+                  <p className="font-['Crimson_Text',serif] text-[18px]">
+                    Se næste
+                  </p>
+                </div>
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            ) : (
+              <div></div>
+            )}
+          </motion.div>
         </div>
       </div>
 
@@ -746,9 +738,9 @@ export function PropertyDetail({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => {
-                  if (onSelectCapex && project._id) {
+                  if (project._id) {
                     setShowCapexList(false);
-                    onSelectCapex(project._id);
+                    navigate(`/capex/${project._id}`);
                   }
                 }}
                 className="w-full text-left bg-white hover:bg-[#f5f5f0] border border-[#e5e5e0] rounded-lg p-6 transition-all hover:shadow-lg group"
