@@ -85,7 +85,7 @@ export function ProjectTimeline({
           <p className="font-['Albert_Sans',sans-serif] text-[18px] text-[#595959] mb-3">
             Status
           </p>
-          <p className="font-['Crimson_Text',serif] text-[48px] leading-[56px] text-[#767A57]">
+          <p className="font-['Crimson_Text',serif] text-[36px] leading-[43px] text-[#767A57]">
             {displayProgress}% Gennemført
           </p>
         </div>
@@ -106,16 +106,16 @@ export function ProjectTimeline({
       </div>
 
       {/* Timeline */}
-      <div className="relative mb-6">
+      <div className="relative mb-6 px-8">
         {/* Background Line */}
-        <div className="absolute top-1/2 left-0 right-0 h-1 bg-[#E5E7EB] transform -translate-y-1/2 z-0" />
+        <div className="absolute top-1/2 left-8 right-8 h-1 bg-[#E5E7EB] transform -translate-y-1/2 z-0" />
 
         {/* Progress Line */}
         <motion.div
           initial={{ width: '0%' }}
           animate={{ width: `${lineProgress}%` }}
           transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
-          className="absolute top-1/2 left-0 h-1 bg-[#767A57] transform -translate-y-1/2 z-0"
+          className="absolute top-1/2 left-8 h-1 bg-[#767A57] transform -translate-y-1/2 z-0"
         />
 
         {/* Phase Steps */}
