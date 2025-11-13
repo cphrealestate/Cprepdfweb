@@ -108,7 +108,7 @@ export interface PortfolioSettings {
   totalProperties?: number;
   totalArea?: string;
   totalValue?: string;
-  occupancyRate?: string;
+  totalRent?: string;
   highlights?: Array<{
     title: string;
     description: string;
@@ -148,7 +148,7 @@ export async function getPortfolioSettings(): Promise<PortfolioSettings | null> 
     totalProperties,
     totalArea,
     totalValue,
-    occupancyRate,
+    totalRent,
     highlights
   }`;
   
