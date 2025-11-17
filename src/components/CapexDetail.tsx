@@ -297,8 +297,8 @@ export function CapexDetail() {
               </motion.span>
             </div>
 
-            {/* Masonry Grid */}
-            <div className="grid grid-cols-3 gap-4">
+            {/* Gallery Grid */}
+            <div className="grid grid-cols-3 gap-2">
               {project.gallery.map((item, index) => {
                 const isSanityImage = item.image && typeof item.image === 'object' && (item.image._type === 'image' || item.image.asset);
 
@@ -308,19 +308,16 @@ export function CapexDetail() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.9 + index * 0.05 }}
-
-                    className={`relative group cursor-pointer overflow-hidden rounded-lg ${
-                      index === 0 ? 'col-span-2 row-span-2' : ''
-                    }`}
+                    className="relative group cursor-pointer overflow-hidden rounded-lg"
                     onClick={() => openLightbox(index)}
-                    style={{ height: index === 0 ? '400px' : '190px' }}
+                    style={{ height: '190px' }}
                   >
                     {/* Image */}
                     {isSanityImage ? (
                       <SanityImage
                         image={item.image}
                         alt={item.caption}
-                        width={index === 0 ? 800 : 400}
+                        width={400}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                     ) : (
