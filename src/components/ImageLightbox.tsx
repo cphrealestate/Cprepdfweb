@@ -70,7 +70,7 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="absolute inset-0 bg-black backdrop-blur-sm"
+            className="absolute inset-0 bg-black/98 backdrop-blur-lg"
             onClick={onClose}
           />
 
@@ -117,7 +117,8 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                     alt={currentItem.caption}
                     width={1400}
                     objectFit="contain"
-                    className="max-w-full max-h-full rounded-xl"
+                    borderRadius="0.75rem"
+                    className="max-w-full max-h-full"
                   />
                 ) : (
                   <ImageWithFallback
