@@ -7,6 +7,7 @@ interface SanityImageProps {
   width?: number;
   className?: string;
   fallbackQuery?: string; // Unsplash query if no Sanity image
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down';
 }
 
 /**
@@ -20,7 +21,7 @@ interface SanityImageProps {
  *   fallbackQuery="modern office building"
  * />
  */
-export function SanityImage({ image, alt, width, className, fallbackQuery }: SanityImageProps) {
+export function SanityImage({ image, alt, width, className, fallbackQuery, objectFit = 'cover' }: SanityImageProps) {
   // Skip if this is a video file (should use <video> tag instead)
   if (isVideo(image)) {
     console.warn('SanityImage received a video file. Use <video> tag instead.');
@@ -38,7 +39,7 @@ export function SanityImage({ image, alt, width, className, fallbackQuery }: San
         alt={alt}
         className={className}
         loading="lazy"
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        style={{ width: '100%', height: '100%', objectFit }}
       />
     );
   }

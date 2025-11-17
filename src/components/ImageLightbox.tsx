@@ -116,7 +116,8 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                     image={currentItem.image}
                     alt={currentItem.caption}
                     width={1400}
-                    className="max-w-full max-h-full object-contain rounded-lg"
+                    objectFit="contain"
+                    className="max-w-full max-h-full rounded-lg"
                   />
                 ) : (
                   <ImageWithFallback
