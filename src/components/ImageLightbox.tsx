@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { SanityImage } from './SanityImage';
 import { getImageUrl } from '../lib/sanity';
@@ -22,18 +22,6 @@ interface ImageLightboxProps {
 export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigate }: ImageLightboxProps) {
   const [imageKey, setImageKey] = useState(0);
 
-  const handlePrevious = () => {
-    const newIndex = (currentIndex - 1 + images.length) % images.length;
-    onNavigate(newIndex);
-    setImageKey(prev => prev + 1);
-  };
-
-  const handleNext = () => {
-    const newIndex = (currentIndex + 1) % images.length;
-    onNavigate(newIndex);
-    setImageKey(prev => prev + 1);
-  };
-
   // Keyboard controls
   useEffect(() => {
     if (!isOpen) return;
@@ -42,9 +30,13 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
       if (e.key === 'Escape') {
         onClose();
       } else if (e.key === 'ArrowLeft') {
-        handlePrevious();
+        const newIndex = (currentIndex - 1 + images.length) % images.length;
+        onNavigate(newIndex);
+        setImageKey(prev => prev + 1);
       } else if (e.key === 'ArrowRight') {
-        handleNext();
+        const newIndex = (currentIndex + 1) % images.length;
+        onNavigate(newIndex);
+        setImageKey(prev => prev + 1);
       }
     };
 
@@ -57,7 +49,7 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
       window.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, currentIndex]);
+  }, [isOpen, currentIndex, images.length, onNavigate, onClose]);
 
   if (!isOpen) return null;
 
@@ -108,7 +100,7 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
               </h2>
             </motion.div>
 
-            {/* Image Container with Navigation */}
+            {/* Image Container */}
             <div className="flex-1 flex items-center justify-center px-20 relative">
               {/* Main Image */}
               <motion.div
@@ -134,27 +126,6 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                   />
                 )}
               </motion.div>
-
-              {/* Navigation Buttons */}
-              {images.length > 1 && (
-                <>
-                  <button
-                    onClick={handlePrevious}
-                    className="absolute left-8 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors"
-                    aria-label="Forrige billede"
-                  >
-                    <ChevronLeft className="w-6 h-6 text-white" />
-                  </button>
-
-                  <button
-                    onClick={handleNext}
-                    className="absolute right-8 w-14 h-14 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-colors"
-                    aria-label="Næste billede"
-                  >
-                    <ChevronRight className="w-6 h-6 text-white" />
-                  </button>
-                </>
-              )}
             </div>
 
             {/* Bottom Info Section */}
