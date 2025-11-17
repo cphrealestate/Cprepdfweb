@@ -298,7 +298,7 @@ export function CapexDetail() {
             </div>
 
             {/* Gallery Grid */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-2">
               {project.gallery.map((item, index) => {
                 const isSanityImage = item.image && typeof item.image === 'object' && (item.image._type === 'image' || item.image.asset);
 
