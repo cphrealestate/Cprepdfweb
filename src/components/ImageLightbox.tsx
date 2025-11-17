@@ -101,33 +101,21 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
             </motion.div>
 
             {/* Image Container */}
-            <div className="relative flex-1 flex items-center justify-center bg-black px-8 py-8" style={{ maxHeight: 'calc(85vh - 180px)' }}>
-              <motion.div
-                key={imageKey}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                className="flex items-center justify-center"
-                style={{ maxWidth: '80vw', maxHeight: 'calc(85vh - 240px)' }}
-              >
-                {isSanityImage(currentItem.image) ? (
-                  <SanityImage
-                    image={currentItem.image}
-                    alt={currentItem.caption}
-                    width={1400}
-                    objectFit="contain"
-                    borderRadius="0.75rem"
-                    className="max-w-full max-h-full object-contain"
-                  />
-                ) : (
-                  <ImageWithFallback
-                    src={currentItem.image as string}
-                    alt={currentItem.caption}
-                    className="max-w-full max-h-full object-contain rounded-xl"
-                  />
-                )}
-              </motion.div>
+            <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-white" style={{ maxHeight: 'calc(85vh - 180px)' }}>
+              {isSanityImage(currentItem.image) ? (
+                <SanityImage
+                  image={currentItem.image}
+                  alt={currentItem.caption}
+                  width={1400}
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <ImageWithFallback
+                  src={currentItem.image as string}
+                  alt={currentItem.caption}
+                  className="w-full h-full object-contain"
+                />
+              )}
             </div>
 
             {/* Bottom Info Section */}
