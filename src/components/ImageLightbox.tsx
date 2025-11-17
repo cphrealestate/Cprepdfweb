@@ -101,14 +101,15 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
             </motion.div>
 
             {/* Image Container */}
-            <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-black px-8" style={{ maxHeight: 'calc(85vh - 180px)' }}>
+            <div className="relative flex-1 flex items-center justify-center bg-black px-8 py-8" style={{ maxHeight: 'calc(85vh - 180px)' }}>
               <motion.div
                 key={imageKey}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="w-full h-full flex items-center justify-center overflow-hidden rounded-lg"
+                className="max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-xl"
+                style={{ maxHeight: 'calc(85vh - 240px)' }}
               >
                 {isSanityImage(currentItem.image) ? (
                   <SanityImage
@@ -116,13 +117,13 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                     alt={currentItem.caption}
                     width={1400}
                     objectFit="contain"
-                    className="w-full h-full rounded-lg"
+                    className="max-w-full max-h-full rounded-xl"
                   />
                 ) : (
                   <ImageWithFallback
                     src={currentItem.image as string}
                     alt={currentItem.caption}
-                    className="w-full h-full object-contain rounded-lg"
+                    className="max-w-full max-h-full object-contain rounded-xl"
                   />
                 )}
               </motion.div>
