@@ -108,8 +108,8 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="max-w-full max-h-full flex items-center justify-center overflow-hidden rounded-xl"
-                style={{ maxHeight: 'calc(85vh - 240px)' }}
+                className="flex items-center justify-center"
+                style={{ maxWidth: '80vw', maxHeight: 'calc(85vh - 240px)' }}
               >
                 {isSanityImage(currentItem.image) ? (
                   <SanityImage
@@ -118,7 +118,7 @@ export function ImageLightbox({ images, isOpen, currentIndex, onClose, onNavigat
                     width={1400}
                     objectFit="contain"
                     borderRadius="0.75rem"
-                    className="max-w-full max-h-full"
+                    className="max-w-full max-h-full object-contain"
                   />
                 ) : (
                   <ImageWithFallback
